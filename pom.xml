@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-  <!--
-   | put company details here
-  <organization>
-    <name>...</name>
-    <url>http://...</url>
-  </organization>
-  -->
-
-  <!--
-   | put license details here
-  <licenses>
-    <license>
-      <name>...</name>
-      <url>http://...</url>
-      <comments>
-      </comments>
-    </license>
-  </licenses>
-  -->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openengsb.opencit</groupId>
@@ -28,16 +9,10 @@
 
   <name>OpenCIT :: Parent</name>
 
-  <!--
-   | describe your project here
-  -->
-
   <description>Continuous Integration Server based on the OpenEngsB</description>
 
   <properties>
-    <!--
-     | some example OSGi runtime properties
-    -->
+    <!-- | some example OSGi runtime properties -->
     <org.osgi.service.http.port>8080</org.osgi.service.http.port>
     <org.osgi.service.http.port.secure>8443</org.osgi.service.http.port.secure>
   </properties>
@@ -56,34 +31,73 @@
         <artifactId>maven-pax-plugin</artifactId>
         <version>1.4</version>
         <configuration>
-          <!--
-           | some example Pax-Runner settings
-          -->
           <provision>
             <param>--platform=felix</param>
+            <param>--definitionURL=file:${settings.localRepository}/org/openengsb/openengsb/1.0.0-SNAPSHOT/openengsb-1.0.0-SNAPSHOT-platform.xml</param>
+            <param>--console=false</param>
+            <param>--vmOptions=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005</param>
+            <param>scan-composite:file:${settings.localRepository}/org/openengsb/openengsb/1.0.0-SNAPSHOT/openengsb-1.0.0-SNAPSHOT-karaf.composite</param>
+            <param>scan-composite:file:${settings.localRepository}/org/openengsb/openengsb/1.0.0-SNAPSHOT/openengsb-1.0.0-SNAPSHOT-run.composite</param>
+            <param>scan-pom:file:${settings.localRepository}/org/openengsb/build/provision/1.0.0-SNAPSHOT/provision-1.0.0-SNAPSHOT-provision.xml</param>
+            <param>--ee=J2SE-1.6</param>
           </provision>
         </configuration>
-        <executions>
-          <!--
-           | uncomment to auto-generate IDE files
-          <execution>
-            <id>ide-support</id>
-            <goals>
-              <goal>eclipse</goal>
-            </goals>
-          </execution>
-          -->
-        </executions>
       </plugin>
     </plugins>
   </build>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.openengsb</groupId>
+      <artifactId>openengsb</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <classifier>platform</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb</groupId>
+      <artifactId>openengsb</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <classifier>karaf</classifier>
+      <type>composite</type>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb</groupId>
+      <artifactId>openengsb</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <classifier>release</classifier>
+      <type>composite</type>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb</groupId>
+      <artifactId>openengsb</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <classifier>run</classifier>
+      <type>composite</type>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.build</groupId>
+      <artifactId>provision</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <type>xml</type>
+      <classifier>provision</classifier>
+    </dependency>
+  </dependencies>
+
   <distributionManagement>
     <snapshotRepository>
-      <id>openengsb-snapshots</id>
+      <id>opencit-snapshots</id>
       <name>OpenEngSB Snapshot Repository</name>
       <url>dav:http://maven.openengsb.org/nexus/content/repositories/openengsb-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>openengsb-snapshots</id>
+      <name>OpenEngSB Snapshots</name>
+      <url>http://maven.openengsb.org/nexus/content/repositories/openengsb-snapshots/</url>
+    </repository>
+  </repositories>
 
 </project>

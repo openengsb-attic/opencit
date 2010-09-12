@@ -18,10 +18,69 @@
 
   <packaging>pom</packaging>
 
-  <!--
-   | imported (non-local) bundles are listed here as dependencies
-   | and will be deployed by pax:provision unless they are marked
-   | with <optional>true</optional>
-  -->
+  <dependencies>
+    <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>com.google.guava-all</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>javax.xml.jaxb-all</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>org.apache.wicket-all</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.config</groupId>
+      <artifactId>openengsb-config-jetty</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.config</groupId>
+      <artifactId>openengsb-config-webextender</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.core</groupId>
+      <artifactId>openengsb-core-common</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.domains.example</groupId>
+      <artifactId>openengsb-domains-example-implementation</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.domains.notification</groupId>
+      <artifactId>openengsb-domains-notification-implementation</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.core</groupId>
+      <artifactId>openengsb-core-workflow</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.ui</groupId>
+      <artifactId>openengsb-ui-web</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.domains.example</groupId>
+      <artifactId>openengsb-domains-example-connector</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.domains.notification</groupId>
+      <artifactId>openengsb-domains-notification-email</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 
 </project>
+
