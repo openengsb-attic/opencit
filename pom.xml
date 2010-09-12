@@ -78,4 +78,12 @@
     </plugins>
   </build>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>openengsb-snapshots</id>
+      <name>OpenEngSB Snapshot Repository</name>
+      <url>dav:http://maven.openengsb.org/nexus/content/repositories/openengsb-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 </project>
