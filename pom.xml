@@ -12,9 +12,9 @@
   <description>Continuous Integration Server based on the OpenEngsB</description>
 
   <properties>
-    <!-- | some example OSGi runtime properties -->
     <org.osgi.service.http.port>8080</org.osgi.service.http.port>
     <org.osgi.service.http.port.secure>8443</org.osgi.service.http.port.secure>
+    <openengsb.version>1.0.0-SNAPSHOT</openengsb.version>
   </properties>
 
   <packaging>pom</packaging>
@@ -33,12 +33,12 @@
         <configuration>
           <provision>
             <param>--platform=felix</param>
-            <param>--definitionURL=file:${settings.localRepository}/org/openengsb/openengsb/1.0.0-SNAPSHOT/openengsb-1.0.0-SNAPSHOT-platform.xml</param>
+            <param>--definitionURL=file:${settings.localRepository}/org/openengsb/openengsb/${openengsb.version}/openengsb-${openengsb.version}-platform.xml</param>
             <param>--console=false</param>
             <param>--vmOptions=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005</param>
-            <param>scan-composite:file:${settings.localRepository}/org/openengsb/openengsb/1.0.0-SNAPSHOT/openengsb-1.0.0-SNAPSHOT-karaf.composite</param>
-            <param>scan-composite:file:${settings.localRepository}/org/openengsb/openengsb/1.0.0-SNAPSHOT/openengsb-1.0.0-SNAPSHOT-run.composite</param>
-            <param>scan-pom:file:${settings.localRepository}/org/openengsb/build/provision/1.0.0-SNAPSHOT/provision-1.0.0-SNAPSHOT-provision.xml</param>
+            <param>scan-composite:file:${settings.localRepository}/org/openengsb/openengsb/${openengsb.version}/openengsb-${openengsb.version}-karaf.composite</param>
+            <param>scan-composite:file:${settings.localRepository}/org/openengsb/openengsb/${openengsb.version}/openengsb-${openengsb.version}-run.composite</param>
+            <param>scan-pom:file:${settings.localRepository}/org/openengsb/build/provision/${openengsb.version}/provision-${openengsb.version}-provision.xml</param>
             <param>--ee=J2SE-1.6</param>
           </provision>
         </configuration>
@@ -50,35 +50,35 @@
     <dependency>
       <groupId>org.openengsb</groupId>
       <artifactId>openengsb</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${openengsb.version}</version>
       <classifier>platform</classifier>
       <type>xml</type>
     </dependency>
     <dependency>
       <groupId>org.openengsb</groupId>
       <artifactId>openengsb</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${openengsb.version}</version>
       <classifier>karaf</classifier>
       <type>composite</type>
     </dependency>
     <dependency>
       <groupId>org.openengsb</groupId>
       <artifactId>openengsb</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${openengsb.version}</version>
       <classifier>release</classifier>
       <type>composite</type>
     </dependency>
     <dependency>
       <groupId>org.openengsb</groupId>
       <artifactId>openengsb</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${openengsb.version}</version>
       <classifier>run</classifier>
       <type>composite</type>
     </dependency>
     <dependency>
       <groupId>org.openengsb.build</groupId>
       <artifactId>provision</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${openengsb.version}</version>
       <type>xml</type>
       <classifier>provision</classifier>
     </dependency>
