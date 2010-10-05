@@ -16,10 +16,6 @@
 
   <packaging>pom</packaging>
 
-  <modules>
-    <module>compiled</module>
-  </modules>
-
   <build>
     <pluginManagement>
       <plugins>
