@@ -132,7 +132,7 @@
     <snapshotRepository>
       <id>opencit-snapshots</id>
       <name>OpenEngSB Snapshot Repository</name>
-      <url>dav:http://maven.openengsb.org/nexus/content/repositories/openengsb-snapshots/</url>
+      <url>dav:http://maven.openengsb.org/nexus/content/repositories/opencit-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
