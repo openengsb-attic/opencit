@@ -118,7 +118,7 @@
                 <param>scan-composite:file:assembly/target/classes/settings.debug.composite</param>
                 <param>--ee=J2SE-1.6</param>
                 <param>--definitionURL=file:assembly/target/classes/felix.xml</param>
-                <param>scan-pom:file:${settings.localRepository}/org/openengsb/build/provision/${openengsb.version}/provision-${openengsb.version}-provision.xml</param>
+                <param>scan-pom:file:assembly/target/provision-provision.xml</param>
               </provision>
             </configuration>
           </plugin>
@@ -150,7 +150,7 @@
                 <param>--ee=J2SE-1.6</param>
                 <param>--definitionURL=file:assembly/target/classes/felix.xml</param>
                 <param>--clean</param>
-                <param>scan-pom:file:${settings.localRepository}/org/openengsb/build/provision/${openengsb.version}/provision-${openengsb.version}-provision.xml</param>
+                <param>scan-pom:file:assembly/target/provision-provision.xml</param>
               </provision>
             </configuration>
           </plugin>
@@ -168,16 +168,6 @@
       </build>
     </profile>
   </profiles>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.openengsb.build</groupId>
-      <artifactId>provision</artifactId>
-      <version>${openengsb.version}</version>
-      <classifier>provision</classifier>
-      <type>xml</type>
-    </dependency>
-  </dependencies>
 
   <distributionManagement>
     <snapshotRepository>
