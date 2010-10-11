@@ -63,6 +63,10 @@
 
     <!-- config/* -->   
     <!-- To be extended, currently no properties required here -->
+
+    <!-- log settings -->
+    <logging.level>TRACE</logging.level>
+
   </properties>
 
   <build>
@@ -105,21 +109,21 @@
                 <artifactItem>
                   <groupId>org.openengsb.config</groupId>
                   <artifactId>openengsb-config-client</artifactId>
-                  <version>${project.version}</version>
+                  <version>${openengsb.version}</version>
                   <type>zip</type>
                   <classifier>platform</classifier>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.openengsb.config</groupId>
                   <artifactId>openengsb-config-client</artifactId>
-                  <version>${project.version}</version>
+                  <version>${openengsb.version}</version>
                   <type>zip</type>
                   <classifier>config</classifier>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.openengsb.config</groupId>
                   <artifactId>openengsb-config-client</artifactId>
-                  <version>${project.version}</version>
+                  <version>${openengsb.version}</version>
                   <type>zip</type>
                   <classifier>run</classifier>
                 </artifactItem>
