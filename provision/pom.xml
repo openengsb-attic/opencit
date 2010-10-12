@@ -33,6 +33,11 @@
       <artifactId>org.apache.wicket-all</artifactId>
       <version>${openengsb.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>com.jcraft.jsch-all</artifactId>
+      <version>${openengsb.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.openengsb.config</groupId>

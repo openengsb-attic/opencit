@@ -55,6 +55,9 @@
     <release.felix.fileinstall.poll>1000</release.felix.fileinstall.poll>
     <release.felix.fileinstall.noInitialDelay>true</release.felix.fileinstall.noInitialDelay>
 
+    <!-- Specific Debug Settings -->
+    <client.debug.properties></client.debug.properties>
+
     <!-- run/karaf.sh -->
     <client.properties.linux></client.properties.linux>
 
