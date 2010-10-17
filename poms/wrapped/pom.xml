@@ -26,7 +26,8 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>wrapped-settings</artifactId>
-
+  <groupId>org.openengsb.opencit.build</groupId>
+  
   <name>OpenCIT :: Plugin Configuration :: Wrapped Settings</name>
 
   <packaging>pom</packaging>

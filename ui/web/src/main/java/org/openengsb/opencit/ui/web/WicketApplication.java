@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.ui.web;
+package org.openengsb.opencit.ui.web;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;

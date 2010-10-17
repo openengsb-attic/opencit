@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.ui.web.service.impl;
+package org.openengsb.opencit.ui.web.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;

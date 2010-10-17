@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.ui.web;
+package org.openengsb.opencit.ui.web;
 
 import java.util.Locale;
 

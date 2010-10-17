@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-package org.openengsb.ui.web.model;
-
-import java.io.Serializable;
+package org.openengsb.opencit.ui.web;
 
 @SuppressWarnings("serial")
-public class User implements Serializable {
-    private String username;
-    private String password;
+public class Index extends BasePage {
 
-    public String getUsername() {
-        return this.username;
-    }
+    public Index() {
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 }

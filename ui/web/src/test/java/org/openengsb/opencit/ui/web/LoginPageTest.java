@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.ui.web;
+package org.openengsb.opencit.ui.web;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.ui.web.service.DomainService;
+import org.openengsb.opencit.ui.web.service.DomainService;
 import org.osgi.framework.ServiceReference;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

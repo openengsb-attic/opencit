@@ -59,6 +59,7 @@
     <maven.plugin.enforcer.version>1.0-beta-1</maven.plugin.enforcer.version>
     <maven.war.plugin>2.1-beta-1</maven.war.plugin>
     <mockito.version>1.8.5</mockito.version>
+    <odb.version>1.9.24.679</odb.version>
     <twdata.cli.version>1.0.4</twdata.cli.version>
     <clover.version>3.0.2</clover.version>
     <maven.plugin.antrun>1.5</maven.plugin.antrun>
