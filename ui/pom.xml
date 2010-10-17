@@ -19,15 +19,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <relativePath>../poms/compiled/</relativePath>
-    <groupId>org.openengsb.build</groupId>
+    <groupId>org.openengsb.opencit.build</groupId>
     <artifactId>compiled-bundle-settings</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../poms/compiled/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openengsb.ui</groupId>
-  <artifactId>openengsb-ui-parent</artifactId>
+  <groupId>org.openengsb.opencit.ui</groupId>
+  <artifactId>opencit-ui-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
   <name>OpenCIT :: User Interface :: Parent</name>
