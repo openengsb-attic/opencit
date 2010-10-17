@@ -31,6 +31,10 @@
 
   <packaging>pom</packaging>
 
+  <modules>
+    <module>org.neobatis.odb</module>
+  </modules>
+
   <build>
     <finalName>${artifactId}-${version}</finalName>
     <plugins>
