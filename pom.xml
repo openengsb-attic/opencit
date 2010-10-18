@@ -184,6 +184,11 @@
       <name>OpenEngSB Snapshots</name>
       <url>http://maven.openengsb.org/nexus/content/repositories/openengsb-snapshots/</url>
     </repository>
+    <repository>
+      <id>thirdparty</id>
+      <name>OpenEngSB 3rd Party Repository</name>
+      <url>http://maven.openengsb.org/nexus/content/repositories/thirdparty</url>      
+    </repository>
   </repositories>
 
 </project>
