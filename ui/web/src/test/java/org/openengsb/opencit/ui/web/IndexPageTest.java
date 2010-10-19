@@ -44,11 +44,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
-public class BasePageTest {
+public class IndexPageTest {
 
     private WicketTester tester;
     private ContextCurrentService contextService;
     private ApplicationContextMock appContext;
+    private Page indexPage;
 
     @Before
     public void setup() {
@@ -75,7 +76,7 @@ public class BasePageTest {
             }
         });
         when(contextService.getAvailableContexts()).thenReturn(Arrays.asList(new String[]{ "foo", "bar" }));
-        tester.startPage(new BasePage());
+        indexPage = tester.startPage(new Index());
     }
 
     private void mockAuthentication() {
@@ -97,7 +98,13 @@ public class BasePageTest {
     }
 
     @Test
-    public void test_label_present() {
-        tester.assertContains("Hello World");
+    public void testProjectlistHeaderPresent_shouldWork() {
+        tester.assertContains(indexPage.getString("projectlist.title"));
     }
+
+    @Test
+    public void testNoProjects_shouldShowLabel() {
+        // tester.assertContains(indexPage.getString("noProjectsAvailable"));
+    }
+
 }
