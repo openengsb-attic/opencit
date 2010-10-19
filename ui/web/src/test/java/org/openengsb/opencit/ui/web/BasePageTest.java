@@ -48,7 +48,6 @@ public class BasePageTest {
 
     private WicketTester tester;
     private ContextCurrentService contextService;
-    private Page basePage;
     private ApplicationContextMock appContext;
 
     @Before
@@ -75,8 +74,8 @@ public class BasePageTest {
                 return new WicketSession(request);
             }
         });
-        when(contextService.getAvailableContexts()).thenReturn(Arrays.asList(new String[]{"foo", "bar"}));
-        basePage = tester.startPage(new BasePage());
+        when(contextService.getAvailableContexts()).thenReturn(Arrays.asList(new String[]{ "foo", "bar" }));
+        tester.startPage(new BasePage());
     }
 
     private void mockAuthentication() {

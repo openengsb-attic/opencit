@@ -16,7 +16,6 @@
 
 package org.openengsb.opencit.ui.web;
 
-@SuppressWarnings("serial")
 public class Index extends BasePage {
 
     public Index() {
