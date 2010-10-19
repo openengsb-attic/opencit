@@ -46,8 +46,6 @@ public class WicketApplication extends AuthenticatedWebApplication {
 
     @Override
     public AjaxRequestTarget newAjaxRequestTarget(Page page) {
-        if (page instanceof BasePage) {
-        }
         return super.newAjaxRequestTarget(page);
     }
 
