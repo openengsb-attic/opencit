@@ -3,3 +3,14 @@ runner
 *.classpath
 *.project
 *.settings
+
+
+*.iml
+*.ipr
+*.iws
+
+
+classes
+
+*velocity.log
+
