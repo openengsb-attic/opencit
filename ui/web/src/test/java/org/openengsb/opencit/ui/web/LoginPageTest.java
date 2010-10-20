@@ -37,7 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.ui.web.service.DomainService;
 import org.osgi.framework.ServiceReference;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -77,7 +77,7 @@ public class LoginPageTest {
             }
         });
         contextMock.putBean(managedServicesMock);
-        contextMock.putBean(mock(ContextCurrentService.class));
+        contextMock.putBean(mock(ProjectManager.class));
     }
 
     private void mockAuthentication() {

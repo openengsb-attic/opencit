@@ -27,7 +27,7 @@
 
   <properties>
     <bundle.symbolicName>org.openengsb.opencit.core.projectmanager</bundle.symbolicName>
-    <bundle.namespace>orgi.openengsb.opencit.core.projectmanager</bundle.namespace>
+    <bundle.namespace>org.openengsb.opencit.core.projectmanager</bundle.namespace>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>

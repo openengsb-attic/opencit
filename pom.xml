@@ -26,8 +26,8 @@
     <module>poms</module>
     <module>provision</module>
     <module>assembly</module>
-    <module>ui</module>
     <module>core</module>
+    <module>ui</module>
   </modules>
 
  <build>
