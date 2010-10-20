@@ -23,6 +23,7 @@ import org.openengsb.core.persistence.PersistenceManager;
 import org.openengsb.core.persistence.PersistenceService;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.domains.report.model.Report;
+import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.osgi.framework.BundleContext;
@@ -43,12 +44,22 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     }
 
     @Override
-    public void createProject(Project project) {
+    public void createProject(Project project) throws ProjectAlreadyExistsException {
+        checkId(project.getId());
         try {
             reportService.createCategory(project.getId());
             persistence.create(project);
         } catch (PersistenceException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void checkId(String id) throws ProjectAlreadyExistsException {
+        List<Project> projects = persistence.query(new Project(null));
+        for (Project project : projects) {
+            if (project.getId().equals(id)) {
+                throw new ProjectAlreadyExistsException("Project with id '" + id + "' already exists.");
+            }
         }
     }
 

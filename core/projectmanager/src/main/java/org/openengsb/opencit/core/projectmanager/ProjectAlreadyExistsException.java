@@ -16,14 +16,23 @@
 
 package org.openengsb.opencit.core.projectmanager;
 
-import java.util.List;
+@SuppressWarnings("serial")
+public class ProjectAlreadyExistsException extends Exception {
 
-import org.openengsb.opencit.core.projectmanager.model.Project;
+    public ProjectAlreadyExistsException() {
+        super();
+    }
 
-public interface ProjectManager {
+    public ProjectAlreadyExistsException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    void createProject(Project project) throws ProjectAlreadyExistsException;
+    public ProjectAlreadyExistsException(String message) {
+        super(message);
+    }
 
-    List<Project> getAllProjects();
+    public ProjectAlreadyExistsException(Throwable cause) {
+        super(cause);
+    }
 
 }
