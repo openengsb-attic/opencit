@@ -28,7 +28,6 @@ import org.mockito.Mockito;
 import org.openengsb.core.persistence.PersistenceException;
 import org.openengsb.core.persistence.PersistenceManager;
 import org.openengsb.core.persistence.PersistenceService;
-import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.osgi.framework.Bundle;
@@ -37,15 +36,12 @@ import org.osgi.framework.BundleContext;
 public class ProjectManagerImplTest {
 
     private ProjectManagerImpl projectManager;
-    private ReportDomain reportMock;
     private PersistenceService persistenceMock;
 
     @Before
     public void setUp() throws Exception {
         projectManager = new ProjectManagerImpl();
         projectManager.setBundleContext(Mockito.mock(BundleContext.class));
-        reportMock = Mockito.mock(ReportDomain.class);
-        projectManager.setReportService(reportMock);
 
         persistenceMock = Mockito.mock(PersistenceService.class);
         Mockito.when(persistenceMock.query(Mockito.any(Project.class))).thenReturn(

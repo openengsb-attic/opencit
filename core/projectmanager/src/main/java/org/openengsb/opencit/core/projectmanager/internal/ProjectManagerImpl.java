@@ -21,8 +21,7 @@ import java.util.List;
 import org.openengsb.core.persistence.PersistenceException;
 import org.openengsb.core.persistence.PersistenceManager;
 import org.openengsb.core.persistence.PersistenceService;
-import org.openengsb.domains.report.ReportDomain;
-import org.openengsb.domains.report.model.Report;
+import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -37,8 +36,6 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     private BundleContext bundleContext;
 
-    private ReportDomain reportService;
-
     public void init() {
         this.persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
     }
@@ -47,7 +44,6 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     public void createProject(Project project) throws ProjectAlreadyExistsException {
         checkId(project.getId());
         try {
-            reportService.createCategory(project.getId());
             persistence.create(project);
         } catch (PersistenceException e) {
             throw new RuntimeException(e);
@@ -65,16 +61,26 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     @Override
     public List<Project> getAllProjects() {
-        List<Project> projects = persistence.query(new Project(null));
-        for (Project project : projects) {
-            addReports(project);
-        }
-        return projects;
+        return persistence.query(new Project(null));
     }
 
-    private void addReports(Project project) {
-        List<Report> reports = reportService.getAllReports(project.getId());
-        project.setReports(reports);
+    @Override
+    public Project getProject(String projectId) throws NoSuchProjectException {
+        List<Project> projects = persistence.query(new Project(projectId));
+        if (projects.isEmpty()) {
+            throw new NoSuchProjectException("No project with id '" + projectId + "' found.");
+        }
+        return projects.get(0);
+    }
+
+    @Override
+    public void updateProject(Project project) throws NoSuchProjectException {
+        Project old = getProject(project.getId());
+        try {
+            persistence.update(old, project);
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Could not update project", e);
+        }
     }
 
     public void setPersistenceManager(PersistenceManager persistenceManager) {
@@ -84,10 +90,6 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     @Override
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-    }
-
-    public void setReportService(ReportDomain reportService) {
-        this.reportService = reportService;
     }
 
 }

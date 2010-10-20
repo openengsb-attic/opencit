@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package org.openengsb.opencit.core.projectmanager.model;
+package org.openengsb.opencit.core.projectmanager;
 
+@SuppressWarnings("serial")
+public class NoSuchProjectException extends Exception {
 
-public class Project {
-
-    public enum State {
-            OK, IN_PROGRESS, FAILURE
+    public NoSuchProjectException() {
+        super();
     }
 
-    private State state;
-
-    private String id;
-
-    public Project(String id) {
-        this.id = id;
+    public NoSuchProjectException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public String getId() {
-        return id;
+    public NoSuchProjectException(String message) {
+        super(message);
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
+    public NoSuchProjectException(Throwable cause) {
+        super(cause);
     }
 
 }

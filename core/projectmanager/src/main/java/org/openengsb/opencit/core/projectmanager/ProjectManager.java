@@ -26,4 +26,8 @@ public interface ProjectManager {
 
     List<Project> getAllProjects();
 
+    Project getProject(String projectId) throws NoSuchProjectException;
+
+    void updateProject(Project project) throws NoSuchProjectException;
+
 }
