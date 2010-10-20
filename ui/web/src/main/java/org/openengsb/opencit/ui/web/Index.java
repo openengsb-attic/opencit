@@ -16,7 +16,6 @@
 
 package org.openengsb.opencit.ui.web;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -26,19 +25,24 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class Index extends BasePage {
+
+    @SpringBean
+    private ProjectManager projectManager;
 
     public Index() {
         WebMarkupContainer connectingServicePanel = new WebMarkupContainer("projectlistPanel");
         connectingServicePanel.setOutputMarkupId(true);
 
         @SuppressWarnings("serial")
-        IModel<List<String>> projectsModel = new LoadableDetachableModel<List<String>>() {
+        IModel<List<Project>> projectsModel = new LoadableDetachableModel<List<Project>>() {
             @Override
-            protected List<String> load() {
-                List<String> projects = new ArrayList<String>();
-                projects.add("testProject");
+            protected List<Project> load() {
+                List<Project> projects = projectManager.getAllProjects();
                 return projects;
             }
         };
@@ -58,14 +62,14 @@ public class Index extends BasePage {
     }
 
     @SuppressWarnings("serial")
-    private ListView<String> createServiceListView(IModel<List<String>> projectsModel,
+    private ListView<Project> createServiceListView(IModel<List<Project>> projectsModel,
             String id) {
-        return new ListView<String>(id, projectsModel) {
+        return new ListView<Project>(id, projectsModel) {
 
             @Override
-            protected void populateItem(ListItem<String> item) {
-                String project = item.getModelObject();
-                item.add(new Label("project.name", project));
+            protected void populateItem(ListItem<Project> item) {
+                Project project = item.getModelObject();
+                item.add(new Label("project.name", project.getId()));
             }
         };
     }

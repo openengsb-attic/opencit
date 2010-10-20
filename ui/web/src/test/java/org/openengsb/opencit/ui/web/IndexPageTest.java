@@ -36,7 +36,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,15 +48,14 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 public class IndexPageTest {
 
     private WicketTester tester;
-    private ContextCurrentService contextService;
+    private ProjectManager projectManager;
     private ApplicationContextMock appContext;
-    private Page indexPage;
 
     @Before
     public void setup() {
-        contextService = mock(ContextCurrentService.class);
+        projectManager = mock(ProjectManager.class);
         appContext = new ApplicationContextMock();
-        appContext.putBean(contextService);
+        appContext.putBean(projectManager);
         mockAuthentication();
         tester = new WicketTester(new WebApplication() {
 
@@ -75,8 +75,6 @@ public class IndexPageTest {
                 return new WicketSession(request);
             }
         });
-        when(contextService.getAvailableContexts()).thenReturn(Arrays.asList(new String[]{ "foo", "bar" }));
-        indexPage = tester.startPage(new Index());
     }
 
     private void mockAuthentication() {
@@ -99,12 +97,21 @@ public class IndexPageTest {
 
     @Test
     public void testProjectlistHeaderPresent_shouldWork() {
+        Page indexPage = tester.startPage(new Index());
         tester.assertContains(indexPage.getString("projectlist.title"));
     }
 
     @Test
     public void testNoProjects_shouldShowLabel() {
-        // tester.assertContains(indexPage.getString("noProjectsAvailable"));
+        Page indexPage = tester.startPage(new Index());
+        tester.assertContains(indexPage.getString("noProjectsAvailable"));
+    }
+
+    @Test
+    public void testProjectsAvailable_shouldShowProjectId() {
+        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
+        tester.startPage(new Index());
+        tester.assertContains("test");
     }
 
 }
