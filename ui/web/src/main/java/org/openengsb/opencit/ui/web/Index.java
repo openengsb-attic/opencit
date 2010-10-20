@@ -20,11 +20,13 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -70,8 +72,22 @@ public class Index extends BasePage {
             protected void populateItem(ListItem<Project> item) {
                 Project project = item.getModelObject();
                 item.add(new Label("project.name", project.getId()));
+                String imageName = getImage(project);
+                item.add(new Image("search_icon", new ContextRelativeResource(imageName)));
+            }
+
+            private String getImage(Project project) {
+                switch (project.getState()) {
+                    case OK:
+                        return "images/traffic_light_green.png";
+                    case IN_PROGRESS:
+                        return "images/traffic_light_yellow.png";
+                    case FAILURE:
+                        return "images/traffic_light_red.png";
+                    default:
+                        return "images/traffic_light_green.png";
+                }
             }
         };
     }
-
 }
