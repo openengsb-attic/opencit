@@ -16,9 +16,15 @@
 
 package org.openengsb.opencit.core.projectmanager.model;
 
+import java.util.List;
+
+import org.openengsb.domains.report.model.Report;
+
 public class Project {
 
     private String id;
+
+    private List<Report> reports;
 
     public Project(String id) {
         this.id = id;
@@ -26,6 +32,14 @@ public class Project {
 
     public String getId() {
         return id;
+    }
+
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
+    }
+
+    public List<Report> getReports() {
+        return reports;
     }
 
 }

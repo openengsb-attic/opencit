@@ -27,7 +27,12 @@
     <osgi:interfaces>
       <value>org.openengsb.opencit.core.projectmanager.ProjectManager</value>
     </osgi:interfaces>
-    <bean class="org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl" />
+    <bean class="org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl" init-method="init">
+      <property name="reportService" ref="reportService" />
+      <property name="persistenceManager" ref="persistenceManager" />
+    </bean>
   </osgi:service>
 
+  <osgi:reference id="persistenceManager" interface="org.openengsb.core.persistence.PersistenceManager" />
+  <osgi:reference id="reportService" interface="org.openengsb.domains.report.ReportDomain" />
 </beans>

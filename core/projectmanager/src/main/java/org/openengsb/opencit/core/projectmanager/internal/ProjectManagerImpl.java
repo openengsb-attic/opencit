@@ -18,21 +18,65 @@ package org.openengsb.opencit.core.projectmanager.internal;
 
 import java.util.List;
 
+import org.openengsb.core.persistence.PersistenceException;
+import org.openengsb.core.persistence.PersistenceManager;
+import org.openengsb.core.persistence.PersistenceService;
+import org.openengsb.domains.report.ReportDomain;
+import org.openengsb.domains.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.osgi.framework.BundleContext;
+import org.springframework.osgi.context.BundleContextAware;
 
-public class ProjectManagerImpl implements ProjectManager {
+public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
+
+    private PersistenceManager persistenceManager;
+
+    private PersistenceService persistence;
+
+    private BundleContext bundleContext;
+
+    private ReportDomain reportService;
+
+    public void init() {
+        this.persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
+    }
 
     @Override
     public void createProject(Project project) {
-        // TODO Auto-generated method stub
-
+        try {
+            reportService.createCategory(project.getId());
+            persistence.create(project);
+        } catch (PersistenceException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<Project> getAllProjects() {
-        // TODO Auto-generated method stub
-        return null;
+        List<Project> projects = persistence.query(new Project(null));
+        for (Project project : projects) {
+            addReports(project);
+        }
+        return projects;
+    }
+
+    private void addReports(Project project) {
+        List<Report> reports = reportService.getAllReports(project.getId());
+        project.setReports(reports);
+    }
+
+    public void setPersistenceManager(PersistenceManager persistenceManager) {
+        this.persistenceManager = persistenceManager;
+    }
+
+    @Override
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+    }
+
+    public void setReportService(ReportDomain reportService) {
+        this.reportService = reportService;
     }
 
 }
