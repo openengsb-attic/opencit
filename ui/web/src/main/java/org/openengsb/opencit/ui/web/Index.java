@@ -31,6 +31,7 @@ import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.util.StateUtil;
 
 public class Index extends BasePage {
 
@@ -38,8 +39,8 @@ public class Index extends BasePage {
     private ProjectManager projectManager;
 
     public Index() {
-        WebMarkupContainer connectingServicePanel = new WebMarkupContainer("projectlistPanel");
-        connectingServicePanel.setOutputMarkupId(true);
+        WebMarkupContainer projectListPanel = new WebMarkupContainer("projectlistPanel");
+        projectListPanel.setOutputMarkupId(true);
 
         @SuppressWarnings("serial")
         IModel<List<Project>> projectsModel = new LoadableDetachableModel<List<Project>>() {
@@ -50,22 +51,22 @@ public class Index extends BasePage {
             }
         };
 
-        Label noConServices =
+        Label noProjects =
             new Label("noProjects", new StringResourceModel("noProjectsAvailable", this, null));
-        noConServices.setVisible(false);
-        noConServices.setOutputMarkupId(true);
+        noProjects.setVisible(false);
+        noProjects.setOutputMarkupId(true);
 
-        connectingServicePanel.add(createServiceListView(projectsModel, "projectlist"));
-        connectingServicePanel.add(noConServices);
+        projectListPanel.add(createProjectListView(projectsModel, "projectlist"));
+        projectListPanel.add(noProjects);
 
-        add(connectingServicePanel);
+        add(projectListPanel);
         if (projectsModel.getObject().isEmpty()) {
-            noConServices.setVisible(true);
+            noProjects.setVisible(true);
         }
     }
 
     @SuppressWarnings("serial")
-    private ListView<Project> createServiceListView(IModel<List<Project>> projectsModel,
+    private ListView<Project> createProjectListView(IModel<List<Project>> projectsModel,
             String id) {
         return new ListView<Project>(id, projectsModel) {
 
@@ -73,7 +74,7 @@ public class Index extends BasePage {
             protected void populateItem(ListItem<Project> item) {
                 Project project = item.getModelObject();
                 item.add(new Label("project.name", project.getId()));
-                String imageName = getImage(project);
+                String imageName = StateUtil.getImage(project);
                 item.add(new Image("project.state", new ContextRelativeResource(imageName)));
                 item.add(new Link<Project>("project.details", item.getModel()) {
                     @Override
@@ -83,21 +84,6 @@ public class Index extends BasePage {
                 });
             }
 
-            private String getImage(Project project) {
-                if (project.getState() == null) {
-                    return "images/traffic_light_green.png";
-                }
-                switch (project.getState()) {
-                    case OK:
-                        return "images/traffic_light_green.png";
-                    case IN_PROGRESS:
-                        return "images/traffic_light_yellow.png";
-                    case FAILURE:
-                        return "images/traffic_light_red.png";
-                    default:
-                        return "images/traffic_light_green.png";
-                }
-            }
         };
     }
 }
