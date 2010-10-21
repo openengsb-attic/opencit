@@ -50,7 +50,7 @@ public class Index extends BasePage {
         };
 
         Label noConServices =
-            new Label("noProjects", new StringResourceModel("noProjectsAvailable", this, null).getString());
+            new Label("noProjects", new StringResourceModel("noProjectsAvailable", this, null));
         noConServices.setVisible(false);
         noConServices.setOutputMarkupId(true);
 
