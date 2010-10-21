@@ -51,11 +51,9 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     }
 
     private void checkId(String id) throws ProjectAlreadyExistsException {
-        List<Project> projects = persistence.query(new Project(null));
-        for (Project project : projects) {
-            if (project.getId().equals(id)) {
-                throw new ProjectAlreadyExistsException("Project with id '" + id + "' already exists.");
-            }
+        List<Project> projects = persistence.query(new Project(id));
+        if (!projects.isEmpty()) {
+            throw new ProjectAlreadyExistsException("Project with id '" + id + "' already exists.");
         }
     }
 

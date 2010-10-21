@@ -73,10 +73,13 @@ public class Index extends BasePage {
                 Project project = item.getModelObject();
                 item.add(new Label("project.name", project.getId()));
                 String imageName = getImage(project);
-                item.add(new Image("search_icon", new ContextRelativeResource(imageName)));
+                item.add(new Image("project.state", new ContextRelativeResource(imageName)));
             }
 
             private String getImage(Project project) {
+                if (project.getState() == null) {
+                    return "images/traffic_light_green.png";
+                }
                 switch (project.getState()) {
                     case OK:
                         return "images/traffic_light_green.png";

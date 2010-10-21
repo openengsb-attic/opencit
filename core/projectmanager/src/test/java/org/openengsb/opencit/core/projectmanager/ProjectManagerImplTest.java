@@ -44,14 +44,17 @@ public class ProjectManagerImplTest {
         projectManager.setBundleContext(Mockito.mock(BundleContext.class));
 
         persistenceMock = Mockito.mock(PersistenceService.class);
-        Mockito.when(persistenceMock.query(Mockito.any(Project.class))).thenReturn(
-            Arrays.asList(new Project[]{ new Project("test") }));
 
         PersistenceManager persistenceManagerMock = Mockito.mock(PersistenceManager.class);
         Mockito.when(persistenceManagerMock.getPersistenceForBundle(Mockito.any(Bundle.class))).thenReturn(
             persistenceMock);
         projectManager.setPersistenceManager(persistenceManagerMock);
         projectManager.init();
+    }
+
+    private void addTestData() {
+        Mockito.when(persistenceMock.query(Mockito.any(Project.class))).thenReturn(
+            Arrays.asList(new Project[]{ new Project("test") }));
     }
 
     @Test
@@ -63,12 +66,14 @@ public class ProjectManagerImplTest {
 
     @Test(expected = ProjectAlreadyExistsException.class)
     public void createProjectTwice_shouldFail() throws ProjectAlreadyExistsException {
+        addTestData();
         Project project = new Project("test");
         projectManager.createProject(project);
     }
 
     @Test
     public void getAllProjects_shouldWork() {
+        addTestData();
         List<Project> allProjects = projectManager.getAllProjects();
         assertThat(allProjects.size(), is(1));
         assertThat(allProjects.get(0).getId(), is("test"));
