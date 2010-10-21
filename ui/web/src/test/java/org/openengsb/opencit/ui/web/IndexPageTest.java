@@ -38,8 +38,10 @@ import org.apache.wicket.spring.test.ApplicationContextMock;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -60,6 +62,7 @@ public class IndexPageTest {
         projectManager = mock(ProjectManager.class);
         appContext = new ApplicationContextMock();
         appContext.putBean(projectManager);
+        appContext.putBean(Mockito.mock(ReportDomain.class));
         mockAuthentication();
         tester = new WicketTester(new WebApplication() {
 

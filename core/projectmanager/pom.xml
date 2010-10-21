@@ -60,12 +60,6 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.openengsb.domains.report</groupId>
-      <artifactId>openengsb-domains-report-implementation</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
    
     <dependency>
       <groupId>junit</groupId>
