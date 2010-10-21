@@ -16,6 +16,8 @@
 
 package org.openengsb.opencit.ui.web;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,8 @@ import org.apache.wicket.Page;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
@@ -112,6 +116,13 @@ public class IndexPageTest {
         when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
         tester.startPage(new Index());
         tester.assertContains("test");
+        String item = "projectlistPanel:projectlist:0";
+        Image image = (Image) tester.getComponentFromLastRenderedPage(item + ":project.state");
+        Link<?> link = (Link<?>) tester.getComponentFromLastRenderedPage(item + ":project.details");
+        assertThat(image.isVisible(), is(true));
+        assertThat(link.isVisible(), is(true));
+        tester.clickLink(item + ":project.details");
+        String expectedPage = ProjectDetails.class.getName();
+        assertThat(tester.getLastRenderedPage().getClass().getName(), is(expectedPage));
     }
-
 }

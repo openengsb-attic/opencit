@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
@@ -74,6 +75,12 @@ public class Index extends BasePage {
                 item.add(new Label("project.name", project.getId()));
                 String imageName = getImage(project);
                 item.add(new Image("project.state", new ContextRelativeResource(imageName)));
+                item.add(new Link<Project>("project.details", item.getModel()) {
+                    @Override
+                    public void onClick() {
+                        setResponsePage(new ProjectDetails(getModelObject()));
+                    }
+                });
             }
 
             private String getImage(Project project) {
