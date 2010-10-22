@@ -35,8 +35,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>config</module>
     <module>projectmanager</module>
+    <module>config</module>
   </modules>
 
 </project>

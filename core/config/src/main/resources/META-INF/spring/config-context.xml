@@ -23,4 +23,18 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd">
 
+
+  <bean class="org.openengsb.opencit.core.config.OpenCitConfigurator" id="configurator" init-method="init">
+    <property name="context" value="foo" />
+    <property name="contextService" ref="contextService" />
+    <property name="ruleManager" ref="ruleManager" />
+    <property name="reportServiceManager" ref="reportServiceManager" />
+  </bean>
+
+  <osgi:reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
+  <osgi:reference id="ruleManager" interface="org.openengsb.core.workflow.RuleManager" />
+  <osgi:reference id="reportServiceManager" interface="org.openengsb.core.common.ServiceManager"
+    filter="(domain=org.openengsb.domains.report.ReportDomain)" />
+
+
 </beans>
