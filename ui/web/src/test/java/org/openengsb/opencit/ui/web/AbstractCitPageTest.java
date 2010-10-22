@@ -16,27 +16,25 @@
 
 package org.openengsb.opencit.ui.web;
 
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.Page;
+import org.apache.wicket.Request;
+import org.apache.wicket.Response;
+import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
-import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,25 +42,37 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
-public class LoginPageTest {
-
+public abstract class AbstractCitPageTest {
     private WicketTester tester;
-    private ApplicationContextMock contextMock;
+    private ApplicationContextMock appContext;
+
+    protected abstract List<Object> getBeansForAppContext();
 
     @Before
-    public void setUp() {
-        contextMock = new ApplicationContextMock();
+    public void setup() {
+        appContext = new ApplicationContextMock();
+        for (Object bean : getBeansForAppContext()) {
+            appContext.putBean(bean);
+        }
         mockAuthentication();
-        contextMock.putBean(mock(ProjectManager.class));
+        tester = new WicketTester(new WebApplication() {
 
-        WebApplication app = new WicketApplication() {
             @Override
-            protected void addInjector() {
-                addComponentInstantiationListener(new SpringComponentInjector(this, contextMock, true));
+            protected void init() {
+                super.init();
+                addComponentInstantiationListener(new SpringComponentInjector(this, appContext, false));
             }
-        };
-        tester = new WicketTester(app);
 
+            @Override
+            public Class<? extends Page> getHomePage() {
+                return Index.class;
+            }
+
+            @Override
+            public Session newSession(Request request, Response response) {
+                return new WicketSession(request);
+            }
+        });
     }
 
     private void mockAuthentication() {
@@ -80,52 +90,11 @@ public class LoginPageTest {
                 throw new BadCredentialsException("wrong password");
             }
         });
-        contextMock.putBean("authenticationManager", authManager);
+        appContext.putBean("authenticationManager", authManager);
     }
 
-    @Test
-    public void testLoginPageIsDisplayed() throws Exception {
-        tester.startPage(LoginPage.class);
-        tester.assertRenderedPage(LoginPage.class);
+    public WicketTester getTester() {
+        return tester;
     }
 
-    @Test
-    public void testRedirectToLogin() throws Exception {
-        tester.startPage(Index.class);
-        tester.assertRenderedPage(LoginPage.class);
-    }
-
-    @Test
-    public void testEnterLogin() throws Exception {
-        tester.startPage(LoginPage.class);
-        FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("username", "test");
-        formTester.setValue("password", "password");
-        formTester.submit();
-        tester.assertNoErrorMessage();
-        tester.assertRenderedPage(Index.class);
-    }
-
-    @Test
-    public void testLogout() throws Exception {
-        tester.startPage(LoginPage.class);
-        FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("username", "test");
-        formTester.setValue("password", "password");
-        formTester.submit();
-        tester.clickLink("logout");
-        tester.assertRenderedPage(LoginPage.class);
-    }
-
-    @Test
-    public void testInvalidLogin() throws Exception {
-        tester.startPage(LoginPage.class);
-        FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("username", "test");
-        formTester.setValue("password", "wrongpassword");
-        formTester.submit();
-        tester.assertRenderedPage(LoginPage.class);
-        List<Serializable> messages = tester.getMessages(FeedbackMessage.ERROR);
-        assertFalse(messages.isEmpty());
-    }
 }
