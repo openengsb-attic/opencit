@@ -23,13 +23,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
@@ -39,6 +42,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openengsb.domains.report.ReportDomain;
+import org.openengsb.domains.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
@@ -127,6 +131,26 @@ public class ProjectDetailsPageTest {
         tester.startPage(new ProjectDetails(testProject));
         tester.clickLink("back");
         String expectedPage = Index.class.getName();
+        assertThat(tester.getLastRenderedPage().getClass().getName(), is(expectedPage));
+    }
+
+    @Test
+    public void testNoReports_shouldShowLabel() {
+        Page detailPage = tester.startPage(new ProjectDetails(testProject));
+        tester.assertContains(detailPage.getString("noReportsAvailable"));
+    }
+
+    @Test
+    public void testReportPanel_shouldWork() {
+        List<Report> reports = Arrays.asList(new Report[]{ new Report("rep1") });
+        when(reportDomain.getAllReports(testProject.getId())).thenReturn(reports);
+        tester.startPage(new ProjectDetails(testProject));
+        tester.assertContains("rep1");
+        String item = "reportsPanel:reportlist:0";
+        Link<?> link = (Link<?>) tester.getComponentFromLastRenderedPage(item + ":report.link");
+        assertThat(link.isVisible(), is(true));
+        tester.clickLink(item + ":report.link");
+        String expectedPage = ReportViewPage.class.getName();
         assertThat(tester.getLastRenderedPage().getClass().getName(), is(expectedPage));
     }
 

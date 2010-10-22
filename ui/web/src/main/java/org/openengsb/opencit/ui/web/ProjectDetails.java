@@ -68,7 +68,7 @@ public class ProjectDetails extends BasePage {
         noReports.setVisible(false);
         noReports.setOutputMarkupId(true);
 
-        reportsPanel.add(createReportListView(reportsModel, "projectlist"));
+        reportsPanel.add(createReportListView(reportsModel, "reportlist"));
         reportsPanel.add(noReports);
 
         add(reportsPanel);
