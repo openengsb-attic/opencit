@@ -30,6 +30,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.domains.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -41,10 +42,14 @@ public class ProjectDetails extends BasePage {
     private IModel<Project> projectModel;
 
     @SpringBean
+    private ContextCurrentService contextService;
+
+    @SpringBean
     private ReportDomain reportDomain;
 
     public ProjectDetails(IModel<Project> projectModel) {
         this.projectModel = projectModel;
+
         add(new Label("project.id", projectModel.getObject().getId()));
         add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(projectModel.getObject()))));
         add(new BookmarkablePageLink<Index>("back", Index.class));
@@ -60,7 +65,9 @@ public class ProjectDetails extends BasePage {
         IModel<List<Report>> reportsModel = new LoadableDetachableModel<List<Report>>() {
             @Override
             protected List<Report> load() {
-                return reportDomain.getAllReports(projectModel.getObject().getId());
+                String projectId = projectModel.getObject().getId();
+                contextService.setThreadLocalContext(projectId);
+                return reportDomain.getAllReports(projectId);
             }
         };
 

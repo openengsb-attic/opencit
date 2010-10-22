@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -39,7 +40,8 @@ public class IndexPageTest extends AbstractCitPageTest {
     @Override
     protected List<Object> getBeansForAppContext() {
         projectManager = Mockito.mock(ProjectManager.class);
-        return Arrays.asList(new Object[]{ projectManager, Mockito.mock(ReportDomain.class) });
+        return Arrays.asList(new Object[]{ projectManager, Mockito.mock(ReportDomain.class),
+            Mockito.mock(ContextCurrentService.class) });
     }
 
     @Test
