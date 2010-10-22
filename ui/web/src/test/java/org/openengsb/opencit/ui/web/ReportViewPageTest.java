@@ -16,18 +16,72 @@
 
 package org.openengsb.opencit.ui.web;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.wicket.Page;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.domains.report.ReportDomain;
+import org.openengsb.domains.report.model.Report;
+import org.openengsb.domains.report.model.SimpleReportPart;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class ReportViewPageTest extends AbstractCitPageTest {
+
+    private Report testReport;
+
+    private Project testProject;
 
     @Override
     protected List<Object> getBeansForAppContext() {
         return Arrays.asList(new Object[]{ Mockito.mock(ReportDomain.class), Mockito.mock(ProjectManager.class) });
+    }
+
+    @Before
+    public void setUp() {
+        testReport = new Report("foo");
+        testProject = new Project("bar");
+    }
+
+    @Test
+    public void testReportViewHeaderPresent_shouldWork() {
+        Page reportView = getTester().startPage(new ReportViewPage(testProject, testReport));
+        getTester().assertContains(reportView.getString("reportView.title"));
+    }
+
+    @Test
+    public void testProjectIdPresent_shouldWork() {
+        getTester().startPage(new ReportViewPage(testProject, testReport));
+        getTester().assertContains(testProject.getId());
+    }
+
+    @Test
+    public void testReportNamePresent_shouldWork() {
+        getTester().startPage(new ReportViewPage(testProject, testReport));
+        getTester().assertContains(testReport.getName());
+    }
+
+    @Test
+    public void testBackLink_shouldWork() {
+        getTester().startPage(new ReportViewPage(testProject, testReport));
+        getTester().clickLink("back");
+        String expectedPage = ProjectDetails.class.getName();
+        assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
+    }
+
+    @Test
+    public void testPartsPanel_shouldWork() {
+        SimpleReportPart reportPart = new SimpleReportPart("part1", "text/plain", "content1".getBytes());
+        testReport.addPart(reportPart);
+        getTester().startPage(new ReportViewPage(testProject, testReport));
+        getTester().assertContains("part1");
+        getTester().assertContains("content1");
     }
 
 }

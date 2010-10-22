@@ -60,6 +60,12 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     }
 
     @Test
+    public void testProjectIdLabelPresent_shouldWork() {
+        Page detailPage = getTester().startPage(new ProjectDetails(testProject));
+        getTester().assertContains(detailPage.getString("projectId.label"));
+    }
+
+    @Test
     public void testProjectIdPresent_shouldWork() {
         getTester().startPage(new ProjectDetails(testProject));
         getTester().assertContains(testProject.getId());

@@ -89,7 +89,7 @@ public class ProjectDetails extends BasePage {
                 item.add(new Link<Report>("report.link", item.getModel()) {
                     @Override
                     public void onClick() {
-                        setResponsePage(new ReportViewPage(getModelObject()));
+                        setResponsePage(new ReportViewPage(project, getModelObject()));
                     }
                 });
             }
