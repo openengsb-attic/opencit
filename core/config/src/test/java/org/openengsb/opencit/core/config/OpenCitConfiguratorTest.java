@@ -16,33 +16,32 @@
 
 package org.openengsb.opencit.core.config;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.wicket.util.file.File;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.openengsb.core.workflow.RuleBaseException;
 import org.openengsb.core.workflow.RuleManager;
 import org.openengsb.core.workflow.model.RuleBaseElementId;
 import org.openengsb.core.workflow.model.RuleBaseElementType;
 
-public class OpenCitConfigurator {
+public class OpenCitConfiguratorTest {
+
+    private OpenCitConfigurator configurator;
 
     private RuleManager ruleManager;
 
-    public void init() {
-        addWorkflow();
+    @Before
+    public void setUp() {
+        ruleManager = Mockito.mock(RuleManager.class);
+
+        configurator = new OpenCitConfigurator();
+        configurator.setRuleManager(ruleManager);
     }
 
-    private void addWorkflow() {
-        try {
-            File workflowFile = new File(ClassLoader.getSystemResource("ci.rf").toURI());
-            String citWorkflow = FileUtils.readFileToString(workflowFile);
-            RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
-            ruleManager.add(id, citWorkflow);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Test
+    public void testInit() throws RuleBaseException {
+        configurator.init();
+        RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
+        Mockito.verify(ruleManager).add(Mockito.eq(id), Mockito.anyString());
     }
-
-    public void setRuleManager(RuleManager ruleManager) {
-        this.ruleManager = ruleManager;
-    }
-
 }

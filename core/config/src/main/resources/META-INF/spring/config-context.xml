@@ -25,16 +25,9 @@
 
 
   <bean class="org.openengsb.opencit.core.config.OpenCitConfigurator" id="configurator" init-method="init">
-    <property name="context" value="foo" />
-    <property name="contextService" ref="contextService" />
     <property name="ruleManager" ref="ruleManager" />
-    <property name="reportServiceManager" ref="reportServiceManager" />
   </bean>
 
-  <osgi:reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
   <osgi:reference id="ruleManager" interface="org.openengsb.core.workflow.RuleManager" />
-  <osgi:reference id="reportServiceManager" interface="org.openengsb.core.common.ServiceManager"
-    filter="(domain=org.openengsb.domains.report.ReportDomain)" />
-
 
 </beans>
