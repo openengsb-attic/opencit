@@ -20,11 +20,13 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.openengsb.domains.report.model.Report;
 import org.openengsb.domains.report.model.ReportPart;
@@ -90,7 +92,7 @@ public class ReportViewPage extends BasePage {
             protected void populateItem(ListItem<ReportPart> item) {
                 ReportPart part = item.getModelObject();
                 item.add(new Label("part.name", part.getPartName()));
-                item.add(new Label("part.content", new String(part.getContent())));
+                item.add(new TextArea<String>("part.content", new Model<String>(new String(part.getContent()))));
             }
 
         };
