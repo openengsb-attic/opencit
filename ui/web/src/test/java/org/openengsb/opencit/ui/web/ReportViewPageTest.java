@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -34,9 +36,9 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class ReportViewPageTest extends AbstractCitPageTest {
 
-    private Report testReport;
+    private IModel<Report> testReportModel;
 
-    private Project testProject;
+    private IModel<Project> testProjectModel;
 
     @Override
     protected List<Object> getBeansForAppContext() {
@@ -44,32 +46,43 @@ public class ReportViewPageTest extends AbstractCitPageTest {
     }
 
     @Before
+    @SuppressWarnings("serial")
     public void setUp() {
-        testReport = new Report("foo");
-        testProject = new Project("bar");
+        testProjectModel = new LoadableDetachableModel<Project>() {
+            @Override
+            protected Project load() {
+                return new Project("bar");
+            }
+        };
+        testReportModel = new LoadableDetachableModel<Report>() {
+            @Override
+            protected Report load() {
+                return new Report("foo");
+            }
+        };
     }
 
     @Test
     public void testReportViewHeaderPresent_shouldWork() {
-        Page reportView = getTester().startPage(new ReportViewPage(testProject, testReport));
+        Page reportView = getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
         getTester().assertContains(reportView.getString("reportView.title"));
     }
 
     @Test
     public void testProjectIdPresent_shouldWork() {
-        getTester().startPage(new ReportViewPage(testProject, testReport));
-        getTester().assertContains(testProject.getId());
+        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
+        getTester().assertContains(testProjectModel.getObject().getId());
     }
 
     @Test
     public void testReportNamePresent_shouldWork() {
-        getTester().startPage(new ReportViewPage(testProject, testReport));
-        getTester().assertContains(testReport.getName());
+        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
+        getTester().assertContains(testReportModel.getObject().getName());
     }
 
     @Test
     public void testBackLink_shouldWork() {
-        getTester().startPage(new ReportViewPage(testProject, testReport));
+        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
         getTester().clickLink("back");
         String expectedPage = ProjectDetails.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
@@ -78,8 +91,8 @@ public class ReportViewPageTest extends AbstractCitPageTest {
     @Test
     public void testPartsPanel_shouldWork() {
         SimpleReportPart reportPart = new SimpleReportPart("part1", "text/plain", "content1".getBytes());
-        testReport.addPart(reportPart);
-        getTester().startPage(new ReportViewPage(testProject, testReport));
+        testReportModel.getObject().addPart(reportPart);
+        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
         getTester().assertContains("part1");
         getTester().assertContains("content1");
     }

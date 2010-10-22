@@ -33,19 +33,20 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.domains.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.ReportModel;
 import org.openengsb.opencit.ui.web.util.StateUtil;
 
 public class ProjectDetails extends BasePage {
 
-    private Project project;
+    private IModel<Project> projectModel;
 
     @SpringBean
     private ReportDomain reportDomain;
 
-    public ProjectDetails(Project project) {
-        this.project = project;
-        add(new Label("project.id", project.getId()));
-        add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(project))));
+    public ProjectDetails(IModel<Project> projectModel) {
+        this.projectModel = projectModel;
+        add(new Label("project.id", projectModel.getObject().getId()));
+        add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(projectModel.getObject()))));
         add(new BookmarkablePageLink<Index>("back", Index.class));
 
         initReportPanel();
@@ -59,7 +60,7 @@ public class ProjectDetails extends BasePage {
         IModel<List<Report>> reportsModel = new LoadableDetachableModel<List<Report>>() {
             @Override
             protected List<Report> load() {
-                return reportDomain.getAllReports(project.getId());
+                return reportDomain.getAllReports(projectModel.getObject().getId());
             }
         };
 
@@ -89,11 +90,14 @@ public class ProjectDetails extends BasePage {
                 item.add(new Link<Report>("report.link", item.getModel()) {
                     @Override
                     public void onClick() {
-                        setResponsePage(new ReportViewPage(project, getModelObject()));
+                        IModel<Report> reportModel = new ReportModel(projectModel.getObject()
+                            .getId(), getModelObject());
+                        setResponsePage(new ReportViewPage(projectModel, reportModel));
                     }
                 });
             }
 
         };
     }
+
 }

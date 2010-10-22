@@ -27,6 +27,8 @@ import java.util.List;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,7 +41,7 @@ import org.openengsb.opencit.core.projectmanager.model.Project.State;
 public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     private ReportDomain reportDomain;
-    private Project testProject;
+    private IModel<Project> testProjectModel;
 
     @Override
     protected List<Object> getBeansForAppContext() {
@@ -48,39 +50,46 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     }
 
     @Before
+    @SuppressWarnings("serial")
     public void setUp() {
-        testProject = new Project("test");
-        testProject.setState(State.IN_PROGRESS);
+        testProjectModel = new LoadableDetachableModel<Project>() {
+            @Override
+            protected Project load() {
+                Project testProject = new Project("test");
+                testProject.setState(State.IN_PROGRESS);
+                return testProject;
+            }
+        };
     }
 
     @Test
     public void testProjectDetailsHeaderPresent_shouldWork() {
-        Page detailPage = getTester().startPage(new ProjectDetails(testProject));
+        Page detailPage = getTester().startPage(new ProjectDetails(testProjectModel));
         getTester().assertContains(detailPage.getString("projectDetail.title"));
     }
 
     @Test
     public void testProjectIdLabelPresent_shouldWork() {
-        Page detailPage = getTester().startPage(new ProjectDetails(testProject));
+        Page detailPage = getTester().startPage(new ProjectDetails(testProjectModel));
         getTester().assertContains(detailPage.getString("projectId.label"));
     }
 
     @Test
     public void testProjectIdPresent_shouldWork() {
-        getTester().startPage(new ProjectDetails(testProject));
-        getTester().assertContains(testProject.getId());
+        getTester().startPage(new ProjectDetails(testProjectModel));
+        getTester().assertContains(testProjectModel.getObject().getId());
     }
 
     @Test
     public void testProjectStatePresent_shouldWork() {
-        getTester().startPage(new ProjectDetails(testProject));
+        getTester().startPage(new ProjectDetails(testProjectModel));
         Image image = (Image) getTester().getComponentFromLastRenderedPage("project.state");
         assertThat(image.isVisible(), is(true));
     }
 
     @Test
     public void testBackLink_shouldWork() {
-        getTester().startPage(new ProjectDetails(testProject));
+        getTester().startPage(new ProjectDetails(testProjectModel));
         getTester().clickLink("back");
         String expectedPage = Index.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
@@ -88,15 +97,15 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     @Test
     public void testNoReports_shouldShowLabel() {
-        Page detailPage = getTester().startPage(new ProjectDetails(testProject));
+        Page detailPage = getTester().startPage(new ProjectDetails(testProjectModel));
         getTester().assertContains(detailPage.getString("noReportsAvailable"));
     }
 
     @Test
     public void testReportPanel_shouldWork() {
         List<Report> reports = Arrays.asList(new Report[]{ new Report("rep1") });
-        when(reportDomain.getAllReports(testProject.getId())).thenReturn(reports);
-        getTester().startPage(new ProjectDetails(testProject));
+        when(reportDomain.getAllReports(testProjectModel.getObject().getId())).thenReturn(reports);
+        getTester().startPage(new ProjectDetails(testProjectModel));
         getTester().assertContains("rep1");
         String item = "reportsPanel:reportlist:0";
         Link<?> link = (Link<?>) getTester().getComponentFromLastRenderedPage(item + ":report.link");

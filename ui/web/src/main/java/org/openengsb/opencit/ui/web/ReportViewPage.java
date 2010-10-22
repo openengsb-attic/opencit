@@ -34,15 +34,15 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class ReportViewPage extends BasePage {
 
-    private Project project;
+    private IModel<Project> projectModel;
 
-    private Report report;
+    private IModel<Report> reportModel;
 
-    public ReportViewPage(Project project, Report report) {
-        this.project = project;
-        this.report = report;
-        add(new Label("project.id", project.getId()));
-        add(new Label("report.name", report.getName()));
+    public ReportViewPage(IModel<Project> projectModel, IModel<Report> reportModel) {
+        this.projectModel = projectModel;
+        this.reportModel = reportModel;
+        add(new Label("project.id", projectModel.getObject().getId()));
+        add(new Label("report.name", reportModel.getObject().getName()));
         createBackLink();
         initReportPartsPanel();
     }
@@ -52,7 +52,7 @@ public class ReportViewPage extends BasePage {
         add(new Link<Project>("back") {
             @Override
             public void onClick() {
-                setResponsePage(new ProjectDetails(project));
+                setResponsePage(new ProjectDetails(projectModel));
             }
         });
     }
@@ -65,7 +65,7 @@ public class ReportViewPage extends BasePage {
         IModel<List<ReportPart>> reportPartsModel = new LoadableDetachableModel<List<ReportPart>>() {
             @Override
             protected List<ReportPart> load() {
-                return report.getParts();
+                return reportModel.getObject().getParts();
             }
         };
 

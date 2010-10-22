@@ -31,6 +31,7 @@ import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.ProjectModel;
 import org.openengsb.opencit.ui.web.util.StateUtil;
 
 public class Index extends BasePage {
@@ -79,7 +80,7 @@ public class Index extends BasePage {
                 item.add(new Link<Project>("project.details", item.getModel()) {
                     @Override
                     public void onClick() {
-                        setResponsePage(new ProjectDetails(getModelObject()));
+                        setResponsePage(new ProjectDetails(new ProjectModel(getModelObject())));
                     }
                 });
             }
