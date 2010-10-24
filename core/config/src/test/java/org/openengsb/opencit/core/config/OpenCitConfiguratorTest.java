@@ -23,6 +23,8 @@ import org.openengsb.core.workflow.RuleBaseException;
 import org.openengsb.core.workflow.RuleManager;
 import org.openengsb.core.workflow.model.RuleBaseElementId;
 import org.openengsb.core.workflow.model.RuleBaseElementType;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class OpenCitConfiguratorTest {
 
@@ -41,7 +43,20 @@ public class OpenCitConfiguratorTest {
     @Test
     public void testInit() throws RuleBaseException {
         configurator.init();
-        RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
-        Mockito.verify(ruleManager).add(Mockito.eq(id), Mockito.anyString());
+        RuleBaseElementId workflowId = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
+        RuleBaseElementId ruleId1 = new RuleBaseElementId(RuleBaseElementType.Rule, "updateStateOnFlowStart");
+        RuleBaseElementId ruleId2 = new RuleBaseElementId(RuleBaseElementType.Rule, "updateStateOnFlowSuccess");
+        RuleBaseElementId ruleId3 = new RuleBaseElementId(RuleBaseElementType.Rule, "updateStateOnFlowFailure");
+
+        Mockito.verify(ruleManager).add(Mockito.eq(workflowId), Mockito.anyString());
+        Mockito.verify(ruleManager).add(Mockito.eq(ruleId1), Mockito.anyString());
+        Mockito.verify(ruleManager).add(Mockito.eq(ruleId2), Mockito.anyString());
+        Mockito.verify(ruleManager).add(Mockito.eq(ruleId3), Mockito.anyString());
+
+        Mockito.verify(ruleManager).addImport(ProjectManager.class.getName());
+        Mockito.verify(ruleManager).addImport(Project.class.getName());
+
+        RuleBaseElementId globalId = new RuleBaseElementId(RuleBaseElementType.Global, "projectManager");
+        Mockito.verify(ruleManager).add(globalId, ProjectManager.class.getName());
     }
 }
