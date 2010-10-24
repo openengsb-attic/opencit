@@ -18,6 +18,7 @@ package org.openengsb.opencit.core.projectmanager.internal;
 
 import java.util.List;
 
+import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.persistence.PersistenceException;
 import org.openengsb.core.persistence.PersistenceManager;
 import org.openengsb.core.persistence.PersistenceService;
@@ -25,6 +26,7 @@ import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
@@ -33,6 +35,8 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     private PersistenceManager persistenceManager;
 
     private PersistenceService persistence;
+
+    private ContextCurrentService contextService;
 
     private BundleContext bundleContext;
 
@@ -81,6 +85,14 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         }
     }
 
+    @Override
+    public void updateCurrentContextProjectState(State state) throws NoSuchProjectException {
+        String projectId = contextService.getCurrentContextId();
+        Project project = getProject(projectId);
+        project.setState(state);
+        updateProject(project);
+    }
+
     public void setPersistenceManager(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
     }
@@ -88,6 +100,10 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     @Override
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+    }
+
+    public void setContextService(ContextCurrentService contextService) {
+        this.contextService = contextService;
     }
 
 }

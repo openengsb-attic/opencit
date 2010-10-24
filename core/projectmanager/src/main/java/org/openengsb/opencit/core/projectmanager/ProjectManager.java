@@ -19,6 +19,7 @@ package org.openengsb.opencit.core.projectmanager;
 import java.util.List;
 
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
 public interface ProjectManager {
 
@@ -29,5 +30,7 @@ public interface ProjectManager {
     Project getProject(String projectId) throws NoSuchProjectException;
 
     void updateProject(Project project) throws NoSuchProjectException;
+
+    void updateCurrentContextProjectState(State state) throws NoSuchProjectException;
 
 }

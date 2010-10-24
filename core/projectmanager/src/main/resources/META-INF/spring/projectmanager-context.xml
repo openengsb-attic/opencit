@@ -29,8 +29,10 @@
     </osgi:interfaces>
     <bean class="org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl" init-method="init">
       <property name="persistenceManager" ref="persistenceManager" />
+      <property name="contextService" ref="contextService" />
     </bean>
   </osgi:service>
 
   <osgi:reference id="persistenceManager" interface="org.openengsb.core.persistence.PersistenceManager" />
+  <osgi:reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
 </beans>
