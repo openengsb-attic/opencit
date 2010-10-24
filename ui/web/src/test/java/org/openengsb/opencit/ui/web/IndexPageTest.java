@@ -26,6 +26,8 @@ import java.util.List;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.domains.report.ReportDomain;
@@ -35,22 +37,28 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 public class IndexPageTest extends AbstractCitPageTest {
 
     private ProjectManager projectManager;
+    private WicketTester wicketTester;
+
+    @Before
+    public void setUp() {
+        wicketTester = getTester();
+    }
 
     @Override
     protected List<Object> getBeansForAppContext() {
         projectManager = Mockito.mock(ProjectManager.class);
         return Arrays.asList(new Object[]{ projectManager, Mockito.mock(ReportDomain.class) });
     }
-
+   
     @Test
     public void testProjectlistHeaderPresent_shouldWork() {
-        Page indexPage = getTester().startPage(new Index());
+        Page indexPage = wicketTester.startPage(new Index());
         getTester().assertContains(indexPage.getString("projectlist.title"));
     }
 
     @Test
     public void testNoProjects_shouldShowLabel() {
-        Page indexPage = getTester().startPage(new Index());
+        Page indexPage = wicketTester.startPage(new Index());
         getTester().assertContains(indexPage.getString("noProjectsAvailable"));
     }
 
@@ -67,5 +75,22 @@ public class IndexPageTest extends AbstractCitPageTest {
         getTester().clickLink(item + ":project.details");
         String expectedPage = ProjectDetails.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
+    }
+
+    @Test
+    public void testCreateProjectLink_shouldBeCreateNewProject() {
+        Page indexPage = wicketTester.startPage(new Index());
+        wicketTester.assertContains(indexPage.getString("newProject.title"));
+    }
+
+    @Test
+    public void testCreateProjectLink_shouldReturnFirstPageForWizzard() {
+        Page indexPage = wicketTester.startPage(new Index());
+        wicketTester.assertContains(indexPage.getString("newProject.title"));
+        wicketTester.debugComponentTrees();
+        wicketTester.clickLink("newProject",true);
+
+        wicketTester.assertContains(indexPage.getString("newProject.summary"));
+
     }
 }
