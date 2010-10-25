@@ -27,6 +27,10 @@
     <osgi:interfaces>
       <value>org.openengsb.opencit.core.projectmanager.ProjectManager</value>
     </osgi:interfaces>
+    <osgi:service-properties>
+      <entry key="openengsb.workflow.globalid" value="projectManager" />
+      <entry key="openengsb.service.type" value="workflow-service" />
+    </osgi:service-properties>
     <bean class="org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl" init-method="init">
       <property name="persistenceManager" ref="persistenceManager" />
       <property name="contextService" ref="contextService" />
