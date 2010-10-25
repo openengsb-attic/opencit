@@ -88,7 +88,11 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
         formTester.submit();
         nextButton.onSubmit();
-
+        // Step to SCMEditor
+        formTester = tester.newFormTester("wizard:form");
+        nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
+        formTester.submit();
+        nextButton.onSubmit();
 
         Label titel = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         assertThat(titel.getDefaultModelObject().toString(), is("Confirmation"));
@@ -135,7 +139,46 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(choices.size(), is(1));
     }
 
-    
+    @Test
+    public void testSCMSetupStep_ShouldShowSomeInputFieldsForSCMSetup() {
+        mockSetupForSCMDomains();
+        tester.startPage(new Index());
+        tester.clickLink("newProject");
+        tester.assertContains("newProject.title");
+
+        // Step to SCM
+        FormTester formTester = tester.newFormTester("wizard:form");
+        formTester.setValue("view:project.id", "testID");
+        String nextFulltBtnPath = "wizard:form:buttons:next";
+        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
+        WizardButton nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
+        formTester.submit();
+        nextButton.onSubmit();
+
+        formTester = tester.newFormTester("wizard:form");
+        Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        String o = newHeader.getDefaultModelObject().toString();
+        assertThat(o, is("Set up SCM"));
+
+        DropDownChoice ddc = (DropDownChoice) tester
+            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
+        List choices = ddc.getChoices();
+        assertThat(choices.size(), is(1));
+        tester.debugComponentTrees();
+        
+        formTester.select("view:scmDescriptor", 0);
+
+        // Step to SCMEditor
+        nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
+        formTester.submit();
+        nextButton.onSubmit();
+
+        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        o = newHeader.getDefaultModelObject().toString();
+        assertThat(o, is("Attributes"));
+    }
+
+
     private void mockSetupForSCMDomains() {
         //mock manager
         List<ServiceManager> managers = new ArrayList<ServiceManager>();

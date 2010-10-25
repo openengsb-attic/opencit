@@ -100,6 +100,13 @@ public class ProjectWizard extends Wizard {
     }
 
 
+    private final class SetAttributes extends WizardStep {
+        public SetAttributes() {
+             super(new ResourceModel("scmAttribute.title"), new ResourceModel("scmAttribute.summary"),
+                new Model<Project>(project));
+        }
+    }
+
     private final class FinalStep extends WizardStep {
         public FinalStep() {
             super(new ResourceModel("final.title"), new ResourceModel("final.summary"), new Model<Project>(project));
@@ -115,6 +122,7 @@ public class ProjectWizard extends Wizard {
         WizardModel model = new WizardModel();
         model.add(new CreateProject());
         model.add(new SetSCM());
+        model.add(new SetAttributes());
         model.add(new FinalStep());
         init(model);
     }
@@ -141,5 +149,7 @@ public class ProjectWizard extends Wizard {
     public void setProject(Project project) {
         this.project = project;
     }
+
+
 }
 
