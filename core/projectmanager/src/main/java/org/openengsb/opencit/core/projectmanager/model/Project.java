@@ -16,8 +16,10 @@
 
 package org.openengsb.opencit.core.projectmanager.model;
 
+import java.io.Serializable;
 
-public class Project {
+
+public class Project implements Serializable{
 
     public enum State {
             OK, IN_PROGRESS, FAILURE
@@ -27,7 +29,15 @@ public class Project {
 
     private String id;
 
+    public Project() {
+
+    }
+
     public Project(String id) {
+        this.id = id;
+    }
+
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -100,7 +100,6 @@
       <scope>provided</scope>
     </dependency>
 
-
     <dependency>
       <groupId>org.openengsb.opencit.core</groupId>
       <artifactId>opencit-core-projectmanager</artifactId>
