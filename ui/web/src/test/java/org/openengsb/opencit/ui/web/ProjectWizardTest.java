@@ -2,6 +2,7 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,13 +15,16 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.Project;
 
-public class ProjectWizardTest extends AbstractCitPageTest{
+public class ProjectWizardTest extends AbstractCitPageTest {
 
     private WicketTester tester;
     private ProjectManager projectManager;
+    private ContextCurrentService contextSerice;
 
     @Before
     public void setUp() {
@@ -29,8 +33,9 @@ public class ProjectWizardTest extends AbstractCitPageTest{
 
     @Override
     protected List<Object> getBeansForAppContext() {
-        projectManager = Mockito.mock(ProjectManager.class);
-        return Arrays.asList(new Object[]{projectManager, Mockito.mock(ReportDomain.class)});
+        contextSerice = mock(ContextCurrentService.class);
+        projectManager = mock(ProjectManager.class);
+        return Arrays.asList(new Object[]{projectManager, mock(ReportDomain.class), contextSerice});
     }
 
     @Test
@@ -41,16 +46,50 @@ public class ProjectWizardTest extends AbstractCitPageTest{
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
 
-        String nextFulltBtnPath = "wizard:form:buttons:finish";
+        String nextFulltBtnPath = "wizard:form:buttons:next";
         tester.assertComponent(nextFulltBtnPath, WizardButton.class);
         WizardButton finishButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
         formTester.submit();
         finishButton.onSubmit();
+        ProjectWizard wizard = (ProjectWizard) tester.getComponentFromLastRenderedPage("wizard");
+        Project project = wizard.getProject();
+        assertThat(project.getId(), is("testID"));
 
-        tester.debugComponentTrees();
-//        assertThat(projectWizard.getProject().getId(), is("testID"));
 
     }
+
+
+    @Test
+    public void testLastStep_ShouldCreateProjectInContext() {
+        tester.startPage(new Index());
+        tester.clickLink("newProject");
+        tester.assertContains("newProject.title");
+        FormTester formTester = tester.newFormTester("wizard:form");
+        formTester.setValue("view:project.id", "testID");
+
+        String nextFulltBtnPath = "wizard:form:buttons:next";
+        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
+        WizardButton nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
+        formTester.submit();
+        nextButton.onSubmit();
+        tester.debugComponentTrees();
+        Label titel = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        assertThat(titel.getDefaultModelObject().toString(), is("Confirmation"));
+
+        Label id = (Label) tester.getComponentFromLastRenderedPage("wizard:form:view:projectId.confirm");
+        assertThat(id.getDefaultModelObject().toString(), is("testID"));
+
+        formTester = tester.newFormTester("wizard:form");
+
+        nextFulltBtnPath = "wizard:form:buttons:finish";
+        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
+        WizardButton finishButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
+        formTester.submit();
+        finishButton.onSubmit();
+        Mockito.verify(contextSerice, Mockito.times(1)).createContext("testID");
+        
+    }
+
 
     @Ignore
     @Test
