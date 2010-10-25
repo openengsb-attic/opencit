@@ -26,8 +26,8 @@ public class Project implements Serializable{
     }
 
     private State state;
-
     private String id;
+
 
     public Project() {
 

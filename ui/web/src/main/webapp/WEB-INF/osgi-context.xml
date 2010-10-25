@@ -28,5 +28,6 @@
   <osgi:reference id="projectManager" interface="org.openengsb.opencit.core.projectmanager.ProjectManager"/>
   <osgi:reference id="reportDomain" interface="org.openengsb.domains.report.ReportDomain"/>
   <osgi:reference id="contextSerice" interface="org.openengsb.core.common.context.ContextCurrentService"/>
+  <osgi:reference id="domainService" interface="org.openengsb.core.common.service.DomainService"/>
 
 </beans>
