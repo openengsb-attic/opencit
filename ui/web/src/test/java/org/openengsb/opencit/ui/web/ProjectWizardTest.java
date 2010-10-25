@@ -22,6 +22,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.l10n.LocalizableString;
 import org.openengsb.core.common.service.DomainService;
@@ -189,6 +190,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         LocalizableString localizableString = mock(LocalizableString.class);
         when(localizableString.getString(Mockito.any(Locale.class))).thenReturn("SCMDomain");
         when(serviceDescriptor.getName()).thenReturn(localizableString);
+        LocalizableString description = mock(LocalizableString.class);
+        when(description.getString(Mockito.any(Locale.class))).thenReturn("SCM Description");
+        when(serviceDescriptor.getDescription()).thenReturn(description);
+        List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
+        AttributeDefinition attribute = mock(AttributeDefinition.class);
+        attributes.add(attribute);
+        when(serviceDescriptor.getAttributes()).thenReturn(attributes);
 
         when(serviceDescriptor.getImplementationType()).thenAnswer(new Answer<Class>() {
             @Override

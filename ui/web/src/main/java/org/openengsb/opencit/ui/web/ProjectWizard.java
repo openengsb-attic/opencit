@@ -22,10 +22,12 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.domains.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.WicketStringLocalizer;
 
 public class ProjectWizard extends Wizard {
 
@@ -41,9 +43,9 @@ public class ProjectWizard extends Wizard {
 
     private Log log = LogFactory.getLog(this.getClass());
 
-    private final class CreateProject extends WizardStep {
+    private final class CreateProjectStep extends WizardStep {
 
-        public CreateProject() {
+        public CreateProjectStep() {
             super(new ResourceModel("newProject.title"), new ResourceModel("newProject.summary"),
                 new Model<Project>(project));
             add(new RequiredTextField<String>("project.id"));
@@ -56,9 +58,9 @@ public class ProjectWizard extends Wizard {
         }
     }
 
-    private final class SetSCM extends WizardStep {
+    private final class SetSCMStep extends WizardStep {
 
-        public SetSCM() {
+        public SetSCMStep() {
             super(new ResourceModel("setUpSCM.title"), new ResourceModel("setUpSCM.summary"),
                 new Model<Project>(project));
             List<ServiceManager> manager = domainService.serviceManagersForDomain(ScmDomain.class);
@@ -100,12 +102,31 @@ public class ProjectWizard extends Wizard {
     }
 
 
-    private final class SetAttributes extends WizardStep {
-        public SetAttributes() {
+    private final class SetAttributesStep extends WizardStep {
+
+         public SetAttributesStep() {
              super(new ResourceModel("scmAttribute.title"), new ResourceModel("scmAttribute.summary"),
-                new Model<Project>(project));
-        }
-    }
+                 new Model<Project>(project));
+             IModel<List<AttributeDefinition>> attributeDefinitions = new LoadableDetachableModel<List<AttributeDefinition>>(){
+                 @Override
+                 public List<AttributeDefinition> load(){
+                     return buildAttributeList();
+                 }
+             }  ;
+         }
+
+         private List<AttributeDefinition> buildAttributeList() {
+             AttributeDefinition.Builder builder = AttributeDefinition.builder(new WicketStringLocalizer(this));
+             AttributeDefinition id = builder.id("id").name("attribute.id.name").description("attribute.id.description")
+                 .required().build();
+             List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
+             attributes.add(id);
+             attributes.addAll(project.getScmDescriptor().getAttributes());
+             return attributes;
+         }
+
+     }
+
 
     private final class FinalStep extends WizardStep {
         public FinalStep() {
@@ -120,9 +141,9 @@ public class ProjectWizard extends Wizard {
         project = new Project();
         setDefaultModel(new CompoundPropertyModel<ProjectWizard>(this));
         WizardModel model = new WizardModel();
-        model.add(new CreateProject());
-        model.add(new SetSCM());
-        model.add(new SetAttributes());
+        model.add(new CreateProjectStep());
+        model.add(new SetSCMStep());
+        model.add(new SetAttributesStep());
         model.add(new FinalStep());
         init(model);
     }
