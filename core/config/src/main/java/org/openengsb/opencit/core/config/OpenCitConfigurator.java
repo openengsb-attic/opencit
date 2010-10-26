@@ -44,8 +44,7 @@ public class OpenCitConfigurator {
             ruleManager.addImport(ProjectManager.class.getName());
             ruleManager.addImport(Project.class.getName());
             ruleManager.addImport(State.class.getName());
-            RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Global, "projectManager");
-            ruleManager.add(id, ProjectManager.class.getName());
+            ruleManager.addGlobal(ProjectManager.class.getName(), "projectManager");
         } catch (RuleBaseException e) {
             throw new RuntimeException(e);
         }

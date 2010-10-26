@@ -56,7 +56,6 @@ public class OpenCitConfiguratorTest {
         Mockito.verify(ruleManager).addImport(ProjectManager.class.getName());
         Mockito.verify(ruleManager).addImport(Project.class.getName());
 
-        RuleBaseElementId globalId = new RuleBaseElementId(RuleBaseElementType.Global, "projectManager");
-        Mockito.verify(ruleManager).add(globalId, ProjectManager.class.getName());
+        Mockito.verify(ruleManager).addGlobal(ProjectManager.class.getName(), "projectManager");
     }
 }
