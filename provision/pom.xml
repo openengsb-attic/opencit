@@ -50,17 +50,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.openengsb.config</groupId>
-      <artifactId>openengsb-config-jetty</artifactId>
-      <version>${openengsb.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openengsb.config</groupId>
-      <artifactId>openengsb-config-webextender</artifactId>
-      <version>${openengsb.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.openengsb.core</groupId>
       <artifactId>openengsb-core-common</artifactId>
       <version>${openengsb.version}</version>
