@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -37,9 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.opencit.ui.web.service.DomainService;
-import org.osgi.framework.ServiceReference;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,7 +53,7 @@ public class LoginPageTest {
     public void setUp() {
         contextMock = new ApplicationContextMock();
         mockAuthentication();
-        mockIndex();
+        contextMock.putBean(mock(ProjectManager.class));
 
         WebApplication app = new WicketApplication() {
             @Override
@@ -66,18 +63,6 @@ public class LoginPageTest {
         };
         tester = new WicketTester(app);
 
-    }
-
-    private void mockIndex() {
-        DomainService managedServicesMock = mock(DomainService.class);
-        when(managedServicesMock.getManagedServiceInstances()).thenAnswer(new Answer<List<ServiceReference>>() {
-            @Override
-            public List<ServiceReference> answer(InvocationOnMock invocation) {
-                return Collections.emptyList();
-            }
-        });
-        contextMock.putBean(managedServicesMock);
-        contextMock.putBean(mock(ContextCurrentService.class));
     }
 
     private void mockAuthentication() {

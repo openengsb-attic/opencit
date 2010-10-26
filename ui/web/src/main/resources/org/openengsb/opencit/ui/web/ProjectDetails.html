@@ -23,19 +23,24 @@
 <body>
   <wicket:extend>
     <h2>
-      <wicket:message key="projectlist.title">[project.list]</wicket:message>
+      <wicket:message key="projectDetail.title">[projectDetail.title]</wicket:message>
     </h2>
-    <div wicket:id="projectlistPanel">
-      <ul wicket:id="projectlist">
+    <h3>
+      <wicket:message key="projectId.label">[projectId.label]</wicket:message>
+      <span wicket:id="project.id">[project.id]</span>
+    </h3>
+    <img wicket:id="project.state" height="84" width="234"/><br />
+    <a href="#" wicket:id="back"><wicket:message key="back">[back]</wicket:message></a>
+    <div wicket:id="reportsPanel">
+      <ul wicket:id="reportlist">
         <li>
-          <h3>
-            <span wicket:id="project.name">[project.name]</span><br />
-            <img wicket:id="project.state" height="42" width="117"/><br />
-            <a href="#" wicket:id="project.details"><wicket:message key="project.details">[project.details]</wicket:message></a>
-          </h3>
+          <h4>
+            <span wicket:id="report.name">[report.name]</span>
+            <a href="#" wicket:id="report.link"><wicket:message key="report.link">[report.link]</wicket:message></a>
+          </h4>
         </li>
       </ul>
-      <div wicket:id="noProjects" class="info" >
+      <div wicket:id="noReports" class="info" >
         no results info window
       </div>
     </div>

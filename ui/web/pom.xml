@@ -17,7 +17,7 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <groupId>org.openengsb.opencit.ui</groupId>
@@ -26,8 +26,8 @@
   </parent>
 
   <properties>
-    <bundle.symbolicName>org.openengsb.ui.web</bundle.symbolicName>
-    <bundle.namespace>org.openengsb.ui.web</bundle.namespace>
+    <bundle.symbolicName>org.openengsb.opencit.ui.web</bundle.symbolicName>
+    <bundle.namespace>org.openengsb.opencit.ui.web</bundle.namespace>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>
@@ -79,20 +79,35 @@
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>org.apache.wicket-all</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.core</groupId>
       <artifactId>openengsb-core-common</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openengsb.core</groupId>
       <artifactId>openengsb-core-workflow</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openengsb.domains.report</groupId>
+      <artifactId>openengsb-domains-report-implementation</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.openengsb.opencit.core</groupId>
+      <artifactId>opencit-core-projectmanager</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
 
     <dependency>
       <groupId>org.apache.wicket</groupId>

@@ -104,6 +104,17 @@
     </dependency>
 
     <dependency>
+      <groupId>org.openengsb.domains.report</groupId>
+      <artifactId>openengsb-domains-report-implementation</artifactId>
+      <version>${openengsb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.domains.report</groupId>
+      <artifactId>openengsb-domains-report-plaintext</artifactId>
+      <version>${openengsb.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-web</artifactId>
       <version>${openengsb.version}</version>

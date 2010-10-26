@@ -21,8 +21,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
@@ -33,10 +33,8 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.core.common.context.ContextCurrentService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,18 +42,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
-public class BasePageTest {
-
+public abstract class AbstractCitPageTest {
     private WicketTester tester;
-    private ContextCurrentService contextService;
-    private Page basePage;
     private ApplicationContextMock appContext;
+
+    protected abstract List<Object> getBeansForAppContext();
 
     @Before
     public void setup() {
-        contextService = mock(ContextCurrentService.class);
         appContext = new ApplicationContextMock();
-        appContext.putBean(contextService);
+        for (Object bean : getBeansForAppContext()) {
+            appContext.putBean(bean);
+        }
         mockAuthentication();
         tester = new WicketTester(new WebApplication() {
 
@@ -75,8 +73,6 @@ public class BasePageTest {
                 return new WicketSession(request);
             }
         });
-        when(contextService.getAvailableContexts()).thenReturn(Arrays.asList(new String[]{"foo", "bar"}));
-        basePage = tester.startPage(new BasePage());
     }
 
     private void mockAuthentication() {
@@ -97,8 +93,8 @@ public class BasePageTest {
         appContext.putBean("authenticationManager", authManager);
     }
 
-    @Test
-    public void test_label_present() {
-        tester.assertContains("Hello World");
+    public WicketTester getTester() {
+        return tester;
     }
+
 }
