@@ -25,6 +25,7 @@ import org.openengsb.core.workflow.model.RuleBaseElementId;
 import org.openengsb.core.workflow.model.RuleBaseElementType;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
 public class OpenCitConfiguratorTest {
 
@@ -53,9 +54,10 @@ public class OpenCitConfiguratorTest {
         Mockito.verify(ruleManager).add(Mockito.eq(ruleId2), Mockito.anyString());
         Mockito.verify(ruleManager).add(Mockito.eq(ruleId3), Mockito.anyString());
 
-        Mockito.verify(ruleManager).addImport(ProjectManager.class.getName());
-        Mockito.verify(ruleManager).addImport(Project.class.getName());
+        Mockito.verify(ruleManager).addImport(ProjectManager.class.getCanonicalName());
+        Mockito.verify(ruleManager).addImport(Project.class.getCanonicalName());
+        Mockito.verify(ruleManager).addImport(State.class.getCanonicalName());
 
-        Mockito.verify(ruleManager).addGlobal(ProjectManager.class.getName(), "projectManager");
+        Mockito.verify(ruleManager).addGlobal(ProjectManager.class.getCanonicalName(), "projectManager");
     }
 }

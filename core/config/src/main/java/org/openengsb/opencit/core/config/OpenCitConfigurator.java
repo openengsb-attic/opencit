@@ -16,11 +16,11 @@
 
 package org.openengsb.opencit.core.config;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.wicket.util.file.File;
+import org.apache.commons.io.IOUtils;
 import org.openengsb.core.workflow.RuleBaseException;
 import org.openengsb.core.workflow.RuleManager;
 import org.openengsb.core.workflow.model.RuleBaseElementId;
@@ -41,23 +41,26 @@ public class OpenCitConfigurator {
 
     private void addGlobalsAndImports() {
         try {
-            ruleManager.addImport(ProjectManager.class.getName());
-            ruleManager.addImport(Project.class.getName());
-            ruleManager.addImport(State.class.getName());
-            ruleManager.addGlobal(ProjectManager.class.getName(), "projectManager");
+            ruleManager.addImport(ProjectManager.class.getCanonicalName());
+            ruleManager.addImport(Project.class.getCanonicalName());
+            ruleManager.addImport(State.class.getCanonicalName());
+            ruleManager.addGlobal(ProjectManager.class.getCanonicalName(), "projectManager");
         } catch (RuleBaseException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void addWorkflow() {
+        InputStream is = null;
         try {
-            File workflowFile = new File(ClassLoader.getSystemResource("ci.rf").toURI());
-            String citWorkflow = FileUtils.readFileToString(workflowFile);
+            is = getClass().getClassLoader().getResourceAsStream("ci.rf");
+            String citWorkflow = IOUtils.toString(is);
             RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
             ruleManager.add(id, citWorkflow);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 
@@ -72,13 +75,16 @@ public class OpenCitConfigurator {
     }
 
     private void addRule(String rule) {
+        InputStream is = null;
         try {
-            File ruleFile = new File(ClassLoader.getSystemResource(rule + ".rule").toURI());
-            String ruleText = FileUtils.readFileToString(ruleFile);
+            is = getClass().getClassLoader().getResourceAsStream(rule + ".rule");
+            String ruleText = IOUtils.toString(is);
             RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Rule, rule);
             ruleManager.add(id, ruleText);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 
