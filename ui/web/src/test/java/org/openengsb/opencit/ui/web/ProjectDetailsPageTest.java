@@ -32,6 +32,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.domains.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -46,7 +47,8 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     @Override
     protected List<Object> getBeansForAppContext() {
         reportDomain = mock(ReportDomain.class);
-        return Arrays.asList(new Object[]{ reportDomain, Mockito.mock(ProjectManager.class) });
+        return Arrays.asList(new Object[]{ reportDomain, Mockito.mock(ProjectManager.class),
+            Mockito.mock(ContextCurrentService.class) });
     }
 
     @Before

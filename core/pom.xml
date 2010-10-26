@@ -36,6 +36,7 @@
 
   <modules>
     <module>projectmanager</module>
+    <module>config</module>
   </modules>
 
 </project>
