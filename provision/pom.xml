@@ -104,6 +104,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.openengsb.domains.scm</groupId>
+      <artifactId>openengsb-domains-scm-implementation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.openengsb.domains.report</groupId>
       <artifactId>openengsb-domains-report-implementation</artifactId>
       <version>${openengsb.version}</version>
