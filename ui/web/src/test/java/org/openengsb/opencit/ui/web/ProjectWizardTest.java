@@ -59,16 +59,10 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
 
-        String nextFulltBtnPath = "wizard:form:buttons:next";
-        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
-        WizardButton finishButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        finishButton.onSubmit();
+        nextStep(formTester);
         ProjectWizard wizard = (ProjectWizard) tester.getComponentFromLastRenderedPage("wizard");
         Project project = wizard.getProject();
         assertThat(project.getId(), is("testID"));
-
-
     }
 
     @Test
@@ -79,21 +73,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
         // Step to SCM
-        String nextFulltBtnPath = "wizard:form:buttons:next";
-        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
-        WizardButton nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        nextButton.onSubmit();
+        nextStep(formTester);
         //Step to Final
         formTester = tester.newFormTester("wizard:form");
-        nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        nextButton.onSubmit();
+        nextStep(formTester);
         // Step to SCMEditor
         formTester = tester.newFormTester("wizard:form");
-        nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        nextButton.onSubmit();
+         nextStep(formTester);
 
         Label titel = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         assertThat(titel.getDefaultModelObject().toString(), is("Confirmation"));
@@ -103,7 +89,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
         formTester = tester.newFormTester("wizard:form");
 
-        nextFulltBtnPath = "wizard:form:buttons:finish";
+        String nextFulltBtnPath = "wizard:form:buttons:finish";
         tester.assertComponent(nextFulltBtnPath, WizardButton.class);
         WizardButton finishButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
         formTester.submit();
@@ -111,7 +97,6 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         Mockito.verify(contextSerice, Mockito.times(1)).createContext("testID");
 
     }
-
 
     @Test
     public void testSCMStep_ShouldShowDropDownWithPossibleSCM() {
@@ -123,11 +108,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         formTester.setValue("view:project.id", "testID");
 
         // Step to SCM
-        String nextFulltBtnPath = "wizard:form:buttons:next";
-        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
-        WizardButton nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        nextButton.onSubmit();
+        nextStep(formTester);
 
         tester.debugComponentTrees();
         Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
@@ -150,11 +131,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         // Step to SCM
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
-        String nextFulltBtnPath = "wizard:form:buttons:next";
-        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
-        WizardButton nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        nextButton.onSubmit();
+         nextStep(formTester);
 
         formTester = tester.newFormTester("wizard:form");
         Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
@@ -166,19 +143,26 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
         tester.debugComponentTrees();
-        
-        formTester.select("view:scmDescriptor", 0);
 
+        formTester = tester.newFormTester("wizard:form");
+        formTester.select("view:scmDescriptor", 0);
         // Step to SCMEditor
-        nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        nextButton.onSubmit();
+        nextStep(formTester);
 
         newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         o = newHeader.getDefaultModelObject().toString();
         assertThat(o, is("Attributes"));
     }
 
+
+    private void nextStep(FormTester formTester) {
+
+        String nextFulltBtnPath = "wizard:form:buttons:next";
+        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
+        WizardButton nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
+        formTester.submit();
+        nextButton.onSubmit();
+    }
 
     private void mockSetupForSCMDomains() {
         //mock manager

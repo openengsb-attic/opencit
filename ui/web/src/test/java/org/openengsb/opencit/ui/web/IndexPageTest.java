@@ -18,6 +18,7 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -30,6 +31,8 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -85,10 +88,13 @@ public class IndexPageTest extends AbstractCitPageTest {
 
     @Test
     public void testCreateProjectLink_shouldReturnFirstPageForWizzard() {
+        appContext.putBean("domainService", mock(DomainService.class));
+        appContext.putBean("contextCurrentService", mock(ContextCurrentService.class));
+
         Page indexPage = wicketTester.startPage(new Index());
         wicketTester.assertContains(indexPage.getString("newProject.title"));
         wicketTester.debugComponentTrees();
-        wicketTester.clickLink("newProject",true);
+        wicketTester.clickLink("newProject", true);
 
         wicketTester.assertContains(indexPage.getString("newProject.summary"));
 

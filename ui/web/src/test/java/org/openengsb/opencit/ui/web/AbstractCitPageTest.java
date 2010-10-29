@@ -44,7 +44,7 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 public abstract class AbstractCitPageTest {
     private WicketTester tester;
-    private ApplicationContextMock appContext;
+    public ApplicationContextMock appContext;
 
     protected abstract List<Object> getBeansForAppContext();
 
