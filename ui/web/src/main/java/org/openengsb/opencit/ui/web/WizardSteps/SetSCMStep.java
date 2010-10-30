@@ -42,7 +42,7 @@ public class SetSCMStep extends DynamicWizardStep {
     private DomainService domainService;
 
     Project project;
-    private Map<ServiceDescriptor, ServiceManager> managersMap= new HashMap<ServiceDescriptor, ServiceManager>();
+    private Map<String, ServiceManager> managersMap= new HashMap<String, ServiceManager>();
 
 
     public SetSCMStep(Project project) {
@@ -58,7 +58,7 @@ public class SetSCMStep extends DynamicWizardStep {
         final List<ServiceDescriptor> descritors = new ArrayList<ServiceDescriptor>();
 
         for (ServiceManager sm : managers) {
-            managersMap.put(sm.getDescriptor(), sm);
+            managersMap.put(sm.getDescriptor().getName().getString(getLocale()), sm);
             descritors.add(sm.getDescriptor());
         }
 
@@ -74,7 +74,7 @@ public class SetSCMStep extends DynamicWizardStep {
             dropDownModel, new IChoiceRenderer<ServiceDescriptor>() {
 
                 public String getDisplayValue(ServiceDescriptor object) {
-                    return object.getName().toString();
+                    return object.getName().getString(getLocale());
                 }
 
                 public String getIdValue(ServiceDescriptor object, int index) {
@@ -94,7 +94,7 @@ public class SetSCMStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        ServiceManager serviceManager = managersMap.get(project.getScmDescriptor());
+        ServiceManager serviceManager = managersMap.get(project.getScmDescriptor().getName().getString(getLocale()));
         return new SetAttributesStep(project,serviceManager);
     }
 }
