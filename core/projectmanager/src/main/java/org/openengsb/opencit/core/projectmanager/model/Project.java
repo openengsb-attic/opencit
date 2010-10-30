@@ -21,21 +21,25 @@ import java.io.Serializable;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 
 
-public class Project implements Serializable{
+public class Project implements Serializable {
+
 
     public enum State {
-            OK, IN_PROGRESS, FAILURE
+        OK,
+        IN_PROGRESS,
+        FAILURE;
     }
 
-
     private ServiceDescriptor scmDescriptor;
+
+
     private State state;
     private String id;
-
 
     public Project() {
 
     }
+
 
     public Project(String id) {
         this.id = id;
@@ -64,4 +68,5 @@ public class Project implements Serializable{
     public void setScmDescriptor(ServiceDescriptor scmDescriptor) {
         this.scmDescriptor = scmDescriptor;
     }
+
 }

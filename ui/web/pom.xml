@@ -113,6 +113,22 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.openengsb.ui</groupId>
+      <artifactId>openengsb-ui-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openengsb.ui</groupId>
+      <artifactId>openengsb-ui-web</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+      <classifier>classes</classifier>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.wicket</groupId>

@@ -17,7 +17,9 @@
 package org.openengsb.opencit.ui.web.WizardSteps;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
@@ -40,13 +42,15 @@ public class SetSCMStep extends DynamicWizardStep {
     private DomainService domainService;
 
     Project project;
+    private Map<ServiceDescriptor, ServiceManager> managersMap= new HashMap<ServiceDescriptor, ServiceManager>();
+
 
     public SetSCMStep(Project project) {
         super(new CreateProjectStep(project), new ResourceModel("setUpSCM.title"),
             new ResourceModel("setUpSCM.summary"), new Model<Project>(project));
         this.project = project;
         List<ServiceManager> manager = domainService.serviceManagersForDomain(ScmDomain.class);
-        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(manager, "scmDescriptor");
+        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(manager, "project.scmDescriptor");
         add(descriptorDropDownChoice);
     }
 
@@ -54,6 +58,7 @@ public class SetSCMStep extends DynamicWizardStep {
         final List<ServiceDescriptor> descritors = new ArrayList<ServiceDescriptor>();
 
         for (ServiceManager sm : managers) {
+            managersMap.put(sm.getDescriptor(), sm);
             descritors.add(sm.getDescriptor());
         }
 
@@ -89,6 +94,7 @@ public class SetSCMStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        return new SetAttributesStep(project);
+        ServiceManager serviceManager = managersMap.get(project.getScmDescriptor());
+        return new SetAttributesStep(project,serviceManager);
     }
 }

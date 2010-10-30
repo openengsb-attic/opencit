@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.wicket.extensions.wizard.WizardButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -26,6 +27,8 @@ import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.l10n.LocalizableString;
 import org.openengsb.core.common.service.DomainService;
+import org.openengsb.core.common.validation.FormValidator;
+import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
 import org.openengsb.domains.report.ReportDomain;
 import org.openengsb.domains.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -67,19 +70,24 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
     @Test
     public void testLastStep_ShouldCreateProjectInContext() {
+        mockSetupForSCMDomains();
+
         tester.startPage(new Index());
         tester.clickLink("newProject");
         tester.assertContains("newProject.title");
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
-        // Step to SCM
+        // Step to setSCM
         nextStep(formTester);
-        //Step to Final
+        //Step to SCMEditor
         formTester = tester.newFormTester("wizard:form");
+        formTester.select("view:project.scmDescriptor", 0);
         nextStep(formTester);
-        // Step to SCMEditor
+
+        // Step to Final
         formTester = tester.newFormTester("wizard:form");
-         nextStep(formTester);
+        formTester.setValue("view:editor:form:validate",false);
+        nextStep(formTester);
 
         Label titel = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         assertThat(titel.getDefaultModelObject().toString(), is("Confirmation"));
@@ -116,7 +124,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(o, is("Set up SCM"));
 
         DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
+            .getComponentFromLastRenderedPage("wizard:form:view:project.scmDescriptor");
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
     }
@@ -131,7 +139,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         // Step to SCM
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
-         nextStep(formTester);
+        nextStep(formTester);
 
         formTester = tester.newFormTester("wizard:form");
         Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
@@ -139,13 +147,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(o, is("Set up SCM"));
 
         DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
+            .getComponentFromLastRenderedPage("wizard:form:view:project.scmDescriptor");
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
         tester.debugComponentTrees();
 
         formTester = tester.newFormTester("wizard:form");
-        formTester.select("view:scmDescriptor", 0);
+        formTester.select("view:project.scmDescriptor", 0);
         // Step to SCMEditor
         nextStep(formTester);
 
@@ -160,6 +168,8 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         String nextFulltBtnPath = "wizard:form:buttons:next";
         tester.assertComponent(nextFulltBtnPath, WizardButton.class);
         WizardButton nextButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
+        tester.debugComponentTrees();
+
         formTester.submit();
         nextButton.onSubmit();
     }
@@ -174,11 +184,21 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         LocalizableString localizableString = mock(LocalizableString.class);
         when(localizableString.getString(Mockito.any(Locale.class))).thenReturn("SCMDomain");
         when(serviceDescriptor.getName()).thenReturn(localizableString);
+        FormValidator formValidator = mock(FormValidator.class);
+        List<String> validateFields = new ArrayList<String>();
+        when(formValidator.fieldsToValidate()).thenReturn(validateFields);
+        when(serviceDescriptor.getFormValidator()).thenReturn(formValidator);
+        MultipleAttributeValidationResult validate = mock(MultipleAttributeValidationResult.class);
+        when(validate.isValid()).thenReturn(true);
+
+        when(formValidator.validate(Mockito.<Map<String, String>>any())).thenReturn(validate);
         LocalizableString description = mock(LocalizableString.class);
         when(description.getString(Mockito.any(Locale.class))).thenReturn("SCM Description");
         when(serviceDescriptor.getDescription()).thenReturn(description);
         List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
         AttributeDefinition attribute = mock(AttributeDefinition.class);
+        when(attribute.getId()).thenReturn("attributeId");
+
         attributes.add(attribute);
         when(serviceDescriptor.getAttributes()).thenReturn(attributes);
 
@@ -192,7 +212,6 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         when(serviceManager.getDescriptor()).thenReturn(serviceDescriptor);
         when(domainService.serviceManagersForDomain(ScmDomain.class)).thenReturn(managers);
     }
-
 
 
 }
