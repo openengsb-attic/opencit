@@ -28,8 +28,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.openengsb.domains.report.model.Report;
-import org.openengsb.domains.report.model.ReportPart;
+import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.model.ReportPart;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class ReportViewPage extends BasePage {

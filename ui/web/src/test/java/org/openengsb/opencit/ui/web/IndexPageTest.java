@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.domains.report.ReportDomain;
+import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 

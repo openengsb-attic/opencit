@@ -55,20 +55,20 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.domains.report</groupId>
-      <artifactId>openengsb-domains-report-implementation</artifactId>
+      <groupId>org.openengsb.domain</groupId>
+      <artifactId>openengsb-domain-report</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.domains.notification</groupId>
-      <artifactId>openengsb-domains-notification-implementation</artifactId>
+      <groupId>org.openengsb.domain</groupId>
+      <artifactId>openengsb-domain-notification</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.domains.scm</groupId>
-      <artifactId>openengsb-domains-scm-implementation</artifactId>
+      <groupId>org.openengsb.domain</groupId>
+      <artifactId>openengsb-domain-scm</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

@@ -29,9 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.domains.report.ReportDomain;
-import org.openengsb.domains.report.model.Report;
-import org.openengsb.domains.report.model.SimpleReportPart;
+import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.model.SimpleReportPart;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 

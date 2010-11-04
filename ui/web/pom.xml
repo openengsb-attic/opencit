@@ -94,8 +94,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.domains.report</groupId>
-      <artifactId>openengsb-domains-report-implementation</artifactId>
+      <groupId>org.openengsb.domain</groupId>
+      <artifactId>openengsb-domain-report</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

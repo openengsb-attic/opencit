@@ -26,7 +26,7 @@
         http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd">
 
   <osgi:reference id="projectManager" interface="org.openengsb.opencit.core.projectmanager.ProjectManager"/>
-  <osgi:reference id="reportDomain" interface="org.openengsb.domains.report.ReportDomain"/>
+  <osgi:reference id="reportDomain" interface="org.openengsb.domain.report.ReportDomain"/>
   <osgi:reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
 
 </beans>
