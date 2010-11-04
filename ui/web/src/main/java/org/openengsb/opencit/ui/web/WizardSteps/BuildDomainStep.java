@@ -27,7 +27,7 @@ public class BuildDomainStep extends DynamicWizardStep {
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
 
     public BuildDomainStep(Project project) {
-        super(new SetSCMStep(project), new ResourceModel("buildAttribute.title"),
+        super(new SCMStep(project), new ResourceModel("buildAttribute.title"),
             new ResourceModel("buildAttribute.summary"), new Model<Project>(project));
         this.project = project;
         List<ServiceManager> manager = domainService.serviceManagersForDomain(NotificationDomain.class);

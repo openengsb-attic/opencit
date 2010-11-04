@@ -36,7 +36,7 @@ import org.openengsb.core.common.service.DomainService;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
-public class SetSCMStep extends DynamicWizardStep {
+public class SCMStep extends DynamicWizardStep {
 
     @SpringBean
     private DomainService domainService;
@@ -45,7 +45,7 @@ public class SetSCMStep extends DynamicWizardStep {
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
 
 
-    public SetSCMStep(Project project) {
+    public SCMStep(Project project) {
         super(new CreateProjectStep(project), new ResourceModel("setUpSCM.title"),
             new ResourceModel("setUpSCM.summary"), new Model<Project>(project));
         this.project = project;

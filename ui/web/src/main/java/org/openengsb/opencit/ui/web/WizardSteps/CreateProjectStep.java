@@ -40,6 +40,6 @@ public class CreateProjectStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        return new SetSCMStep(project);
+        return new SCMStep(project);
     }
 }

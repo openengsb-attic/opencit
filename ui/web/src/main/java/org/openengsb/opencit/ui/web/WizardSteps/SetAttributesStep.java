@@ -46,7 +46,7 @@ public class SetAttributesStep extends DynamicWizardStep {
 
 
     public SetAttributesStep(Project project, final ServiceManager serviceManager) {
-        super(new SetSCMStep(project), new ResourceModel("scmAttribute.title"),
+        super(new SCMStep(project), new ResourceModel("scmAttribute.title"),
             new ResourceModel("scmAttribute.summary"), new Model<Project>(project));
         this.project = project;
 
