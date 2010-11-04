@@ -25,6 +25,9 @@ import org.openengsb.core.workflow.RuleBaseException;
 import org.openengsb.core.workflow.RuleManager;
 import org.openengsb.core.workflow.model.RuleBaseElementId;
 import org.openengsb.core.workflow.model.RuleBaseElementType;
+import org.openengsb.domains.notification.NotificationDomain;
+import org.openengsb.domains.report.ReportDomain;
+import org.openengsb.domains.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
@@ -41,13 +44,60 @@ public class OpenCitConfigurator {
 
     private void addGlobalsAndImports() {
         try {
-            ruleManager.addImport(ProjectManager.class.getCanonicalName());
-            ruleManager.addImport(Project.class.getCanonicalName());
-            ruleManager.addImport(State.class.getCanonicalName());
-            ruleManager.addGlobal(ProjectManager.class.getCanonicalName(), "projectManager");
+            addScmGlobalsAndImports();
+            addBuildGlobalsAndImports();
+            addTestGlobalsAndImports();
+            addDeployGlobalsAndImports();
+            addReportGlobalsAndImports();
+            addNotificationGlobalsAndImports();
+            addProjectManagerGlobalsAndImports();
         } catch (RuleBaseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void addScmGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport(ScmDomain.class.getCanonicalName());
+        ruleManager.addGlobal(ScmDomain.class.getCanonicalName(), "scm");
+    }
+
+    private void addBuildGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport("org.openengsb.domains.build.BuildDomain");
+        ruleManager.addImport("org.openengsb.domains.build.events.BuildSuccess");
+        ruleManager.addImport("org.openengsb.domains.build.events.BuildFailure");
+        ruleManager.addImport("org.openengsb.domains.build.events.BuildStartedEvent");
+        ruleManager.addGlobal("org.openengsb.domains.build.BuildDomain", "test");
+    }
+
+    private void addTestGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport("org.openengsb.domains.test.TestDomain");
+        ruleManager.addImport("org.openengsb.domains.test.events.TestFailure");
+        ruleManager.addImport("org.openengsb.domains.test.events.TestSuccess");
+        ruleManager.addGlobal("org.openengsb.domains.test.TestDomain", "test");
+    }
+
+    private void addDeployGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport("org.openengsb.domains.deploy.DeployDomain");
+        ruleManager.addImport("org.openengsb.domains.deploy.events.DeploySuccess");
+        ruleManager.addImport("org.openengsb.domains.deploy.events.DeployFailure");
+        ruleManager.addGlobal("org.openengsb.domains.deploy.DeployDomain", "deploy");
+    }
+
+    private void addReportGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport(ReportDomain.class.getCanonicalName());
+        ruleManager.addGlobal(ReportDomain.class.getCanonicalName(), "report");
+    }
+
+    private void addNotificationGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport(NotificationDomain.class.getCanonicalName());
+        ruleManager.addGlobal(NotificationDomain.class.getCanonicalName(), "notification");
+    }
+
+    private void addProjectManagerGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport(ProjectManager.class.getCanonicalName());
+        ruleManager.addImport(Project.class.getCanonicalName());
+        ruleManager.addImport(State.class.getCanonicalName());
+        ruleManager.addGlobal(ProjectManager.class.getCanonicalName(), "projectManager");
     }
 
     private void addWorkflow() {
