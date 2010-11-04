@@ -15,14 +15,15 @@ import java.util.Map;
 import org.apache.wicket.extensions.wizard.WizardButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.SimpleFormComponentLabel;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.descriptor.AttributeDefinition;
@@ -31,6 +32,7 @@ import org.openengsb.core.common.l10n.LocalizableString;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.common.validation.FormValidator;
 import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
+import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -42,6 +44,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
     private ProjectManager projectManager;
     private ContextCurrentService contextSerice;
     private DomainService domainService;
+    private ServiceManager scmServiceManager;
 
     @Before
     public void setUp() {
@@ -76,48 +79,9 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(project.getId(), is("testID"));
     }
 
-    @Ignore("just for testing reason, test should run")
-    @Test
-    public void testLastStep_ShouldCreateProjectInContext() {
-        mockSetupForSCMDomains();
-
-        tester.startPage(new Index());
-        tester.clickLink("newProject");
-        tester.assertContains("newProject.title");
-        FormTester formTester = tester.newFormTester("wizard:form");
-        formTester.setValue("view:project.id", "testID");
-        // Step to setSCM
-        nextStep(formTester);
-        //Step to SCMEditor
-        formTester = tester.newFormTester("wizard:form");
-        formTester.select("view:project.scmDescriptor", 0);
-        nextStep(formTester);
-
-        // Step to Final
-        formTester = tester.newFormTester("wizard:form");
-        formTester.setValue("view:editor:form:validate", false);
-        nextStep(formTester);
-
-        Label titel = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
-        assertThat(titel.getDefaultModelObject().toString(), is("Confirmation"));
-
-        Label id = (Label) tester.getComponentFromLastRenderedPage("wizard:form:view:projectId.confirm");
-        assertThat(id.getDefaultModelObject().toString(), is("testID"));
-
-        formTester = tester.newFormTester("wizard:form");
-
-        String nextFulltBtnPath = "wizard:form:buttons:finish";
-        tester.assertComponent(nextFulltBtnPath, WizardButton.class);
-        WizardButton finishButton = (WizardButton) tester.getComponentFromLastRenderedPage(nextFulltBtnPath);
-        formTester.submit();
-        finishButton.onSubmit();
-        Mockito.verify(contextSerice, Mockito.times(1)).createContext("testID");
-
-    }
-
     @Test
     public void testSCMStep_ShouldShowDropDownWithPossibleSCM() {
-        mockSetupForSCMDomains();
+        mockSetupForWizard();
         tester.startPage(new Index());
         tester.clickLink("newProject");
         tester.assertContains("newProject.title");
@@ -140,7 +104,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
     @Test
     public void testSCMSetupStep_ShouldShowSomeInputFieldsForSCMSetup() {
-        mockSetupForSCMDomains();
+        mockSetupForWizard();
         tester.startPage(new Index());
         tester.clickLink("newProject");
         tester.assertContains("newProject.title");
@@ -171,12 +135,72 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         o = newHeader.getDefaultModelObject().toString();
         assertThat(o, is("Attributes"));
 
+        SimpleFormComponentLabel attributName = (SimpleFormComponentLabel) tester
+            .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:attributeId:row:name");
+        assertThat(attributName.getDefaultModelObjectAsString(), is("attName"));
+        formTester.setValue("view:editor:form:fields:id:row:field", "ID1");
+        formTester.setValue("view:editor:form:fields:attributeId:row:field", "attribute1Value1");
+        tester.submitForm("wizard:form:view:editor:form");
+
+        //Step to notification domain
+        nextStep(formTester);
+        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         tester.debugComponentTrees();
-        formTester.setValue("view:editor:form:fields:attributeId:row:field", "attribute1Value");
-
-
+        assertThat(newHeader.getDefaultModelObjectAsString(), is("Define a notification domain"));
     }
 
+
+    @Test
+    public void testNotificationStep_ShouldShowADropdownchoiceForNotificationdomains() {
+        mockSetupForWizard();
+        tester.startPage(new Index());
+        tester.clickLink("newProject");
+        tester.assertContains("newProject.title");
+
+        // Step to SCM
+        FormTester formTester = tester.newFormTester("wizard:form");
+        formTester.setValue("view:project.id", "testID");
+        nextStep(formTester);
+
+        formTester = tester.newFormTester("wizard:form");
+        Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        String o = newHeader.getDefaultModelObject().toString();
+        assertThat(o, is("Set up SCM"));
+
+        DropDownChoice ddc = (DropDownChoice) tester
+            .getComponentFromLastRenderedPage("wizard:form:view:project.scmDescriptor");
+        List choices = ddc.getChoices();
+        assertThat(choices.size(), is(1));
+        tester.debugComponentTrees();
+
+        formTester = tester.newFormTester("wizard:form");
+        formTester.select("view:project.scmDescriptor", 0);
+        // Step to SCMEditor
+        nextStep(formTester);
+
+        formTester = tester.newFormTester("wizard:form");
+        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        o = newHeader.getDefaultModelObject().toString();
+        assertThat(o, is("Attributes"));
+
+        SimpleFormComponentLabel attributName = (SimpleFormComponentLabel) tester
+            .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:attributeId:row:name");
+        assertThat(attributName.getDefaultModelObjectAsString(), is("attName"));
+        formTester.setValue("view:editor:form:fields:id:row:field", "ID1");
+        formTester.setValue("view:editor:form:fields:attributeId:row:field", "attribute1Value1");
+        tester.submitForm("wizard:form:view:editor:form");
+
+        //Step to notification domain
+        nextStep(formTester);
+        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        tester.debugComponentTrees();
+        assertThat(newHeader.getDefaultModelObjectAsString(), is("Define a notification domain"));
+
+        DropDownChoice notificationDDc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:project.notificationDescriptor");
+        choices = notificationDDc.getChoices();
+        assertThat(choices.size(), is(1));
+
+    }
 
     private void nextStep(FormTester formTester) {
 
@@ -187,15 +211,30 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         nextButton.onSubmit();
     }
 
-    private void mockSetupForSCMDomains() {
-        //mock manager
-        List<ServiceManager> managers = new ArrayList<ServiceManager>();
-        ServiceManager serviceManager = mock(ServiceManager.class);
-        managers.add(serviceManager);
+    private void mockSetupForWizard() {
+        ServiceManager scmServiceManager = mock(ServiceManager.class);
+        ServiceManager notificationServiceManager = mock(ServiceManager.class);
+
+        List<ServiceManager> scmManagers = new ArrayList<ServiceManager>();
+        scmManagers.add(scmServiceManager);
+
+        List<ServiceManager> notificationManagers = new ArrayList<ServiceManager>();
+        notificationManagers.add(scmServiceManager);
+
+        ServiceDescriptor scmDescriptor = mockingSetupForConnector("SCM", ScmDomain.class);
+        ServiceDescriptor notificationDescriptor = mockingSetupForConnector("Notification", NotificationDomain.class);
+
+        when(scmServiceManager.getDescriptor()).thenReturn(scmDescriptor);
+        when(notificationServiceManager.getDescriptor()).thenReturn(notificationDescriptor);
+        when(domainService.serviceManagersForDomain(ScmDomain.class)).thenReturn(scmManagers);
+        when(domainService.serviceManagersForDomain(NotificationDomain.class)).thenReturn(notificationManagers);
+    }
+
+    private ServiceDescriptor mockingSetupForConnector(String type, final Class<? extends Domain> scmDomainClass) {
 
         ServiceDescriptor serviceDescriptor = mock(ServiceDescriptor.class);
         LocalizableString localizableString = mock(LocalizableString.class);
-        when(localizableString.getString(any(Locale.class))).thenReturn("SCMDomain");
+        when(localizableString.getString(any(Locale.class))).thenReturn(type + "MDomain");
         when(serviceDescriptor.getName()).thenReturn(localizableString);
         FormValidator formValidator = mock(FormValidator.class);
         List<String> validateFields = new ArrayList<String>();
@@ -206,7 +245,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
         when(formValidator.validate(Mockito.<Map<String, String>>any())).thenReturn(validate);
         LocalizableString description = mock(LocalizableString.class);
-        when(description.getString(any(Locale.class))).thenReturn("SCM Description");
+        when(description.getString(any(Locale.class))).thenReturn(type + " Description");
         when(serviceDescriptor.getDescription()).thenReturn(description);
         List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
         AttributeDefinition attribute = mock(AttributeDefinition.class);
@@ -221,12 +260,10 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         when(serviceDescriptor.getImplementationType()).thenAnswer(new Answer<Class>() {
             @Override
             public Class answer(InvocationOnMock invocation) throws Throwable {
-                return ScmDomain.class;
+                return scmDomainClass;
             }
         });
-
-        when(serviceManager.getDescriptor()).thenReturn(serviceDescriptor);
-        when(domainService.serviceManagersForDomain(ScmDomain.class)).thenReturn(managers);
+        return serviceDescriptor;
     }
 
 

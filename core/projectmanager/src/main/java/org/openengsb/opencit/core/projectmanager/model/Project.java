@@ -31,7 +31,8 @@ public class Project implements Serializable {
     }
 
     private ServiceDescriptor scmDescriptor;
-
+    private ServiceDescriptor buildDescriptor;
+    private ServiceDescriptor notificationDescriptor;
 
     private State state;
     private String id;
@@ -69,4 +70,19 @@ public class Project implements Serializable {
         this.scmDescriptor = scmDescriptor;
     }
 
+    public ServiceDescriptor getBuildDescriptor() {
+        return buildDescriptor;
+    }
+
+    public void setBuildDescriptor(ServiceDescriptor buildDescriptor) {
+        this.buildDescriptor = buildDescriptor;
+    }
+
+    public ServiceDescriptor getNotificationDescriptor() {
+        return notificationDescriptor;
+    }
+
+    public void setNotificationDescriptor(ServiceDescriptor notificationDescriptor) {
+        this.notificationDescriptor = notificationDescriptor;
+    }
 }

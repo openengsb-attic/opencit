@@ -109,7 +109,7 @@ public class SetAttributesStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        return new FinalStep(this, project);
+        return new NotificationDomainStep(project);
     }
 
 }
