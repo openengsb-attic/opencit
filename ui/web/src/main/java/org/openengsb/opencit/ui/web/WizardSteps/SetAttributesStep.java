@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -40,11 +41,18 @@ import org.openengsb.ui.web.model.WicketStringLocalizer;
 public class SetAttributesStep extends DynamicWizardStep {
     private Project project;
     private EditorPanel editorPanel;
+    private FeedbackPanel feedbackPanel;
+    private boolean succeeded = false;
+
 
     public SetAttributesStep(Project project, final ServiceManager serviceManager) {
         super(new SetSCMStep(project), new ResourceModel("scmAttribute.title"),
             new ResourceModel("scmAttribute.summary"), new Model<Project>(project));
         this.project = project;
+
+        feedbackPanel = new FeedbackPanel("feedback");
+        feedbackPanel.setOutputMarkupId(true);
+        add(feedbackPanel);
         
         IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
             @Override
@@ -67,11 +75,16 @@ public class SetAttributesStep extends DynamicWizardStep {
                         Map<String, String> attributeErrorMessages = updateWithValidation.getAttributeErrorMessages();
                         for (String value : attributeErrorMessages.values()) {
                             error(new StringResourceModel(value, this, null).getString());
+                            succeeded = false;
                         }
                     } else {
+                        //Do nothing, suceeded in creating new service
+                        info("connector.succeeded");
+                        succeeded = true;
                     }
                 } else {
                     serviceManager.update(getValues().get("id"), getValues());
+                    succeeded = true;
                 }
             }
         };
@@ -98,5 +111,6 @@ public class SetAttributesStep extends DynamicWizardStep {
     public IDynamicWizardStep next() {
         return new FinalStep(this, project);
     }
+
 }
 

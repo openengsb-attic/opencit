@@ -42,7 +42,7 @@ public class SetSCMStep extends DynamicWizardStep {
     private DomainService domainService;
 
     Project project;
-    private Map<String, ServiceManager> managersMap= new HashMap<String, ServiceManager>();
+    private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
 
 
     public SetSCMStep(Project project) {
@@ -80,8 +80,6 @@ public class SetSCMStep extends DynamicWizardStep {
                 public String getIdValue(ServiceDescriptor object, int index) {
                     return object.getImplementationType().getSimpleName();
                 }
-
-
             });
 
         return descriptorDropDownChoice;
@@ -95,6 +93,11 @@ public class SetSCMStep extends DynamicWizardStep {
     @Override
     public IDynamicWizardStep next() {
         ServiceManager serviceManager = managersMap.get(project.getScmDescriptor().getName().getString(getLocale()));
-        return new SetAttributesStep(project,serviceManager);
+        return new SetAttributesStep(project, serviceManager);
+    }
+
+    @Override
+    public boolean isComplete() {
+        return (managersMap.containsKey(project.getScmDescriptor().getName().getString(getLocale())));
     }
 }
