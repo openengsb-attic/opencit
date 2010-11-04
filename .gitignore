@@ -12,5 +12,5 @@ eclipse-workspace
 
 classes
 
-*velocity.log
-
+*velocity.log*
+*.springBeans

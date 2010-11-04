@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
@@ -46,14 +46,17 @@ public abstract class AbstractCitPageTest {
     private WicketTester tester;
     public ApplicationContextMock appContext;
 
-    protected abstract List<Object> getBeansForAppContext();
+    protected abstract Map<String,Object> getBeansForAppContextAsMap();
 
     @Before
     public void setup() {
         appContext = new ApplicationContextMock();
-        for (Object bean : getBeansForAppContext()) {
-            appContext.putBean(bean);
+
+        Map<String, Object> mockedBeans = getBeansForAppContextAsMap();
+        for (String key : mockedBeans.keySet()) {
+            appContext.putBean(key,mockedBeans.get(key));
         }
+
         mockAuthentication();
         tester = new WicketTester(new WebApplication() {
 

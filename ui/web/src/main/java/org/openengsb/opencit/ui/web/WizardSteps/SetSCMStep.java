@@ -33,7 +33,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.service.DomainService;
-import org.openengsb.domains.scm.ScmDomain;
+import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class SetSCMStep extends DynamicWizardStep {

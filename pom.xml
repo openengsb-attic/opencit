@@ -182,9 +182,8 @@
 
   <repositories>
     <repository>
-      <id>openengsb-snapshots</id>
-      <name>OpenEngSB Snapshots</name>
-      <url>http://maven.openengsb.org/nexus/content/repositories/openengsb-snapshots/</url>
+      <id>sonatype.repository</id>
+      <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
     <repository>
       <id>thirdparty</id>

@@ -94,14 +94,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.domains.report</groupId>
-      <artifactId>openengsb-domains-report-implementation</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openengsb.domains.scm</groupId>
-      <artifactId>openengsb-domains-scm-implementation</artifactId>
+      <groupId>org.openengsb.domain</groupId>
+      <artifactId>openengsb-domain-report</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -112,6 +106,7 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+
 
     <dependency>
       <groupId>org.openengsb.ui</groupId>
@@ -127,6 +122,12 @@
       <version>${project.version}</version>
       <type>jar</type>
       <classifier>classes</classifier>
+  </dependency>
+    
+    <dependency>
+      <groupId>org.openengsb.opencit.core</groupId>
+      <artifactId>opencit-core-config</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 

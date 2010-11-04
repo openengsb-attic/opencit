@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,8 +31,8 @@ import org.openengsb.core.common.l10n.LocalizableString;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.common.validation.FormValidator;
 import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
-import org.openengsb.domains.report.ReportDomain;
-import org.openengsb.domains.scm.ScmDomain;
+import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
@@ -49,11 +49,17 @@ public class ProjectWizardTest extends AbstractCitPageTest {
     }
 
     @Override
-    protected List<Object> getBeansForAppContext() {
+    protected Map<String, Object> getBeansForAppContextAsMap() {
+        Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
         contextSerice = mock(ContextCurrentService.class);
         projectManager = mock(ProjectManager.class);
         domainService = mock(DomainService.class);
-        return Arrays.asList(new Object[]{projectManager, mock(ReportDomain.class), contextSerice, domainService});
+        projectManager = Mockito.mock(ProjectManager.class);
+        mockedBeansMap.put("contextCurrentService", contextSerice);
+        mockedBeansMap.put("domainService", domainService);
+        mockedBeansMap.put("projectManager", projectManager);
+        mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
+        return mockedBeansMap;
     }
 
     @Test
@@ -89,7 +95,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
         // Step to Final
         formTester = tester.newFormTester("wizard:form");
-        formTester.setValue("view:editor:form:validate",false);
+        formTester.setValue("view:editor:form:validate", false);
         nextStep(formTester);
 
         Label titel = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
@@ -167,7 +173,6 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
         tester.debugComponentTrees();
         formTester.setValue("view:editor:form:fields:attributeId:row:field", "attribute1Value");
-
 
 
     }

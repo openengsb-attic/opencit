@@ -22,7 +22,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.image.Image;
@@ -31,9 +33,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openengsb.domains.report.ReportDomain;
-import org.openengsb.domains.report.model.Report;
+import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
@@ -44,10 +46,16 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     private IModel<Project> testProjectModel;
 
     @Override
-    protected List<Object> getBeansForAppContext() {
-        reportDomain = mock(ReportDomain.class);
-        return Arrays.asList(new Object[]{ reportDomain, Mockito.mock(ProjectManager.class) });
+    protected Map<String, Object> getBeansForAppContextAsMap() {
+        Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
+         reportDomain = mock(ReportDomain.class);
+        mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
+        mockedBeansMap.put("projectManager", mock(ProjectManager.class));
+        mockedBeansMap.put("reportDomain", reportDomain);
+
+        return mockedBeansMap;
     }
+
 
     @Before
     @SuppressWarnings("serial")

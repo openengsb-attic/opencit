@@ -18,19 +18,20 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openengsb.domains.report.ReportDomain;
-import org.openengsb.domains.report.model.Report;
-import org.openengsb.domains.report.model.SimpleReportPart;
+import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.model.SimpleReportPart;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
@@ -40,10 +41,16 @@ public class ReportViewPageTest extends AbstractCitPageTest {
 
     private IModel<Project> testProjectModel;
 
+
     @Override
-    protected List<Object> getBeansForAppContext() {
-        return Arrays.asList(new Object[]{ Mockito.mock(ReportDomain.class), Mockito.mock(ProjectManager.class) });
+    protected Map<String, Object> getBeansForAppContextAsMap() {
+        Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
+        mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
+        mockedBeansMap.put("projectManager", mock(ProjectManager.class));
+        mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
+        return mockedBeansMap;
     }
+
 
     @Before
     @SuppressWarnings("serial")

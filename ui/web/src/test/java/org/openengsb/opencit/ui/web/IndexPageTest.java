@@ -22,7 +22,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.image.Image;
@@ -33,7 +34,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.service.DomainService;
-import org.openengsb.domains.report.ReportDomain;
+import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
@@ -48,11 +49,17 @@ public class IndexPageTest extends AbstractCitPageTest {
     }
 
     @Override
-    protected List<Object> getBeansForAppContext() {
+    protected Map<String, Object> getBeansForAppContextAsMap() {
+        Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
+
         projectManager = Mockito.mock(ProjectManager.class);
-        return Arrays.asList(new Object[]{ projectManager, Mockito.mock(ReportDomain.class) });
+        mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
+        mockedBeansMap.put("projectManager", projectManager);
+        mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
+        mockedBeansMap.put("domainService", mock(DomainService.class));
+        return mockedBeansMap;
     }
-   
+
     @Test
     public void testProjectlistHeaderPresent_shouldWork() {
         Page indexPage = wicketTester.startPage(new Index());
@@ -67,7 +74,7 @@ public class IndexPageTest extends AbstractCitPageTest {
 
     @Test
     public void testProjectsAvailable_shouldShowProjectId() {
-        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
+        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{new Project("test")}));
         getTester().startPage(new Index());
         getTester().assertContains("test");
         String item = "projectlistPanel:projectlist:0";
@@ -88,15 +95,10 @@ public class IndexPageTest extends AbstractCitPageTest {
 
     @Test
     public void testCreateProjectLink_shouldReturnFirstPageForWizzard() {
-        appContext.putBean("domainService", mock(DomainService.class));
-        appContext.putBean("contextCurrentService", mock(ContextCurrentService.class));
-
         Page indexPage = wicketTester.startPage(new Index());
         wicketTester.assertContains(indexPage.getString("newProject.title"));
         wicketTester.debugComponentTrees();
         wicketTester.clickLink("newProject", true);
-
         wicketTester.assertContains(indexPage.getString("newProject.summary"));
-
     }
 }

@@ -20,37 +20,42 @@ import java.util.List;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.domains.report.ReportDomain;
-import org.openengsb.domains.report.model.Report;
+import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.report.model.Report;
 
 @SuppressWarnings("serial")
 public class ReportModel extends LoadableDetachableModel<Report> {
     @SpringBean
     private ReportDomain reportDomain;
 
+    @SpringBean
+    private ContextCurrentService contextService;
+
     private String reportName;
 
-    private String categoryName;
+    private String projectId;
 
-    public ReportModel(String categoryName, String reportName) {
-        this.categoryName = categoryName;
+    public ReportModel(String projectId, String reportName) {
+        this.projectId = projectId;
         this.reportName = reportName;
     }
 
     public ReportModel(String categoryName, Report report) {
-        this.categoryName = categoryName;
+        this.projectId = categoryName;
         this.reportName = report.getName();
         setObject(report);
     }
 
     @Override
     protected Report load() {
-        List<Report> reports = reportDomain.getAllReports(categoryName);
+        contextService.setThreadLocalContext(projectId);
+        List<Report> reports = reportDomain.getAllReports(projectId);
         for (Report report : reports) {
             if (report.getName().equals(reportName)) {
                 return report;
             }
         }
-        throw new RuntimeException("No report with name '" + reportName + "' in project '" + categoryName + "' found.");
+        throw new RuntimeException("No report with name '" + reportName + "' in project '" + projectId + "' found.");
     }
 }
