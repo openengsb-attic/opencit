@@ -16,6 +16,10 @@
 
 when
   v : Value (key == "deployId")
-  e : DeploySuccess (deployId == (String) v.getValue())
+  e : DeployEndEvent (deployId == (String) v.getValue())
 then
-  projectManager.updateCurrentContextProjectState(State.OK);
+  if(e.isSuccess()) {
+    projectManager.updateCurrentContextProjectState(State.OK);
+  } else {
+    projectManager.updateCurrentContextProjectState(State.FAILURE);
+  }

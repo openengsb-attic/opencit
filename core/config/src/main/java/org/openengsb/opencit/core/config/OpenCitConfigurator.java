@@ -25,9 +25,18 @@ import org.openengsb.core.workflow.RuleBaseException;
 import org.openengsb.core.workflow.RuleManager;
 import org.openengsb.core.workflow.model.RuleBaseElementId;
 import org.openengsb.core.workflow.model.RuleBaseElementType;
+import org.openengsb.domain.build.BuildDomain;
+import org.openengsb.domain.build.BuildEndEvent;
+import org.openengsb.domain.build.BuildStartEvent;
+import org.openengsb.domain.deploy.DeployDomain;
+import org.openengsb.domain.deploy.DeployEndEvent;
+import org.openengsb.domain.deploy.DeployStartEvent;
 import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
+import org.openengsb.domain.test.TestDomain;
+import org.openengsb.domain.test.TestEndEvent;
+import org.openengsb.domain.test.TestStartEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
@@ -62,25 +71,24 @@ public class OpenCitConfigurator {
     }
 
     private void addBuildGlobalsAndImports() throws RuleBaseException {
-        ruleManager.addImport("org.openengsb.domains.build.BuildDomain");
-        ruleManager.addImport("org.openengsb.domains.build.events.BuildSuccess");
-        ruleManager.addImport("org.openengsb.domains.build.events.BuildFailure");
-        ruleManager.addImport("org.openengsb.domains.build.events.BuildStartedEvent");
-        ruleManager.addGlobal("org.openengsb.domains.build.BuildDomain", "test");
+        ruleManager.addImport(BuildStartEvent.class.getCanonicalName());
+        ruleManager.addImport(BuildEndEvent.class.getCanonicalName());
+        ruleManager.addImport(BuildDomain.class.getCanonicalName());
+        ruleManager.addGlobal(BuildDomain.class.getCanonicalName(), "build");
     }
 
     private void addTestGlobalsAndImports() throws RuleBaseException {
-        ruleManager.addImport("org.openengsb.domains.test.TestDomain");
-        ruleManager.addImport("org.openengsb.domains.test.events.TestFailure");
-        ruleManager.addImport("org.openengsb.domains.test.events.TestSuccess");
-        ruleManager.addGlobal("org.openengsb.domains.test.TestDomain", "test");
+        ruleManager.addImport(TestStartEvent.class.getCanonicalName());
+        ruleManager.addImport(TestEndEvent.class.getCanonicalName());
+        ruleManager.addImport(TestDomain.class.getCanonicalName());
+        ruleManager.addGlobal(TestDomain.class.getCanonicalName(), "test");
     }
 
     private void addDeployGlobalsAndImports() throws RuleBaseException {
-        ruleManager.addImport("org.openengsb.domains.deploy.DeployDomain");
-        ruleManager.addImport("org.openengsb.domains.deploy.events.DeploySuccess");
-        ruleManager.addImport("org.openengsb.domains.deploy.events.DeployFailure");
-        ruleManager.addGlobal("org.openengsb.domains.deploy.DeployDomain", "deploy");
+        ruleManager.addImport(DeployStartEvent.class.getCanonicalName());
+        ruleManager.addImport(DeployEndEvent.class.getCanonicalName());
+        ruleManager.addImport(DeployDomain.class.getCanonicalName());
+        ruleManager.addGlobal(DeployDomain.class.getCanonicalName(), "deploy");
     }
 
     private void addReportGlobalsAndImports() throws RuleBaseException {
@@ -116,8 +124,7 @@ public class OpenCitConfigurator {
 
     private void addRules() {
         List<String> rules =
-            Arrays.asList(new String[]{ "updateStateOnFlowStart", "updateStateOnFlowSuccess",
-                "updateStateOnFlowFailure" });
+            Arrays.asList(new String[]{ "updateStateOnFlowStart", "updateStateOnFlowEnd" });
 
         for (String rule : rules) {
             addRule(rule);
