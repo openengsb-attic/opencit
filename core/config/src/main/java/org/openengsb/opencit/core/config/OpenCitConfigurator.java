@@ -32,7 +32,10 @@ import org.openengsb.domain.deploy.DeployDomain;
 import org.openengsb.domain.deploy.DeployEndEvent;
 import org.openengsb.domain.deploy.DeployStartEvent;
 import org.openengsb.domain.notification.NotificationDomain;
+import org.openengsb.domain.report.NoSuchReportException;
 import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.model.ReportPart;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;
 import org.openengsb.domain.test.TestEndEvent;
@@ -93,6 +96,9 @@ public class OpenCitConfigurator {
 
     private void addReportGlobalsAndImports() throws RuleBaseException {
         ruleManager.addImport(ReportDomain.class.getCanonicalName());
+        ruleManager.addImport(Report.class.getCanonicalName());
+        ruleManager.addImport(ReportPart.class.getCanonicalName());
+        ruleManager.addImport(NoSuchReportException.class.getCanonicalName());
         ruleManager.addGlobal(ReportDomain.class.getCanonicalName(), "report");
     }
 
@@ -124,7 +130,7 @@ public class OpenCitConfigurator {
 
     private void addRules() {
         List<String> rules =
-            Arrays.asList(new String[]{ "updateStateOnFlowStart", "updateStateOnFlowEnd" });
+            Arrays.asList(new String[]{ "updateStateOnFlowStart", "updateStateOnFlowEnd", "forwardEvents" });
 
         for (String rule : rules) {
             addRule(rule);
