@@ -15,7 +15,9 @@
 #
 
 when
-  v : Value (key == "deployId")
-  e : DeploySuccess (deployId == (String) v.getValue())
+  e : Event ()
+  v : Value (key == "reportId")
 then
-  projectManager.updateCurrentContextProjectState(State.OK);
+  String reportId = (String) v.getValue();
+  report.processEvent(reportId, e); 
+
