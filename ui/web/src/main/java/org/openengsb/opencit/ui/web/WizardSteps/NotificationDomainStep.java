@@ -25,13 +25,15 @@ public class NotificationDomainStep extends DynamicWizardStep {
     private DomainService domainService;
     private Project project;
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
+    private ServiceDescriptor notificationDescriptor;
+
 
     public NotificationDomainStep(Project project) {
         super(new SCMStep(project), new ResourceModel("notificationAttribute.title"),
             new ResourceModel("notificationAttribute.summary"), new Model<Project>(project));
         this.project = project;
         List<ServiceManager> manager = domainService.serviceManagersForDomain(NotificationDomain.class);
-        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(manager, "project.notificationDescriptor");
+        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(manager, "notificationDescriptor");
         add(descriptorDropDownChoice);
     }
 
@@ -61,7 +63,24 @@ public class NotificationDomainStep extends DynamicWizardStep {
                 public String getIdValue(ServiceDescriptor object, int index) {
                     return object.getImplementationType().getSimpleName();
                 }
-            });
+            }){
+            /**
+             * Whether this component's onSelectionChanged event handler should called using
+             * javascript if the selection changes.
+             *
+             * @return True if this component's onSelectionChanged event handler should
+             *         called using javascript if the selection changes
+             */
+            protected boolean wantOnSelectionChangedNotifications() {
+                return true;
+            }
+
+            @Override
+            protected void onSelectionChanged(ServiceDescriptor newSelection) {
+                super.onSelectionChanged(newSelection);
+                notificationDescriptor = newSelection;
+            }
+        };
 
         return descriptorDropDownChoice;
     }

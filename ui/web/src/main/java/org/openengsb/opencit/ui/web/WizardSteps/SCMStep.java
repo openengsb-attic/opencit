@@ -40,6 +40,7 @@ public class SCMStep extends DynamicWizardStep {
 
     @SpringBean
     private DomainService domainService;
+    private ServiceDescriptor scmDescriptor;
 
     Project project;
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
@@ -50,7 +51,7 @@ public class SCMStep extends DynamicWizardStep {
             new ResourceModel("setUpSCM.summary"), new Model<Project>(project));
         this.project = project;
         List<ServiceManager> manager = domainService.serviceManagersForDomain(ScmDomain.class);
-        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(manager, "project.scmDescriptor");
+        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(manager, "scmDescriptor");
         add(descriptorDropDownChoice);
     }
 
@@ -80,7 +81,24 @@ public class SCMStep extends DynamicWizardStep {
                 public String getIdValue(ServiceDescriptor object, int index) {
                     return object.getImplementationType().getSimpleName();
                 }
-            });
+            }){
+            /**
+             * Whether this component's onSelectionChanged event handler should called using
+             * javascript if the selection changes.
+             *
+             * @return True if this component's onSelectionChanged event handler should
+             *         called using javascript if the selection changes
+             */
+            protected boolean wantOnSelectionChangedNotifications() {
+                return true;
+            }
+
+            @Override
+            protected void onSelectionChanged(ServiceDescriptor newSelection) {
+                super.onSelectionChanged(newSelection);
+                scmDescriptor = newSelection;
+            }
+        };;
 
         return descriptorDropDownChoice;
     }
@@ -92,12 +110,16 @@ public class SCMStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        ServiceManager serviceManager = managersMap.get(project.getScmDescriptor().getName().getString(getLocale()));
+        ServiceManager serviceManager = managersMap.get(scmDescriptor.getName().getString(getLocale()));
         return new SetAttributesStep(project, serviceManager);
     }
 
     @Override
     public boolean isComplete() {
-        return (managersMap.containsKey(project.getScmDescriptor().getName().getString(getLocale())));
+        if (scmDescriptor != null) {
+            return (managersMap.containsKey(scmDescriptor.getName().getString(getLocale())));
+        }    else {
+            return false;
+        }
     }
 }

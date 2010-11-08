@@ -18,8 +18,6 @@ package org.openengsb.opencit.core.projectmanager.model;
 
 import java.io.Serializable;
 
-import org.openengsb.core.common.descriptor.ServiceDescriptor;
-
 
 public class Project implements Serializable {
 
@@ -30,9 +28,6 @@ public class Project implements Serializable {
         FAILURE;
     }
 
-    private ServiceDescriptor scmDescriptor;
-    private ServiceDescriptor buildDescriptor;
-    private ServiceDescriptor notificationDescriptor;
 
     private State state;
     private String id;
@@ -60,29 +55,5 @@ public class Project implements Serializable {
 
     public void setState(State state) {
         this.state = state;
-    }
-
-    public ServiceDescriptor getScmDescriptor() {
-        return scmDescriptor;
-    }
-
-    public void setScmDescriptor(ServiceDescriptor scmDescriptor) {
-        this.scmDescriptor = scmDescriptor;
-    }
-
-    public ServiceDescriptor getBuildDescriptor() {
-        return buildDescriptor;
-    }
-
-    public void setBuildDescriptor(ServiceDescriptor buildDescriptor) {
-        this.buildDescriptor = buildDescriptor;
-    }
-
-    public ServiceDescriptor getNotificationDescriptor() {
-        return notificationDescriptor;
-    }
-
-    public void setNotificationDescriptor(ServiceDescriptor notificationDescriptor) {
-        this.notificationDescriptor = notificationDescriptor;
     }
 }

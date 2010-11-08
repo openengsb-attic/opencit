@@ -35,12 +35,12 @@ import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.ui.web.editor.EditorPanel;
+import org.openengsb.ui.web.editor.ServiceEditorPanel;
 import org.openengsb.ui.web.model.WicketStringLocalizer;
 
 public class SetAttributesStep extends DynamicWizardStep {
     private Project project;
-    private EditorPanel editorPanel;
+    private ServiceEditorPanel editorPanel;
     private FeedbackPanel feedbackPanel;
     private boolean succeeded = false;
 
@@ -62,7 +62,7 @@ public class SetAttributesStep extends DynamicWizardStep {
         };
         Map<String, String> values = new HashMap<String, String>();
 
-        editorPanel = new EditorPanel("editor", attributes.getObject(), values,
+        editorPanel = new ServiceEditorPanel("editor", attributes.getObject(), values,
             serviceManager.getDescriptor().getFormValidator()) {
             @Override
             public void onSubmit() {

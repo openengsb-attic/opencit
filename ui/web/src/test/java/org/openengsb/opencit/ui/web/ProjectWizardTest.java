@@ -97,7 +97,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(o, is("Set up SCM"));
 
         DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:project.scmDescriptor");
+            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
     }
@@ -120,13 +120,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(o, is("Set up SCM"));
 
         DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:project.scmDescriptor");
+            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
         tester.debugComponentTrees();
 
         formTester = tester.newFormTester("wizard:form");
-        formTester.select("view:project.scmDescriptor", 0);
+        formTester.select("view:scmDescriptor", 0);
         // Step to SCMEditor
         nextStep(formTester);
 
@@ -134,12 +134,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         o = newHeader.getDefaultModelObject().toString();
         assertThat(o, is("Attributes"));
+        tester.debugComponentTrees();
 
         SimpleFormComponentLabel attributName = (SimpleFormComponentLabel) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:attributeId:row:name");
+            .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:2:row:name");
         assertThat(attributName.getDefaultModelObjectAsString(), is("attName"));
-        formTester.setValue("view:editor:form:fields:id:row:field", "ID1");
-        formTester.setValue("view:editor:form:fields:attributeId:row:field", "attribute1Value1");
+        formTester.setValue("view:editor:form:fields:1:row:field", "ID1");
+        formTester.setValue("view:editor:form:fields:2:row:field", "attribute1Value1");
         tester.submitForm("wizard:form:view:editor:form");
 
         //Step to notification domain
@@ -168,13 +169,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(o, is("Set up SCM"));
 
         DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:project.scmDescriptor");
+            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
         tester.debugComponentTrees();
 
         formTester = tester.newFormTester("wizard:form");
-        formTester.select("view:project.scmDescriptor", 0);
+        formTester.select("view:scmDescriptor", 0);
         // Step to SCMEditor
         nextStep(formTester);
 
@@ -184,10 +185,10 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(o, is("Attributes"));
 
         SimpleFormComponentLabel attributName = (SimpleFormComponentLabel) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:attributeId:row:name");
+            .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:2:row:name");
         assertThat(attributName.getDefaultModelObjectAsString(), is("attName"));
-        formTester.setValue("view:editor:form:fields:id:row:field", "ID1");
-        formTester.setValue("view:editor:form:fields:attributeId:row:field", "attribute1Value1");
+        formTester.setValue("view:editor:form:fields:1:row:field", "ID1");
+        formTester.setValue("view:editor:form:fields:2:row:field", "attribute1Value1");
         tester.submitForm("wizard:form:view:editor:form");
 
         //Step to notification domain
@@ -196,7 +197,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         tester.debugComponentTrees();
         assertThat(newHeader.getDefaultModelObjectAsString(), is("Define a notification domain"));
 
-        DropDownChoice notificationDDc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:project.notificationDescriptor");
+        DropDownChoice notificationDDc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:notificationDescriptor");
         choices = notificationDDc.getChoices();
         assertThat(choices.size(), is(1));
 
