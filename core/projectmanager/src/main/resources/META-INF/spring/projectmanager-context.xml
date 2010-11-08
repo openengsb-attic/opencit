@@ -37,6 +37,6 @@
     </bean>
   </osgi:service>
 
-  <osgi:reference id="persistenceManager" interface="org.openengsb.core.persistence.PersistenceManager" />
+  <osgi:reference id="persistenceManager" interface="org.openengsb.core.common.persistence.PersistenceManager" />
   <osgi:reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
 </beans>
