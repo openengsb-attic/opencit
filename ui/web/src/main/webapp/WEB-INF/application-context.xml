@@ -28,5 +28,6 @@
   <bean id="domainService" class="org.openengsb.core.common.service.impl.OsgiDomainService">
     <property name="domains" ref="domains" />
   </bean>
+   <osgi:list id="domains" interface="org.openengsb.core.common.DomainProvider" />
   
 </beans>
