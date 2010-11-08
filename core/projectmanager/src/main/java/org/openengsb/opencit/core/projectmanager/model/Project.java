@@ -17,9 +17,14 @@
 package org.openengsb.opencit.core.projectmanager.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Project implements Serializable {
+
+    private List<String> services = new ArrayList<String>();
+
 
 
     public enum State {
@@ -55,5 +60,13 @@ public class Project implements Serializable {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public List<String> getServices() {
+        return services;
+    }
+   
+    public void addService(String id) {
+        services.add(id);
     }
 }

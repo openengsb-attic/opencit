@@ -18,6 +18,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.SimpleFormComponentLabel;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -89,7 +90,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
 
-        // Step to SCM
+        // Step to domain selection
         nextStep(formTester);
 
         tester.debugComponentTrees();
@@ -100,13 +101,11 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         DropDownChoice ddc = (DropDownChoice) tester
             .getComponentFromLastRenderedPage("wizard:form:view:domainDropDown");
         List choices = ddc.getChoices();
-          //should contain :
+        //should contain :
         //scm, build, test, deploy, notification, report
         assertThat(choices.size(), is(6));
     }
 
-
-    @Ignore("changed logic of steps")
     @Test
     public void testSCMStep_ShouldShowDropDownWithPossibleSCM() {
         mockSetupForWizard();
@@ -116,18 +115,33 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
 
-        // Step to SCM
+        // Step to domain selection
         nextStep(formTester);
 
         tester.debugComponentTrees();
         Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         String o = newHeader.getDefaultModelObject().toString();
-        assertThat(o, is("Set up SCM"));
+        assertThat(o, is("Domain selection"));
 
         DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
-        List choices = ddc.getChoices();
+            .getComponentFromLastRenderedPage("wizard:form:view:domainDropDown");
+
+        formTester = tester.newFormTester("wizard:form");
+        formTester.select("view:domainDropDown", 0); // should be scm
+
+        // Step to SCM selection
+        nextStep(formTester);
+
+        formTester = tester.newFormTester("wizard:form");
+        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        o = newHeader.getDefaultModelObject().toString();
+        assertThat(o, is("Service Selection"));
+
+        ddc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:serviceDescriptor");
+        List<ServiceDescriptor> choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
+        assertThat(choices.get(0), Matchers.instanceOf(ServiceDescriptor.class));
+
     }
 
 
@@ -149,8 +163,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         String o = newHeader.getDefaultModelObject().toString();
         assertThat(o, is("Set up SCM"));
 
-        DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
+        DropDownChoice ddc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
         tester.debugComponentTrees();
@@ -199,8 +212,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         String o = newHeader.getDefaultModelObject().toString();
         assertThat(o, is("Set up SCM"));
 
-        DropDownChoice ddc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
+        DropDownChoice ddc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
         List choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
         tester.debugComponentTrees();
@@ -228,7 +240,8 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         tester.debugComponentTrees();
         assertThat(newHeader.getDefaultModelObjectAsString(), is("Define a notification domain"));
 
-        DropDownChoice notificationDDc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:notificationDescriptor");
+        DropDownChoice notificationDDc = (DropDownChoice) tester
+            .getComponentFromLastRenderedPage("wizard:form:view:notificationDescriptor");
         choices = notificationDDc.getChoices();
         assertThat(choices.size(), is(1));
 

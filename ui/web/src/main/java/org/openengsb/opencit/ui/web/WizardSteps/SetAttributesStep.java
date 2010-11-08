@@ -45,7 +45,7 @@ public class SetAttributesStep extends DynamicWizardStep {
     private boolean succeeded = false;
 
 
-    public SetAttributesStep(Project project, final ServiceManager serviceManager) {
+    public SetAttributesStep(final Project project, final ServiceManager serviceManager) {
         super(new CreateProjectStep(project), new ResourceModel("scmAttribute.title"),
             new ResourceModel("scmAttribute.summary"), new Model<Project>(project));
         this.project = project;
@@ -83,7 +83,9 @@ public class SetAttributesStep extends DynamicWizardStep {
                         succeeded = true;
                     }
                 } else {
-                    serviceManager.update(getValues().get("id"), getValues());
+                    String id = getValues().get("id");
+                    serviceManager.update(id, getValues());
+                    project.addService(id);
                     succeeded = true;
                 }
             }
@@ -104,7 +106,7 @@ public class SetAttributesStep extends DynamicWizardStep {
 
     @Override
     public boolean isLastStep() {
-        return false;
+        return project.getServices().size() == 6;  // at the moment there have to be 6 services in there
     }
 
     @Override

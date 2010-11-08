@@ -30,12 +30,13 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
-public class SCMStep extends DynamicWizardStep {
+public class SelectServiceStep extends DynamicWizardStep {
 
     @SpringBean
     private DomainService domainService;
@@ -43,17 +44,19 @@ public class SCMStep extends DynamicWizardStep {
 
     Project project;
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
+    private Class<? extends Domain> currentDomain;
 
 
-    public SCMStep(Project project, List<ServiceManager> serviceManagers) {
-        super(new CreateProjectStep(project), new ResourceModel("setUpSCM.title"),
-            new ResourceModel("setUpSCM.summary"), new Model<Project>(project));
+    public SelectServiceStep(Project project, Class<? extends Domain> currentDomain) {
+        super(new CreateProjectStep(project), new ResourceModel("selectService.title"),
+            new ResourceModel("selectService.summary"), new Model<Project>(project));
         this.project = project;
-
-        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(serviceManagers, "scmDescriptor");
+        this.currentDomain = currentDomain;
+        List<ServiceManager> serviceManagers = domainService.serviceManagersForDomain(currentDomain);
+        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(serviceManagers,
+            "serviceDescriptor");
         add(descriptorDropDownChoice);
     }
-
 
 
     private DropDownChoice<ServiceDescriptor> initSCMDomains(List<ServiceManager> managers, String dropDownID) {
@@ -71,7 +74,6 @@ public class SCMStep extends DynamicWizardStep {
             }
         };
 
-
         DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = new DropDownChoice<ServiceDescriptor>(dropDownID,
             dropDownModel, new IChoiceRenderer<ServiceDescriptor>() {
 
@@ -83,13 +85,7 @@ public class SCMStep extends DynamicWizardStep {
                     return object.getImplementationType().getSimpleName();
                 }
             }) {
-            /**
-             * Whether this component's onSelectionChanged event handler should called using
-             * javascript if the selection changes.
-             *
-             * @return True if this component's onSelectionChanged event handler should
-             *         called using javascript if the selection changes
-             */
+
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
             }
@@ -100,7 +96,7 @@ public class SCMStep extends DynamicWizardStep {
                 scmDescriptor = newSelection;
             }
         };
-        ;
+
 
         return descriptorDropDownChoice;
     }

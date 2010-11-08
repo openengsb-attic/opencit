@@ -22,9 +22,10 @@ import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.WizardSteps.CreateProjectStep;
+
+import com.sun.xml.internal.ws.api.wsdl.parser.ServiceDescriptor;
 
 public class ProjectWizard extends Wizard {
 
@@ -33,7 +34,9 @@ public class ProjectWizard extends Wizard {
 
     private Project project;
 
-    private ServiceDescriptor scmDescriptor;
+    private String domainDropDown;
+
+    private ServiceDescriptor serviceDescriptor;
 
     public ProjectWizard(String id) {
         super(id);
@@ -62,12 +65,20 @@ public class ProjectWizard extends Wizard {
         this.project = project;
     }
 
-    public ServiceDescriptor getScmDescriptor() {
-        return scmDescriptor;
+    public ServiceDescriptor getServiceDescriptor() {
+        return serviceDescriptor;
     }
 
-    public void setScmDescriptor(ServiceDescriptor scmDescriptor) {
-        this.scmDescriptor = scmDescriptor;
+    public void setServiceDescriptor(ServiceDescriptor serviceDescriptor) {
+        this.serviceDescriptor = serviceDescriptor;
+    }
+
+    public String getDomainDropDown() {
+        return domainDropDown;
+    }
+
+    public void setDomainDropDown(String domainDropDown) {
+        this.domainDropDown = domainDropDown;
     }
 }
 
