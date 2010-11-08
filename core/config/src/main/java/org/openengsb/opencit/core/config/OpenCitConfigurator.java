@@ -21,10 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.openengsb.core.workflow.RuleBaseException;
-import org.openengsb.core.workflow.RuleManager;
-import org.openengsb.core.workflow.model.RuleBaseElementId;
-import org.openengsb.core.workflow.model.RuleBaseElementType;
+import org.openengsb.core.common.workflow.RuleBaseException;
+import org.openengsb.core.common.workflow.RuleManager;
+import org.openengsb.core.common.workflow.model.RuleBaseElementId;
+import org.openengsb.core.common.workflow.model.RuleBaseElementType;
 import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
