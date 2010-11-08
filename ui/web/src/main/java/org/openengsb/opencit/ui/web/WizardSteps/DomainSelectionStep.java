@@ -42,7 +42,7 @@ public class DomainSelectionStep extends DynamicWizardStep {
 
     private String domainDropDown = "";
 
-    Project project;
+    private Project project;
     private Map<String, Class<? extends Domain>> managersMap = new HashMap<String, Class<? extends Domain>>();
 
 

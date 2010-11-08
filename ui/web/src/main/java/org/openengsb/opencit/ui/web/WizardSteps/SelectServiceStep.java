@@ -41,7 +41,7 @@ public class SelectServiceStep extends DynamicWizardStep {
     private DomainService domainService;
     private String serviceDescriptor;
 
-    Project project;
+    private Project project;
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
     private Class<? extends Domain> currentDomain;
 
@@ -64,6 +64,10 @@ public class SelectServiceStep extends DynamicWizardStep {
         for (ServiceManager sm : managers) {
             managersMap.put(sm.getDescriptor().getName().getString(getLocale()), sm);
             descriptors.add(sm.getDescriptor().getName().getString(getLocale()));
+        }
+
+        if (descriptors.size() == 1) {
+            serviceDescriptor = descriptors.get(0);
         }
 
         IModel<List<String>> dropDownModel = new LoadableDetachableModel<List<String>>() {
@@ -95,7 +99,6 @@ public class SelectServiceStep extends DynamicWizardStep {
                 serviceDescriptor = newSelection;
             }
         };
-
 
         return descriptorDropDownChoice;
     }
