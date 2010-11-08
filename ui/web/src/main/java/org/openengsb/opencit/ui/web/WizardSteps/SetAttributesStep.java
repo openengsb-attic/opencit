@@ -46,8 +46,8 @@ public class SetAttributesStep extends DynamicWizardStep {
 
 
     public SetAttributesStep(final Project project, final ServiceManager serviceManager) {
-        super(new CreateProjectStep(project), new ResourceModel("scmAttribute.title"),
-            new ResourceModel("scmAttribute.summary"), new Model<Project>(project));
+        super(new CreateProjectStep(project), new ResourceModel("setAttribute.title"),
+            new ResourceModel("setAttribute.summary"), new Model<Project>(project));
         this.project = project;
 
         feedbackPanel = new FeedbackPanel("feedback");

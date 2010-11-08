@@ -25,8 +25,6 @@ import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.WizardSteps.CreateProjectStep;
 
-import com.sun.xml.internal.ws.api.wsdl.parser.ServiceDescriptor;
-
 public class ProjectWizard extends Wizard {
 
     @SpringBean
@@ -36,7 +34,7 @@ public class ProjectWizard extends Wizard {
 
     private String domainDropDown;
 
-    private ServiceDescriptor serviceDescriptor;
+    private String serviceDescriptor;
 
     public ProjectWizard(String id) {
         super(id);
@@ -65,11 +63,11 @@ public class ProjectWizard extends Wizard {
         this.project = project;
     }
 
-    public ServiceDescriptor getServiceDescriptor() {
+    public String getServiceDescriptor() {
         return serviceDescriptor;
     }
 
-    public void setServiceDescriptor(ServiceDescriptor serviceDescriptor) {
+    public void setServiceDescriptor(String serviceDescriptor) {
         this.serviceDescriptor = serviceDescriptor;
     }
 

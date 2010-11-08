@@ -29,9 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.Domain;
-import org.openengsb.core.common.service.DomainService;
 import org.openengsb.domain.build.BuildDomain;
 import org.openengsb.domain.deploy.DeployDomain;
 import org.openengsb.domain.notification.NotificationDomain;
@@ -42,8 +40,6 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class DomainSelectionStep extends DynamicWizardStep {
 
-    @SpringBean
-    private DomainService domainService;
     private String domainDropDown = "";
 
     Project project;
@@ -61,6 +57,7 @@ public class DomainSelectionStep extends DynamicWizardStep {
         managersMap.put("Test Domain", TestDomain.class);
         managersMap.put("Deploy Domain", DeployDomain.class);
         managersMap.put("Report Domain", ReportDomain.class);
+
         DropDownChoice<String> descriptorDropDownChoice = initSCMDomains();
         add(descriptorDropDownChoice);
     }
@@ -107,9 +104,6 @@ public class DomainSelectionStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        if (managersMap.isEmpty()) {
-            return new FinalStep(this, project);
-        }
         Class<? extends Domain> domain = managersMap.get(domainDropDown);
         return new SelectServiceStep(project, domain);
     }

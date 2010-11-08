@@ -32,7 +32,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
-import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
@@ -40,7 +39,7 @@ public class SelectServiceStep extends DynamicWizardStep {
 
     @SpringBean
     private DomainService domainService;
-    private ServiceDescriptor scmDescriptor;
+    private String serviceDescriptor;
 
     Project project;
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
@@ -53,36 +52,36 @@ public class SelectServiceStep extends DynamicWizardStep {
         this.project = project;
         this.currentDomain = currentDomain;
         List<ServiceManager> serviceManagers = domainService.serviceManagersForDomain(currentDomain);
-        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(serviceManagers,
+        DropDownChoice<String> descriptorDropDownChoice = initSCMDomains(serviceManagers,
             "serviceDescriptor");
         add(descriptorDropDownChoice);
     }
 
 
-    private DropDownChoice<ServiceDescriptor> initSCMDomains(List<ServiceManager> managers, String dropDownID) {
-        final List<ServiceDescriptor> descritors = new ArrayList<ServiceDescriptor>();
+    private DropDownChoice<String> initSCMDomains(List<ServiceManager> managers, String dropDownID) {
+        final List<String> descriptors = new ArrayList<String>();
 
         for (ServiceManager sm : managers) {
             managersMap.put(sm.getDescriptor().getName().getString(getLocale()), sm);
-            descritors.add(sm.getDescriptor());
+            descriptors.add(sm.getDescriptor().getName().getString(getLocale()));
         }
 
-        IModel<List<ServiceDescriptor>> dropDownModel = new LoadableDetachableModel<List<ServiceDescriptor>>() {
+        IModel<List<String>> dropDownModel = new LoadableDetachableModel<List<String>>() {
             @Override
-            protected List<ServiceDescriptor> load() {
-                return descritors;
+            protected List<String> load() {
+                return descriptors;
             }
         };
 
-        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = new DropDownChoice<ServiceDescriptor>(dropDownID,
-            dropDownModel, new IChoiceRenderer<ServiceDescriptor>() {
+        DropDownChoice<String> descriptorDropDownChoice = new DropDownChoice<String>(dropDownID,
+            dropDownModel, new IChoiceRenderer<String>() {
 
-                public String getDisplayValue(ServiceDescriptor object) {
-                    return object.getName().getString(getLocale());
+                public String getDisplayValue(String object) {
+                    return object;
                 }
 
-                public String getIdValue(ServiceDescriptor object, int index) {
-                    return object.getImplementationType().getSimpleName();
+                public String getIdValue(String object, int index) {
+                    return object;
                 }
             }) {
 
@@ -91,9 +90,9 @@ public class SelectServiceStep extends DynamicWizardStep {
             }
 
             @Override
-            protected void onSelectionChanged(ServiceDescriptor newSelection) {
+            protected void onSelectionChanged(String newSelection) {
                 super.onSelectionChanged(newSelection);
-                scmDescriptor = newSelection;
+                serviceDescriptor = newSelection;
             }
         };
 
@@ -108,14 +107,14 @@ public class SelectServiceStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        ServiceManager serviceManager = managersMap.get(scmDescriptor.getName().getString(getLocale()));
+        ServiceManager serviceManager = managersMap.get(serviceDescriptor);
         return new SetAttributesStep(project, serviceManager);
     }
 
     @Override
     public boolean isComplete() {
-        if (scmDescriptor != null) {
-            return (managersMap.containsKey(scmDescriptor.getName().getString(getLocale())));
+        if (serviceDescriptor != null) {
+            return (managersMap.containsKey(serviceDescriptor));
         } else {
             return false;
         }

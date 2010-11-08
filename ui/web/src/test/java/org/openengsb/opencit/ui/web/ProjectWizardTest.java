@@ -18,9 +18,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.SimpleFormComponentLabel;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
-import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -138,113 +136,54 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(o, is("Service Selection"));
 
         ddc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:serviceDescriptor");
-        List<ServiceDescriptor> choices = ddc.getChoices();
+        List<String> choices = ddc.getChoices();
         assertThat(choices.size(), is(1));
-        assertThat(choices.get(0), Matchers.instanceOf(ServiceDescriptor.class));
-
+        assertThat(choices.get(0), is("SCMMDomain"));
     }
 
 
-    @Ignore("changed logic of steps")
     @Test
     public void testSCMSetupStep_ShouldShowSomeInputFieldsForSCMSetup() {
         mockSetupForWizard();
         tester.startPage(new Index());
         tester.clickLink("newProject");
         tester.assertContains("newProject.title");
-
-        // Step to SCM
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
+
+        // Step to domain selection
         nextStep(formTester);
 
         formTester = tester.newFormTester("wizard:form");
+        formTester.select("view:domainDropDown", 0); // should be scm
+
+        // Step to SCM selection
+        nextStep(formTester);
+        tester.debugComponentTrees();
+
+        formTester = tester.newFormTester("wizard:form");
+        formTester.select("view:serviceDescriptor", 0); // should be git
+
+        // step to attribute setup
+        nextStep(formTester);
+        formTester = tester.newFormTester("wizard:form");
+
         Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
-        String o = newHeader.getDefaultModelObject().toString();
-        assertThat(o, is("Set up SCM"));
-
-        DropDownChoice ddc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
-        List choices = ddc.getChoices();
-        assertThat(choices.size(), is(1));
-        tester.debugComponentTrees();
-
-        formTester = tester.newFormTester("wizard:form");
-        formTester.select("view:scmDescriptor", 0);
-        // Step to SCMEditor
-        nextStep(formTester);
-
-        formTester = tester.newFormTester("wizard:form");
-        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
-        o = newHeader.getDefaultModelObject().toString();
-        assertThat(o, is("Attributes"));
-        tester.debugComponentTrees();
+        assertThat(newHeader.getDefaultModelObjectAsString(), is("Attribute definition"));
 
         SimpleFormComponentLabel attributName = (SimpleFormComponentLabel) tester
             .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:2:row:name");
         assertThat(attributName.getDefaultModelObjectAsString(), is("attName"));
+        tester.debugComponentTrees();
+
         formTester.setValue("view:editor:form:fields:1:row:field", "ID1");
         formTester.setValue("view:editor:form:fields:2:row:field", "attribute1Value1");
+        //step next
         tester.submitForm("wizard:form:view:editor:form");
 
-        //Step to notification domain
         nextStep(formTester);
         newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
-        tester.debugComponentTrees();
-        assertThat(newHeader.getDefaultModelObjectAsString(), is("Define a notification domain"));
-    }
-
-
-    @Ignore("changed logic of steps")
-    @Test
-    public void testNotificationStep_ShouldShowADropdownchoiceForNotificationdomains() {
-        mockSetupForWizard();
-        tester.startPage(new Index());
-        tester.clickLink("newProject");
-        tester.assertContains("newProject.title");
-
-        // Step to SCM
-        FormTester formTester = tester.newFormTester("wizard:form");
-        formTester.setValue("view:project.id", "testID");
-        nextStep(formTester);
-
-        formTester = tester.newFormTester("wizard:form");
-        Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
-        String o = newHeader.getDefaultModelObject().toString();
-        assertThat(o, is("Set up SCM"));
-
-        DropDownChoice ddc = (DropDownChoice) tester.getComponentFromLastRenderedPage("wizard:form:view:scmDescriptor");
-        List choices = ddc.getChoices();
-        assertThat(choices.size(), is(1));
-        tester.debugComponentTrees();
-
-        formTester = tester.newFormTester("wizard:form");
-        formTester.select("view:scmDescriptor", 0);
-        // Step to SCMEditor
-        nextStep(formTester);
-
-        formTester = tester.newFormTester("wizard:form");
-        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
-        o = newHeader.getDefaultModelObject().toString();
-        assertThat(o, is("Attributes"));
-
-        SimpleFormComponentLabel attributName = (SimpleFormComponentLabel) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:2:row:name");
-        assertThat(attributName.getDefaultModelObjectAsString(), is("attName"));
-        formTester.setValue("view:editor:form:fields:1:row:field", "ID1");
-        formTester.setValue("view:editor:form:fields:2:row:field", "attribute1Value1");
-        tester.submitForm("wizard:form:view:editor:form");
-
-        //Step to notification domain
-        nextStep(formTester);
-        newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
-        tester.debugComponentTrees();
-        assertThat(newHeader.getDefaultModelObjectAsString(), is("Define a notification domain"));
-
-        DropDownChoice notificationDDc = (DropDownChoice) tester
-            .getComponentFromLastRenderedPage("wizard:form:view:notificationDescriptor");
-        choices = notificationDDc.getChoices();
-        assertThat(choices.size(), is(1));
-
+        assertThat(newHeader.getDefaultModelObjectAsString(), is("Domain selection"));
     }
 
     private void nextStep(FormTester formTester) {
