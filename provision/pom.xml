@@ -17,6 +17,7 @@
 
   <packaging>pom</packaging>
 
+  
   <dependencies>
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
@@ -59,17 +60,7 @@
       <artifactId>openengsb-core-events</artifactId>
       <version>${openengsb.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.openengsb.core</groupId>
-      <artifactId>openengsb-core-persistence</artifactId>
-      <version>${openengsb.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openengsb.core</groupId>
-      <artifactId>openengsb-core-workflow</artifactId>
-      <version>${openengsb.version}</version>
-    </dependency>
-
+   
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-example</artifactId>

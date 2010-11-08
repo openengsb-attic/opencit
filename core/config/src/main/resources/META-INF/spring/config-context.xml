@@ -28,6 +28,6 @@
     <property name="ruleManager" ref="ruleManager" />
   </bean>
 
-  <osgi:reference id="ruleManager" interface="org.openengsb.core.workflow.RuleManager" />
+  <osgi:reference id="ruleManager" interface="org.openengsb.core.common.workflow.RuleManager" />
 
 </beans>

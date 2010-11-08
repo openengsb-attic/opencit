@@ -107,7 +107,6 @@
       <scope>provided</scope>
     </dependency>
 
-
     <dependency>
       <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-web</artifactId>
