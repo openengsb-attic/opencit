@@ -33,7 +33,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.service.DomainService;
-import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class SCMStep extends DynamicWizardStep {
@@ -46,14 +45,16 @@ public class SCMStep extends DynamicWizardStep {
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
 
 
-    public SCMStep(Project project) {
+    public SCMStep(Project project, List<ServiceManager> serviceManagers) {
         super(new CreateProjectStep(project), new ResourceModel("setUpSCM.title"),
             new ResourceModel("setUpSCM.summary"), new Model<Project>(project));
         this.project = project;
-        List<ServiceManager> manager = domainService.serviceManagersForDomain(ScmDomain.class);
-        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(manager, "scmDescriptor");
+
+        DropDownChoice<ServiceDescriptor> descriptorDropDownChoice = initSCMDomains(serviceManagers, "scmDescriptor");
         add(descriptorDropDownChoice);
     }
+
+
 
     private DropDownChoice<ServiceDescriptor> initSCMDomains(List<ServiceManager> managers, String dropDownID) {
         final List<ServiceDescriptor> descritors = new ArrayList<ServiceDescriptor>();
@@ -81,7 +82,7 @@ public class SCMStep extends DynamicWizardStep {
                 public String getIdValue(ServiceDescriptor object, int index) {
                     return object.getImplementationType().getSimpleName();
                 }
-            }){
+            }) {
             /**
              * Whether this component's onSelectionChanged event handler should called using
              * javascript if the selection changes.
@@ -98,7 +99,8 @@ public class SCMStep extends DynamicWizardStep {
                 super.onSelectionChanged(newSelection);
                 scmDescriptor = newSelection;
             }
-        };;
+        };
+        ;
 
         return descriptorDropDownChoice;
     }
@@ -118,7 +120,7 @@ public class SCMStep extends DynamicWizardStep {
     public boolean isComplete() {
         if (scmDescriptor != null) {
             return (managersMap.containsKey(scmDescriptor.getName().getString(getLocale())));
-        }    else {
+        } else {
             return false;
         }
     }

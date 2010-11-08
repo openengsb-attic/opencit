@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.form.SimpleFormComponentLabel;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -80,6 +81,33 @@ public class ProjectWizardTest extends AbstractCitPageTest {
     }
 
     @Test
+    public void testChoseDomainToSetup_ShouldShowDropDownWithSCMNotificationBuildTestDeployReport() {
+        mockSetupForWizard();
+        tester.startPage(new Index());
+        tester.clickLink("newProject");
+        tester.assertContains("newProject.title");
+        FormTester formTester = tester.newFormTester("wizard:form");
+        formTester.setValue("view:project.id", "testID");
+
+        // Step to SCM
+        nextStep(formTester);
+
+        tester.debugComponentTrees();
+        Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
+        String o = newHeader.getDefaultModelObject().toString();
+        assertThat(o, is("Domain selection"));
+
+        DropDownChoice ddc = (DropDownChoice) tester
+            .getComponentFromLastRenderedPage("wizard:form:view:domainDropDown");
+        List choices = ddc.getChoices();
+          //should contain :
+        //scm, build, test, deploy, notification, report
+        assertThat(choices.size(), is(6));
+    }
+
+
+    @Ignore("changed logic of steps")
+    @Test
     public void testSCMStep_ShouldShowDropDownWithPossibleSCM() {
         mockSetupForWizard();
         tester.startPage(new Index());
@@ -102,6 +130,8 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(choices.size(), is(1));
     }
 
+
+    @Ignore("changed logic of steps")
     @Test
     public void testSCMSetupStep_ShouldShowSomeInputFieldsForSCMSetup() {
         mockSetupForWizard();
@@ -151,6 +181,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
     }
 
 
+    @Ignore("changed logic of steps")
     @Test
     public void testNotificationStep_ShouldShowADropdownchoiceForNotificationdomains() {
         mockSetupForWizard();

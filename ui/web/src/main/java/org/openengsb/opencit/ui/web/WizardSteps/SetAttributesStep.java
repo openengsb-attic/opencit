@@ -46,7 +46,7 @@ public class SetAttributesStep extends DynamicWizardStep {
 
 
     public SetAttributesStep(Project project, final ServiceManager serviceManager) {
-        super(new SCMStep(project), new ResourceModel("scmAttribute.title"),
+        super(new CreateProjectStep(project), new ResourceModel("scmAttribute.title"),
             new ResourceModel("scmAttribute.summary"), new Model<Project>(project));
         this.project = project;
 
@@ -109,7 +109,7 @@ public class SetAttributesStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        return new NotificationDomainStep(project);
+        return new DomainSelectionStep(project);
     }
 
 }
