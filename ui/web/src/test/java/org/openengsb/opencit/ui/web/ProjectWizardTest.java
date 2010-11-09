@@ -20,6 +20,7 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -30,13 +31,16 @@ import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.l10n.LocalizableString;
 import org.openengsb.core.common.service.DomainService;
+import org.openengsb.core.common.validation.FieldValidator;
 import org.openengsb.core.common.validation.FormValidator;
 import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
+import org.openengsb.core.common.validation.SingleAttributeValidationResult;
 import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.ui.web.editor.ServiceEditorPanel;
 
 public class ProjectWizardTest extends AbstractCitPageTest {
 
@@ -91,7 +95,6 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         // Step to domain selection
         nextStep(formTester);
 
-        tester.debugComponentTrees();
         Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         String o = newHeader.getDefaultModelObject().toString();
         assertThat(o, is("Domain selection"));
@@ -116,7 +119,6 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         // Step to domain selection
         nextStep(formTester);
 
-        tester.debugComponentTrees();
         Label newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         String o = newHeader.getDefaultModelObject().toString();
         assertThat(o, is("Domain selection"));
@@ -159,7 +161,6 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
         // Step to SCM selection
         nextStep(formTester);
-        tester.debugComponentTrees();
 
         formTester = tester.newFormTester("wizard:form");
         formTester.select("view:serviceDescriptor", 0); // should be git
@@ -174,13 +175,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         SimpleFormComponentLabel attributName = (SimpleFormComponentLabel) tester
             .getComponentFromLastRenderedPage("wizard:form:view:editor:form:fields:2:row:name");
         assertThat(attributName.getDefaultModelObjectAsString(), is("attName"));
-        tester.debugComponentTrees();
-
-        formTester.setValue("view:editor:form:fields:1:row:field", "ID1");
-        formTester.setValue("view:editor:form:fields:2:row:field", "attribute1Value1");
+        FormTester attributeFormTester = tester.newFormTester("wizard:form:view:editor:form");
+        attributeFormTester.setValue("fields:1:row:field", "ID1");
+        attributeFormTester.setValue("fields:2:row:field", "attribute1Value1");
+        attributeFormTester.setValue("validate",false);
         //step next
-        tester.submitForm("wizard:form:view:editor:form");
-
+        ServiceEditorPanel comp = (ServiceEditorPanel) tester.getComponentFromLastRenderedPage("wizard:form:view:editor");
+        comp.onSubmit();
         nextStep(formTester);
         newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
         assertThat(newHeader.getDefaultModelObjectAsString(), is("Domain selection"));
@@ -207,7 +208,9 @@ public class ProjectWizardTest extends AbstractCitPageTest {
 
         ServiceDescriptor scmDescriptor = mockingSetupForConnector("SCM", ScmDomain.class);
         ServiceDescriptor notificationDescriptor = mockingSetupForConnector("Notification", NotificationDomain.class);
-
+        MultipleAttributeValidationResult multipleattru = mock(MultipleAttributeValidationResult.class);
+        when(multipleattru.isValid()).thenReturn(true);
+        when(scmServiceManager.update(any(String.class), Matchers.<Map<String, String>>any())).thenReturn(multipleattru);
         when(scmServiceManager.getDescriptor()).thenReturn(scmDescriptor);
         when(notificationServiceManager.getDescriptor()).thenReturn(notificationDescriptor);
         when(domainService.serviceManagersForDomain(ScmDomain.class)).thenReturn(scmManagers);
@@ -222,6 +225,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         when(serviceDescriptor.getName()).thenReturn(localizableString);
         FormValidator formValidator = mock(FormValidator.class);
         List<String> validateFields = new ArrayList<String>();
+        validateFields.add("attributeId");
         when(formValidator.fieldsToValidate()).thenReturn(validateFields);
         when(serviceDescriptor.getFormValidator()).thenReturn(formValidator);
         MultipleAttributeValidationResult validate = mock(MultipleAttributeValidationResult.class);
@@ -237,6 +241,14 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         when(attLocalizer.getString(any(Locale.class))).thenReturn("attName");
         when(attribute.getId()).thenReturn("attributeId");
         when(attribute.getName()).thenReturn(attLocalizer);
+        FieldValidator attributeValidator = mock(FieldValidator.class);
+        SingleAttributeValidationResult attVRes = mock(SingleAttributeValidationResult.class);
+        when(attVRes.isValid()).thenReturn(true);
+        
+        when(attributeValidator.validate(any(String.class))).thenReturn(attVRes);
+
+        when(attribute.getValidator()).thenReturn(attributeValidator);
+
 
         attributes.add(attribute);
         when(serviceDescriptor.getAttributes()).thenReturn(attributes);

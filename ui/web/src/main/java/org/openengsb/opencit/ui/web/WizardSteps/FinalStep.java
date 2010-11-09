@@ -16,18 +16,42 @@
 
 package org.openengsb.opencit.ui.web.WizardSteps;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.openengsb.core.common.Domain;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class FinalStep extends DynamicWizardStep {
     public FinalStep(DynamicWizardStep prev, Project project) {
         super(prev, new ResourceModel("final.title"), new ResourceModel("final.summary"), new Model<Project>(project));
         add(new Label("projectId.confirm", new PropertyModel(project, "id")));
+        final Map<Class<? extends Domain>, String> createdServices = project.getServices();
+        Set<Class<? extends Domain>> keys = createdServices.keySet();
+
+
+        List<Class<? extends Domain>> list = new ArrayList<Class<? extends Domain>>();
+        list.addAll(keys);
+
+        ListView<Class<? extends Domain>> listview = new ListView<Class<? extends Domain>>("service.list", list) {
+            protected void populateItem(ListItem item) {
+                IModel<Class<? extends Domain>> domainModel = item.getModel();
+                Class<? extends Domain> domainClass = domainModel.getObject();
+                item.add(new Label("service.label", domainClass.getSimpleName() + " id " + createdServices.get(domainClass)));
+            }
+        };
+        add(listview);
     }
 
     @Override

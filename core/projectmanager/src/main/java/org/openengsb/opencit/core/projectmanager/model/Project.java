@@ -17,15 +17,15 @@
 package org.openengsb.opencit.core.projectmanager.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.openengsb.core.common.Domain;
 
 
 public class Project implements Serializable {
 
-    private List<String> services = new ArrayList<String>();
-
-
+    private Map<Class<?extends Domain>,String> services = new HashMap<Class<? extends Domain>, String>();
 
     public enum State {
         OK,
@@ -62,11 +62,15 @@ public class Project implements Serializable {
         this.state = state;
     }
 
-    public List<String> getServices() {
+    /**
+     *
+     * the created services, key is the type, and value the id of the service
+     */
+    public Map<Class<?extends Domain>,String> getServices() {
         return services;
     }
-   
-    public void addService(String id) {
-        services.add(id);
+
+    public void addService(Class<? extends Domain> type, String id) {
+        services.put(type, id);
     }
 }

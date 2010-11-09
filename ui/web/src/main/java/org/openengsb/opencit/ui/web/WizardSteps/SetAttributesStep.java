@@ -42,18 +42,19 @@ public class SetAttributesStep extends DynamicWizardStep {
     private Project project;
     private ServiceEditorPanel editorPanel;
     private FeedbackPanel feedbackPanel;
-    private boolean succeeded = false;
-
+    private ServiceManager serviceManager;
+    private String serviceId;
 
     public SetAttributesStep(final Project project, final ServiceManager serviceManager) {
         super(new CreateProjectStep(project), new ResourceModel("setAttribute.title"),
             new ResourceModel("setAttribute.summary"), new Model<Project>(project));
         this.project = project;
-
+        this.serviceManager = serviceManager;
         feedbackPanel = new FeedbackPanel("feedback");
         feedbackPanel.setOutputMarkupId(true);
         add(feedbackPanel);
-        
+        setComplete(false);
+
         IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
             @Override
             protected List<AttributeDefinition> load() {
@@ -75,18 +76,16 @@ public class SetAttributesStep extends DynamicWizardStep {
                         Map<String, String> attributeErrorMessages = updateWithValidation.getAttributeErrorMessages();
                         for (String value : attributeErrorMessages.values()) {
                             error(new StringResourceModel(value, this, null).getString());
-                            succeeded = false;
                         }
                     } else {
-                        //Do nothing, suceeded in creating new service
+                        serviceId = getValues().get("id");
                         info("connector.succeeded");
-                        succeeded = true;
+                        setComplete(true);
                     }
                 } else {
-                    String id = getValues().get("id");
-                    serviceManager.update(id, getValues());
-                    project.addService(id);
-                    succeeded = true;
+                    serviceId = getValues().get("id");
+                    serviceManager.update(serviceId, getValues());
+                    setComplete(true);
                 }
             }
         };
@@ -106,11 +105,15 @@ public class SetAttributesStep extends DynamicWizardStep {
 
     @Override
     public boolean isLastStep() {
-        return project.getServices().size() == 6;  // at the moment there have to be 6 services in there
+        return false;
     }
 
     @Override
     public IDynamicWizardStep next() {
+        project.addService(serviceManager.getDescriptor().getServiceType(), serviceId);
+        if (project.getServices().size() == 6) {
+            return new FinalStep(this, project);
+        }
         return new DomainSelectionStep(project);
     }
 
