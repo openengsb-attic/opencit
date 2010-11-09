@@ -48,7 +48,8 @@ public class FinalStep extends DynamicWizardStep {
             protected void populateItem(ListItem item) {
                 IModel<Class<? extends Domain>> domainModel = item.getModel();
                 Class<? extends Domain> domainClass = domainModel.getObject();
-                item.add(new Label("service.label", domainClass.getSimpleName() + " id " + createdServices.get(domainClass)));
+                item.add(
+                    new Label("service.label", domainClass.getSimpleName() + " : " + createdServices.get(domainClass)));
             }
         };
         add(listview);
