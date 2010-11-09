@@ -25,6 +25,7 @@ import org.openengsb.core.common.workflow.RuleBaseException;
 import org.openengsb.core.common.workflow.RuleManager;
 import org.openengsb.core.common.workflow.model.RuleBaseElementId;
 import org.openengsb.core.common.workflow.model.RuleBaseElementType;
+
 import org.openengsb.domain.build.BuildDomain;
 import org.openengsb.domain.build.BuildEndEvent;
 import org.openengsb.domain.build.BuildStartEvent;

@@ -19,6 +19,7 @@ package org.openengsb.opencit.core.config;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
 import org.openengsb.core.common.workflow.RuleBaseException;
 import org.openengsb.core.common.workflow.RuleManager;
 import org.openengsb.core.common.workflow.model.RuleBaseElementId;

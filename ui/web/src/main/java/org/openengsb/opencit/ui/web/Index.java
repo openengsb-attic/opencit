@@ -64,6 +64,8 @@ public class Index extends BasePage {
         if (projectsModel.getObject().isEmpty()) {
             noProjects.setVisible(true);
         }
+        this.add(new WizardLink("newProject", ProjectWizard.class));
+
     }
 
     @SuppressWarnings("serial")

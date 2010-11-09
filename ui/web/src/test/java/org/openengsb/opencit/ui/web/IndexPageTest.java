@@ -18,17 +18,22 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -36,29 +41,40 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 public class IndexPageTest extends AbstractCitPageTest {
 
     private ProjectManager projectManager;
+    private WicketTester wicketTester;
+
+    @Before
+    public void setUp() {
+        wicketTester = getTester();
+    }
 
     @Override
-    protected List<Object> getBeansForAppContext() {
+    protected Map<String, Object> getBeansForAppContextAsMap() {
+        Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
+
         projectManager = Mockito.mock(ProjectManager.class);
-        return Arrays.asList(new Object[]{ projectManager, Mockito.mock(ReportDomain.class),
-            Mockito.mock(ContextCurrentService.class) });
+        mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
+        mockedBeansMap.put("projectManager", projectManager);
+        mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
+        mockedBeansMap.put("domainService", mock(DomainService.class));
+        return mockedBeansMap;
     }
 
     @Test
     public void testProjectlistHeaderPresent_shouldWork() {
-        Page indexPage = getTester().startPage(new Index());
+        Page indexPage = wicketTester.startPage(new Index());
         getTester().assertContains(indexPage.getString("projectlist.title"));
     }
 
     @Test
     public void testNoProjects_shouldShowLabel() {
-        Page indexPage = getTester().startPage(new Index());
+        Page indexPage = wicketTester.startPage(new Index());
         getTester().assertContains(indexPage.getString("noProjectsAvailable"));
     }
 
     @Test
     public void testProjectsAvailable_shouldShowProjectId() {
-        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
+        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{new Project("test")}));
         getTester().startPage(new Index());
         getTester().assertContains("test");
         String item = "projectlistPanel:projectlist:0";
@@ -69,5 +85,20 @@ public class IndexPageTest extends AbstractCitPageTest {
         getTester().clickLink(item + ":project.details");
         String expectedPage = ProjectDetails.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
+    }
+
+    @Test
+    public void testCreateProjectLink_shouldBeCreateNewProject() {
+        Page indexPage = wicketTester.startPage(new Index());
+        wicketTester.assertContains(indexPage.getString("newProject.title"));
+    }
+
+    @Test
+    public void testCreateProjectLink_shouldReturnFirstPageForWizzard() {
+        Page indexPage = wicketTester.startPage(new Index());
+        wicketTester.assertContains(indexPage.getString("newProject.title"));
+        wicketTester.debugComponentTrees();
+        wicketTester.clickLink("newProject", true);
+        wicketTester.assertContains(indexPage.getString("newProject.summary"));
     }
 }
