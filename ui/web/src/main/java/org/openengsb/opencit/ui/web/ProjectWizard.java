@@ -22,6 +22,8 @@ import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.WizardSteps.CreateProjectStep;
 
@@ -29,6 +31,10 @@ public class ProjectWizard extends Wizard {
 
     @SpringBean
     private ContextCurrentService contextSerice;
+
+    @SpringBean
+    private ProjectManager projectManager;
+
 
     private Project project;
 
@@ -52,6 +58,11 @@ public class ProjectWizard extends Wizard {
     @Override
     public void onFinish() {
         contextSerice.createContext(project.getId());
+        try {
+            projectManager.createProject(project);
+        } catch (ProjectAlreadyExistsException e) {
+            error(e.getMessage()); // TODO: let change project id
+        }
         setResponsePage(Index.class);
     }
 

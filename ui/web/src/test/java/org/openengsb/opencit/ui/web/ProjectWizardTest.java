@@ -178,9 +178,10 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         FormTester attributeFormTester = tester.newFormTester("wizard:form:view:editor:form");
         attributeFormTester.setValue("fields:1:row:field", "ID1");
         attributeFormTester.setValue("fields:2:row:field", "attribute1Value1");
-        attributeFormTester.setValue("validate",false);
+        attributeFormTester.setValue("validate", false);
         //step next
-        ServiceEditorPanel comp = (ServiceEditorPanel) tester.getComponentFromLastRenderedPage("wizard:form:view:editor");
+        ServiceEditorPanel comp = (ServiceEditorPanel) tester
+            .getComponentFromLastRenderedPage("wizard:form:view:editor");
         comp.onSubmit();
         nextStep(formTester);
         newHeader = (Label) tester.getComponentFromLastRenderedPage("wizard:form:header:title");
@@ -210,7 +211,8 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         ServiceDescriptor notificationDescriptor = mockingSetupForConnector("Notification", NotificationDomain.class);
         MultipleAttributeValidationResult multipleattru = mock(MultipleAttributeValidationResult.class);
         when(multipleattru.isValid()).thenReturn(true);
-        when(scmServiceManager.update(any(String.class), Matchers.<Map<String, String>>any())).thenReturn(multipleattru);
+        when(scmServiceManager.update(any(String.class), Matchers.<Map<String, String>>any()))
+            .thenReturn(multipleattru);
         when(scmServiceManager.getDescriptor()).thenReturn(scmDescriptor);
         when(notificationServiceManager.getDescriptor()).thenReturn(notificationDescriptor);
         when(domainService.serviceManagersForDomain(ScmDomain.class)).thenReturn(scmManagers);
@@ -244,12 +246,8 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         FieldValidator attributeValidator = mock(FieldValidator.class);
         SingleAttributeValidationResult attVRes = mock(SingleAttributeValidationResult.class);
         when(attVRes.isValid()).thenReturn(true);
-        
         when(attributeValidator.validate(any(String.class))).thenReturn(attVRes);
-
         when(attribute.getValidator()).thenReturn(attributeValidator);
-
-
         attributes.add(attribute);
         when(serviceDescriptor.getAttributes()).thenReturn(attributes);
 
