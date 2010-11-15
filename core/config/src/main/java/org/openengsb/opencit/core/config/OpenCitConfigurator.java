@@ -33,6 +33,8 @@ import org.openengsb.domain.deploy.DeployDomain;
 import org.openengsb.domain.deploy.DeployEndEvent;
 import org.openengsb.domain.deploy.DeployStartEvent;
 import org.openengsb.domain.notification.NotificationDomain;
+import org.openengsb.domain.notification.model.Attachment;
+import org.openengsb.domain.notification.model.Notification;
 import org.openengsb.domain.report.NoSuchReportException;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
@@ -110,6 +112,8 @@ public class OpenCitConfigurator {
 
     private void addNotificationGlobalsAndImports() throws RuleBaseException {
         ruleManager.addImport(NotificationDomain.class.getCanonicalName());
+        ruleManager.addImport(Notification.class.getCanonicalName());
+        ruleManager.addImport(Attachment.class.getCanonicalName());
         ruleManager.addGlobal(NotificationDomain.class.getCanonicalName(), "notification");
     }
 

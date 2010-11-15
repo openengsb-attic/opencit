@@ -28,7 +28,9 @@ then
   Notification n = new Notification();
   n.setSubject("CIT workflow report");
   String message = "OpenCIT finished executing CI and T workflow.\n\n";
-  for(ReportPart part : r.getParts()) {
+  List parts = r.getParts();
+  for(int i = 0; i < parts.size(); i++) {
+    ReportPart part = (ReportPart) parts.get(i); 
     message = message + "Report Part: " + part.getPartName() + "\n";
     message = message + part.toString() + "\n\n";
   }
