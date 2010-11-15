@@ -16,24 +16,24 @@
     <state id="100" name="WaitForDeployToFinish" x="25" y="801" width="181" height="40" >
       <constraints>
         <constraint toNodeId="104" name="deployFinished" priority="1" >v : Value( key == "testId")
-TestEndEvent( testId == "blub" )</constraint>
+TestEndEvent( testId == v.value )</constraint>
         <constraint toNodeId="20" name="constraint" priority="1" >v : Value( key == "deployId")
-DeployEndEvent( deployId == "blub" )</constraint>
+DeployEndEvent( deployId == v.value )</constraint>
       </constraints>
     </state>
     <ruleSet id="101" name="SendReport" x="439" y="883" width="80" height="48" ruleFlowGroup="finishWorkflow" />
     <state id="38" name="WaitForTestsToFinish" x="42" y="514" width="146" height="40" >
       <constraints>
         <constraint toNodeId="39" name="testsFinished" priority="1" >v : Value( key == "testId")
-TestEndEvent( testId == "blub")</constraint>
+TestEndEvent( testId == v.value)</constraint>
       </constraints>
     </state>
     <split id="39" name="Split" x="90" y="608" width="80" height="40" type="2" >
       <constraints>
         <constraint toNodeId="5" toType="DROOLS_DEFAULT" name="testSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
-TestEndEvent(success == true, testId == "blub")</constraint>
+TestEndEvent(success == true, testId == v.value)</constraint>
         <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >v : Value( key == "testId" )
-TestEndEvent(success == false, testId == "blub")</constraint>
+TestEndEvent(success == false, testId == v.value)</constraint>
       </constraints>
     </split>
     <actionNode id="5" name="deployProject" x="63" y="698" width="103" height="40" >
@@ -42,17 +42,17 @@ insert(new Value("deployId", deployId));</action>
     </actionNode>
     <state id="36" name="WaitForBuildToFinish" x="260" y="256" width="187" height="40" >
       <constraints>
-        <constraint toNodeId="37" name="buildFinished" priority="1" >b : Value( key == "buildId")
-BuildEndEvent(buildId == "blub")</constraint>
+        <constraint toNodeId="37" name="buildFinished" priority="1" >v : Value( key == "buildId")
+BuildEndEvent(buildId == v.value)</constraint>
       </constraints>
     </state>
     <end id="6" name="End" x="310" y="884" width="80" height="40" />
     <split id="37" name="Split" x="330" y="351" width="80" height="40" type="2" >
       <constraints>
         <constraint toNodeId="26" toType="DROOLS_DEFAULT" name="buildSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "buildId" )
-BuildEndEvent( success == true, buildId == "blub")</constraint>
+BuildEndEvent( success == true, buildId == v.value)</constraint>
         <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >v : Value( key == "buildId" )
-BuildEndEvent( success == false, buildId == "blub")</constraint>
+BuildEndEvent( success == false, buildId == v.value)</constraint>
       </constraints>
     </split>
     <actionNode id="106" name="addFinishedHint" x="587" y="883" width="126" height="48" >
@@ -61,9 +61,9 @@ BuildEndEvent( success == false, buildId == "blub")</constraint>
     <split id="104" name="Gateway" x="333" y="793" width="49" height="49" type="2" >
       <constraints>
         <constraint toNodeId="105" toType="DROOLS_DEFAULT" name="deploySuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "deployId")
-DeployEndEvent( success == true, deployId == "blub")</constraint>
+DeployEndEvent( success == true, deployId == v.value)</constraint>
         <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >v : Value( key == "deployId")
-DeployEndEvent( success == false, deployId == "blub")</constraint>
+DeployEndEvent( success == false, deployId == v.value)</constraint>
       </constraints>
     </split>
     <actionNode id="15" name="startReport" x="287" y="79" width="137" height="64" >

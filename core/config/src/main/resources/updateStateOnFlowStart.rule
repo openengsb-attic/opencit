@@ -16,6 +16,6 @@
 
 when
   v : Value(key == "buildId")
-  b : BuildStartEvent(buildId == "blub")
+  b : BuildStartEvent(buildId == v.value)
 then
   projectManager.updateCurrentContextProjectState(State.IN_PROGRESS);
