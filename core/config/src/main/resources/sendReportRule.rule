@@ -22,9 +22,9 @@ then
   retract(finished);
   retract(v);
   String reportId = (String) v.getValue();
-  String project = projectManager.getCurrentContextProject();
+  Project project = projectManager.getCurrentContextProject();
   String reportName = UUID.randomUUID().toString();
-  Report r = report.generateReport(reportId, project, reportName);
+  Report r = report.generateReport(reportId, project.getId(), reportName);
   Notification n = new Notification();
   n.setSubject("CIT workflow report");
   String message = "OpenCIT finished executing CI and T workflow.\n\n";
