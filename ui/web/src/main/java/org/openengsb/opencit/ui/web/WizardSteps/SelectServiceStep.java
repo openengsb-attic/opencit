@@ -43,20 +43,16 @@ public class SelectServiceStep extends DynamicWizardStep {
 
     private Project project;
     private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
-    private Class<? extends Domain> currentDomain;
-
 
     public SelectServiceStep(Project project, Class<? extends Domain> currentDomain) {
         super(new CreateProjectStep(project), new ResourceModel("selectService.title"),
             new ResourceModel("selectService.summary"), new Model<Project>(project));
         this.project = project;
-        this.currentDomain = currentDomain;
         List<ServiceManager> serviceManagers = domainService.serviceManagersForDomain(currentDomain);
         DropDownChoice<String> descriptorDropDownChoice = initSCMDomains(serviceManagers,
             "serviceDescriptor");
         add(descriptorDropDownChoice);
     }
-
 
     private DropDownChoice<String> initSCMDomains(List<ServiceManager> managers, String dropDownID) {
         final List<String> descriptors = new ArrayList<String>();

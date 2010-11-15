@@ -23,21 +23,20 @@ import org.apache.wicket.extensions.wizard.Wizard;
 public class WizardPage extends BasePage {
     /**
      * Construct.
-     *
+     * 
      * @param wizardClass class of the wizard component
      */
-    public WizardPage(Class wizardClass) {
+    public WizardPage(Class<?> wizardClass) {
         if (wizardClass == null) {
             throw new IllegalArgumentException("argument wizardClass must be not null");
         }
         try {
-            Constructor ctor = wizardClass.getConstructor(new Class[]{String.class});
-            Wizard wizard = (Wizard) ctor.newInstance(new String[]{"wizard"});
+            Constructor<?> ctor = wizardClass.getConstructor(new Class[]{ String.class });
+            Wizard wizard = (Wizard) ctor.newInstance("wizard");
             add(wizard);
         } catch (Exception e) {
             throw new RuntimeException(e);
-		}
-	}
+        }
+    }
 
-    
 }

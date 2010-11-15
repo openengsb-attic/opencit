@@ -36,16 +36,15 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 public class FinalStep extends DynamicWizardStep {
     public FinalStep(DynamicWizardStep prev, Project project) {
         super(prev, new ResourceModel("final.title"), new ResourceModel("final.summary"), new Model<Project>(project));
-        add(new Label("projectId.confirm", new PropertyModel(project, "id")));
+        add(new Label("projectId.confirm", new PropertyModel<Project>(project, "id")));
         final Map<Class<? extends Domain>, String> createdServices = project.getServices();
         Set<Class<? extends Domain>> keys = createdServices.keySet();
-
 
         List<Class<? extends Domain>> list = new ArrayList<Class<? extends Domain>>();
         list.addAll(keys);
 
         ListView<Class<? extends Domain>> listview = new ListView<Class<? extends Domain>>("service.list", list) {
-            protected void populateItem(ListItem item) {
+            protected void populateItem(ListItem<Class<? extends Domain>> item) {
                 IModel<Class<? extends Domain>> domainModel = item.getModel();
                 Class<? extends Domain> domainClass = domainModel.getObject();
                 item.add(
@@ -65,4 +64,3 @@ public class FinalStep extends DynamicWizardStep {
         return null;
     }
 }
-
