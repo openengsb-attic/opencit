@@ -93,6 +93,12 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         updateProject(project);
     }
 
+    @Override
+    public Project getCurrentContextProject() throws NoSuchProjectException {
+        String projectId = contextService.getCurrentContextId();
+        return getProject(projectId);
+    }
+
     public void setPersistenceManager(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
     }

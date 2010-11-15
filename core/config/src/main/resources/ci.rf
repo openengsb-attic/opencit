@@ -8,82 +8,99 @@
   </header>
 
   <nodes>
-    <start id="1" name="Start" x="126" y="16" width="80" height="40" />
-    <state id="100" name="WaitForDeployToFinish" x="32" y="751" width="181" height="40" >
+    <actionNode id="102" name="setStateToFailed" x="587" y="605" width="130" height="48" >
+        <action type="expression" dialect="mvel" >projectManager.updateCurrentContextProjectState(State.FAILURE);</action>
+    </actionNode>
+    <join id="103" name="Gateway" x="331" y="607" width="49" height="49" type="2" />
+    <start id="1" name="Start" x="41" y="89" width="80" height="40" />
+    <state id="100" name="WaitForDeployToFinish" x="25" y="801" width="181" height="40" >
       <constraints>
+        <constraint toNodeId="104" name="deployFinished" priority="1" >v : Value( key == "testId")
+TestEndEvent( testId == v.getValue() )</constraint>
         <constraint toNodeId="20" name="constraint" priority="1" >v : Value( key == "deployId")
 DeployEndEvent( deployId == v.getValue() )</constraint>
       </constraints>
     </state>
-    <actionNode id="101" name="Script" x="207" y="880" width="80" height="48" >
-        <action type="expression" dialect="mvel" >Notification n = new Notification();
-n.setSubject("cit flow finished");
-n.setMessage("CIT FLOW FINISHED");
-n.setRecipient("michael.handler86@gmail.com");
-notification.notify(n);</action>
-    </actionNode>
-    <state id="38" name="WaitForTestsToFinish" x="27" y="487" width="146" height="40" >
+    <ruleSet id="101" name="SendReport" x="439" y="883" width="80" height="48" ruleFlowGroup="finishWorkflow" />
+    <state id="38" name="WaitForTestsToFinish" x="42" y="514" width="146" height="40" >
       <constraints>
-        <constraint toNodeId="39" name="constraint" priority="1" >v : Value( key == "testId")
+        <constraint toNodeId="39" name="testsFinished" priority="1" >v : Value( key == "testId")
 TestEndEvent( testId == v.getValue() )</constraint>
       </constraints>
     </state>
-    <split id="39" name="Split" x="60" y="560" width="80" height="40" type="2" >
+    <split id="39" name="Split" x="90" y="608" width="80" height="40" type="2" >
       <constraints>
-        <constraint toNodeId="5" toType="DROOLS_DEFAULT" name="constraint" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
+        <constraint toNodeId="5" toType="DROOLS_DEFAULT" name="testSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
 TestEndEvent(success == true, testId == v.getValue())</constraint>
-        <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="constraint" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
-TestEndEvent(success == false, testId == v.getValue())</constraint>
+        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
-    <actionNode id="5" name="deployProject" x="16" y="632" width="103" height="40" >
+    <actionNode id="5" name="deployProject" x="63" y="698" width="103" height="40" >
         <action type="expression" dialect="java" >boolean deployId = deploy.deploy();
 insert(new Value("deployId", deployId));</action>
     </actionNode>
-    <state id="36" name="WaitForBuildToFinish" x="73" y="264" width="187" height="40" >
+    <state id="36" name="WaitForBuildToFinish" x="260" y="256" width="187" height="40" >
       <constraints>
-        <constraint toNodeId="37" name="constraint" priority="1" >b : Value( key == "buildId")
+        <constraint toNodeId="37" name="buildFinished" priority="1" >b : Value( key == "buildId")
 BuildEndEvent(buildId == b.getValue())</constraint>
       </constraints>
     </state>
-    <end id="6" name="End" x="105" y="929" width="80" height="40" />
-    <split id="37" name="Split" x="126" y="336" width="80" height="40" type="2" >
+    <end id="6" name="End" x="310" y="884" width="80" height="40" />
+    <split id="37" name="Split" x="330" y="351" width="80" height="40" type="2" >
       <constraints>
-        <constraint toNodeId="26" toType="DROOLS_DEFAULT" name="constraint" priority="1" type="rule" dialect="mvel" >v : Value( key == "buildId" )
+        <constraint toNodeId="26" toType="DROOLS_DEFAULT" name="buildSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "buildId" )
 BuildEndEvent( success == true, buildId == v.getValue() )</constraint>
-        <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="constraint" priority="2" type="rule" dialect="mvel" >v : Value( key == "buildId" )
-BuildEndEvent( success == false, buildId == v.getValue() )</constraint>
+        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
-    <actionNode id="15" name="startReport" x="98" y="88" width="137" height="64" >
+    <actionNode id="106" name="addFinishedHint" x="587" y="883" width="126" height="48" >
+        <action type="expression" dialect="mvel" >insert(new Value("citFinished", true));</action>
+    </actionNode>
+    <split id="104" name="Gateway" x="333" y="793" width="49" height="49" type="2" >
+      <constraints>
+        <constraint toNodeId="105" toType="DROOLS_DEFAULT" name="deploySuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "depoyId")
+DeployEndEvent( success == true, depoyId == v.getValue() )</constraint>
+        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
+      </constraints>
+    </split>
+    <actionNode id="15" name="startReport" x="287" y="79" width="137" height="64" >
         <action type="expression" dialect="java" >String reportId = report.collectData();
 insert(new Value("reportId", reportId));</action>
     </actionNode>
-    <actionNode id="16" name="Start build" x="110" y="184" width="112" height="48" >
+    <actionNode id="105" name="setStateToSuccess" x="478" y="794" width="123" height="48" >
+        <action type="expression" dialect="mvel" >projectManager.updateCurrentContextProjectState(State.OK);</action>
+    </actionNode>
+    <actionNode id="16" name="Start build" x="299" y="174" width="112" height="48" >
         <action type="expression" dialect="java" >String buildId = build.build();
 insert(new Value("buildId", buildId));</action>
     </actionNode>
-    <join id="20" name="jointoSendReport" x="303" y="789" width="123" height="49" type="2" />
-    <actionNode id="26" name="Start Tests" x="45" y="408" width="95" height="48" >
+    <join id="20" name="jointoSendReport" x="626" y="793" width="123" height="49" type="2" />
+    <actionNode id="26" name="Start Tests" x="66" y="353" width="95" height="48" >
         <action type="expression" dialect="mvel" >String testId = test.runTests();
 insert(new Value("testId", testId))</action>
     </actionNode>
   </nodes>
 
   <connections>
+    <connection from="103" to="102" />
+    <connection from="37" to="103" />
+    <connection from="39" to="103" />
+    <connection from="104" to="103" />
     <connection from="5" to="100" />
-    <connection from="20" to="101" />
+    <connection from="106" to="101" />
     <connection from="26" to="38" />
     <connection from="38" to="39" />
     <connection from="39" to="5" />
     <connection from="16" to="36" />
     <connection from="101" to="6" />
     <connection from="36" to="37" />
+    <connection from="20" to="106" />
+    <connection from="100" to="104" />
     <connection from="1" to="15" />
+    <connection from="104" to="105" />
     <connection from="15" to="16" />
-    <connection from="37" to="20" />
-    <connection from="39" to="20" />
-    <connection from="100" to="20" />
+    <connection from="102" to="20" />
+    <connection from="105" to="20" />
     <connection from="37" to="26" />
   </connections>
 

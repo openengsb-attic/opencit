@@ -33,4 +33,6 @@ public interface ProjectManager {
 
     void updateCurrentContextProjectState(State state) throws NoSuchProjectException;
 
+    Project getCurrentContextProject() throws NoSuchProjectException;
+
 }

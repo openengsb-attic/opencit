@@ -19,13 +19,13 @@ package org.openengsb.opencit.core.config;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.openengsb.core.common.workflow.RuleBaseException;
 import org.openengsb.core.common.workflow.RuleManager;
 import org.openengsb.core.common.workflow.model.RuleBaseElementId;
 import org.openengsb.core.common.workflow.model.RuleBaseElementType;
-
 import org.openengsb.domain.build.BuildDomain;
 import org.openengsb.domain.build.BuildEndEvent;
 import org.openengsb.domain.build.BuildStartEvent;
@@ -57,6 +57,7 @@ public class OpenCitConfigurator {
 
     private void addGlobalsAndImports() {
         try {
+            addUtilImports();
             addScmGlobalsAndImports();
             addBuildGlobalsAndImports();
             addTestGlobalsAndImports();
@@ -67,6 +68,10 @@ public class OpenCitConfigurator {
         } catch (RuleBaseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void addUtilImports() throws RuleBaseException {
+        ruleManager.addImport(UUID.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
@@ -131,7 +136,7 @@ public class OpenCitConfigurator {
 
     private void addRules() {
         List<String> rules =
-            Arrays.asList(new String[]{ "updateStateOnFlowStart", "updateStateOnFlowEnd", "forwardEvents" });
+            Arrays.asList(new String[]{ "updateStateOnFlowStart", "sendReportRule", "forwardEvents" });
 
         for (String rule : rules) {
             addRule(rule);
