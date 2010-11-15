@@ -29,9 +29,10 @@ then
   n.setSubject("CIT workflow report");
   String message = "OpenCIT finished executing CI and T workflow.\n\n");
   for(ReportPart part : r.getParts()) {
-    message += "Report Part: "+part.getPartName() + "\n";
-    message += part.toString() + "\n\n";
+    message = message + "Report Part: " + part.getPartName() + "\n";
+    message = message + part.toString() + "\n\n";
   }
   n.setMessage(message);
   n.setRecipient("michael.handler86@gmail.com");
   notification.notify(n);
+  
