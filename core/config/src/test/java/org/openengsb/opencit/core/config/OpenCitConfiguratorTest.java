@@ -19,7 +19,6 @@ package org.openengsb.opencit.core.config;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
 import org.openengsb.core.common.workflow.RuleBaseException;
 import org.openengsb.core.common.workflow.RuleManager;
 import org.openengsb.core.common.workflow.model.RuleBaseElementId;
@@ -47,7 +46,7 @@ public class OpenCitConfiguratorTest {
         configurator.init();
         RuleBaseElementId workflowId = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
         RuleBaseElementId ruleId1 = new RuleBaseElementId(RuleBaseElementType.Rule, "updateStateOnFlowStart");
-        RuleBaseElementId ruleId2 = new RuleBaseElementId(RuleBaseElementType.Rule, "updateStateOnFlowEnd");
+        RuleBaseElementId ruleId2 = new RuleBaseElementId(RuleBaseElementType.Rule, "sendReportRule");
         RuleBaseElementId ruleId3 = new RuleBaseElementId(RuleBaseElementType.Rule, "forwardEvents");
 
         Mockito.verify(ruleManager).add(Mockito.eq(workflowId), Mockito.anyString());
