@@ -48,10 +48,10 @@ public class ProjectWizardTest extends AbstractCitPageTest {
     private ProjectManager projectManager;
     private ContextCurrentService contextSerice;
     private DomainService domainService;
-    private ServiceManager scmServiceManager;
 
     @Before
     public void setUp() {
+        Locale.setDefault(new Locale("en"));
         tester = getTester();
     }
 
@@ -84,6 +84,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
     public void testChoseDomainToSetup_ShouldShowDropDownWithSCMNotificationBuildTestDeployReport() {
         mockSetupForWizard();
         tester.startPage(new Index());
@@ -102,12 +103,13 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         DropDownChoice ddc = (DropDownChoice) tester
             .getComponentFromLastRenderedPage("wizard:form:view:domainDropDown");
         List choices = ddc.getChoices();
-        //should contain :
-        //scm, build, test, deploy, notification, report
+        // should contain :
+        // scm, build, test, deploy, notification, report
         assertThat(choices.size(), is(6));
     }
 
     @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testSCMStep_ShouldShowDropDownWithPossibleSCM() {
         mockSetupForWizard();
         tester.startPage(new Index());
@@ -142,7 +144,6 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         assertThat(choices.size(), is(1));
         assertThat(choices.get(0), is("SCMMDomain"));
     }
-
 
     @Test
     public void testSCMSetupStep_ShouldShowSomeInputFieldsForSCMSetup() {
@@ -179,7 +180,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         attributeFormTester.setValue("fields:1:row:field", "ID1");
         attributeFormTester.setValue("fields:2:row:field", "attribute1Value1");
         attributeFormTester.setValue("validate", false);
-        //step next
+        // step next
         ServiceEditorPanel comp = (ServiceEditorPanel) tester
             .getComponentFromLastRenderedPage("wizard:form:view:editor");
         comp.onSubmit();
@@ -211,7 +212,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         ServiceDescriptor notificationDescriptor = mockingSetupForConnector("Notification", NotificationDomain.class);
         MultipleAttributeValidationResult multipleattru = mock(MultipleAttributeValidationResult.class);
         when(multipleattru.isValid()).thenReturn(true);
-        when(scmServiceManager.update(any(String.class), Matchers.<Map<String, String>>any()))
+        when(scmServiceManager.update(any(String.class), Matchers.<Map<String, String>> any()))
             .thenReturn(multipleattru);
         when(scmServiceManager.getDescriptor()).thenReturn(scmDescriptor);
         when(notificationServiceManager.getDescriptor()).thenReturn(notificationDescriptor);
@@ -219,6 +220,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         when(domainService.serviceManagersForDomain(NotificationDomain.class)).thenReturn(notificationManagers);
     }
 
+    @SuppressWarnings("rawtypes")
     private ServiceDescriptor mockingSetupForConnector(String type, final Class<? extends Domain> scmDomainClass) {
 
         ServiceDescriptor serviceDescriptor = mock(ServiceDescriptor.class);
@@ -233,7 +235,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         MultipleAttributeValidationResult validate = mock(MultipleAttributeValidationResult.class);
         when(validate.isValid()).thenReturn(true);
 
-        when(formValidator.validate(Mockito.<Map<String, String>>any())).thenReturn(validate);
+        when(formValidator.validate(Mockito.<Map<String, String>> any())).thenReturn(validate);
         LocalizableString description = mock(LocalizableString.class);
         when(description.getString(any(Locale.class))).thenReturn(type + " Description");
         when(serviceDescriptor.getDescription()).thenReturn(description);
@@ -259,6 +261,5 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         });
         return serviceDescriptor;
     }
-
 
 }
