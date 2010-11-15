@@ -5,33 +5,35 @@
          type="RuleFlow" name="ci" id="ci" package-name="org.openengsb" >
 
   <header>
-    <variables>
-      <variable name="buildid" >
-        <type name="org.drools.process.core.datatype.impl.type.UndefinedDataType" />
-      </variable>
-      <variable name="testid" >
-        <type name="org.drools.process.core.datatype.impl.type.UndefinedDataType" />
-      </variable>
-      <variable name="deployid" >
-        <type name="org.drools.process.core.datatype.impl.type.UndefinedDataType" />
-      </variable>
-    </variables>
   </header>
 
   <nodes>
     <start id="1" name="Start" x="126" y="16" width="80" height="40" />
-    <state id="38" name="WaitForTestsToFinish" x="56" y="488" width="80" height="40" >
+    <state id="100" name="WaitForDeployToFinish" x="32" y="751" width="181" height="40" >
+      <constraints>
+        <constraint toNodeId="20" name="constraint" priority="1" >v : Value( key == "deployId")
+DeployEndEvent( deployId == v.getValue() )</constraint>
+      </constraints>
+    </state>
+    <actionNode id="101" name="Script" x="207" y="880" width="80" height="48" >
+        <action type="expression" dialect="mvel" >Notification n = new Notification();
+n.setSubject("cit flow finished");
+n.setMessage("CIT FLOW FINISHED");
+n.setRecipient("michael.handler86@gmail.com");
+notification.notify(n);</action>
+    </actionNode>
+    <state id="38" name="WaitForTestsToFinish" x="27" y="487" width="146" height="40" >
       <constraints>
         <constraint toNodeId="39" name="constraint" priority="1" >v : Value( key == "testId")
-TestEndEvent( testId = "testId" )</constraint>
+TestEndEvent( testId == v.getValue() )</constraint>
       </constraints>
     </state>
     <split id="39" name="Split" x="60" y="560" width="80" height="40" type="2" >
       <constraints>
         <constraint toNodeId="5" toType="DROOLS_DEFAULT" name="constraint" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
-TestEndEvent(success == true, testId == "testId")</constraint>
+TestEndEvent(success == true, testId == v.getValue())</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="constraint" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
-TestEndEvent(success == false, testId == "testId")</constraint>
+TestEndEvent(success == false, testId == v.getValue())</constraint>
       </constraints>
     </split>
     <actionNode id="5" name="deployProject" x="16" y="632" width="103" height="40" >
@@ -41,27 +43,18 @@ insert(new Value("deployId", deployId));</action>
     <state id="36" name="WaitForBuildToFinish" x="73" y="264" width="187" height="40" >
       <constraints>
         <constraint toNodeId="37" name="constraint" priority="1" >b : Value( key == "buildId")
-BuildEndEvent(buildId == b)</constraint>
+BuildEndEvent(buildId == b.getValue())</constraint>
       </constraints>
     </state>
     <end id="6" name="End" x="105" y="929" width="80" height="40" />
     <split id="37" name="Split" x="126" y="336" width="80" height="40" type="2" >
       <constraints>
         <constraint toNodeId="26" toType="DROOLS_DEFAULT" name="constraint" priority="1" type="rule" dialect="mvel" >v : Value( key == "buildId" )
-BuildEndEvent( success == true, buildId == v )</constraint>
+BuildEndEvent( success == true, buildId == v.getValue() )</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="constraint" priority="2" type="rule" dialect="mvel" >v : Value( key == "buildId" )
-BuildEndEvent( success == false, buildId == v )</constraint>
+BuildEndEvent( success == false, buildId == v.getValue() )</constraint>
       </constraints>
     </split>
-    <state id="40" name="WaitForDeployToFinish" x="14" y="704" width="181" height="40" >
-      <constraints>
-        <constraint toNodeId="20" name="constraint" priority="1" >v : Value( key == "deployId" )
-DeployEndEvent( deployId = "deployId" )</constraint>
-      </constraints>
-    </state>
-    <actionNode id="14" name="sendReport" x="105" y="857" width="80" height="40" >
-        <action type="expression" dialect="java" >notification.notify("foo42");</action>
-    </actionNode>
     <actionNode id="15" name="startReport" x="98" y="88" width="137" height="64" >
         <action type="expression" dialect="java" >String reportId = report.collectData();
 insert(new Value("reportId", reportId));</action>
@@ -70,7 +63,7 @@ insert(new Value("reportId", reportId));</action>
         <action type="expression" dialect="java" >String buildId = build.build();
 insert(new Value("buildId", buildId));</action>
     </actionNode>
-    <join id="20" name="jointoSendReport" x="99" y="776" width="123" height="49" type="2" />
+    <join id="20" name="jointoSendReport" x="303" y="789" width="123" height="49" type="2" />
     <actionNode id="26" name="Start Tests" x="45" y="408" width="95" height="48" >
         <action type="expression" dialect="mvel" >String testId = test.runTests();
 insert(new Value("testId", testId))</action>
@@ -78,19 +71,19 @@ insert(new Value("testId", testId))</action>
   </nodes>
 
   <connections>
+    <connection from="5" to="100" />
+    <connection from="20" to="101" />
     <connection from="26" to="38" />
     <connection from="38" to="39" />
     <connection from="39" to="5" />
     <connection from="16" to="36" />
-    <connection from="14" to="6" />
+    <connection from="101" to="6" />
     <connection from="36" to="37" />
-    <connection from="5" to="40" />
-    <connection from="20" to="14" />
     <connection from="1" to="15" />
     <connection from="15" to="16" />
     <connection from="37" to="20" />
     <connection from="39" to="20" />
-    <connection from="40" to="20" />
+    <connection from="100" to="20" />
     <connection from="37" to="26" />
   </connections>
 
