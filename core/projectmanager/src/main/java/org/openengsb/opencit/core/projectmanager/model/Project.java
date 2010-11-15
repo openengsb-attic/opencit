@@ -19,20 +19,19 @@ package org.openengsb.opencit.core.projectmanager.model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openengsb.core.common.Domain;
 
-
 public class Project implements Serializable {
 
-    private Map<Class<?extends Domain>,String> services = new HashMap<Class<? extends Domain>, String>();
+    private Map<String, String> services = new HashMap<String, String>();
 
     public enum State {
-        OK,
-        IN_PROGRESS,
-        FAILURE;
+            OK,
+            IN_PROGRESS,
+            FAILURE;
     }
-
 
     private State state;
     private String id;
@@ -40,7 +39,6 @@ public class Project implements Serializable {
     public Project() {
 
     }
-
 
     public Project(String id) {
         this.id = id;
@@ -63,14 +61,27 @@ public class Project implements Serializable {
     }
 
     /**
-     *
+     * 
      * the created services, key is the type, and value the id of the service
      */
-    public Map<Class<?extends Domain>,String> getServices() {
-        return services;
+    public Map<Class<? extends Domain>, String> getServices() {
+        Map<Class<? extends Domain>, String> map = new HashMap<Class<? extends Domain>, String>(services.size());
+        for (Entry<String, String> entry : services.entrySet()) {
+            map.put(getClass(entry.getKey()), entry.getValue());
+        }
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends Domain> getClass(String key) {
+        try {
+            return (Class<? extends Domain>) Class.forName(key);
+        } catch (ClassNotFoundException cnfe) {
+            throw new RuntimeException(cnfe);
+        }
     }
 
     public void addService(Class<? extends Domain> type, String id) {
-        services.put(type, id);
+        services.put(type.getName(), id);
     }
 }

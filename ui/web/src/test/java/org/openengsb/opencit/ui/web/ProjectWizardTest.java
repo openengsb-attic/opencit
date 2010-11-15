@@ -253,7 +253,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         attributes.add(attribute);
         when(serviceDescriptor.getAttributes()).thenReturn(attributes);
 
-        when(serviceDescriptor.getImplementationType()).thenAnswer(new Answer<Class>() {
+        when(serviceDescriptor.getServiceType()).thenAnswer(new Answer<Class>() {
             @Override
             public Class answer(InvocationOnMock invocation) throws Throwable {
                 return scmDomainClass;
