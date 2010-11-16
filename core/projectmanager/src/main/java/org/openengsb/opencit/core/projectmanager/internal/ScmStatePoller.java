@@ -55,6 +55,7 @@ public class ScmStatePoller {
     }
 
     public void doRun() {
+        contextService.setThreadLocalContext(projectId);
         log.info("ScmStatePoller started");
         while (!stopped) {
             if (scm.poll()) {
@@ -76,7 +77,6 @@ public class ScmStatePoller {
     }
 
     private void runFlow() {
-        contextService.setThreadLocalContext(projectId);
         try {
             workflowService.startFlow("ci");
         } catch (WorkflowException e) {
