@@ -35,6 +35,7 @@ import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
 import org.openengsb.ui.web.editor.ServiceEditorPanel;
 import org.openengsb.ui.web.model.WicketStringLocalizer;
 
@@ -42,10 +43,10 @@ public class SetAttributesStep extends DynamicWizardStep {
     private Project project;
     private ServiceEditorPanel editorPanel;
     private FeedbackPanel feedbackPanel;
-    private ServiceManager serviceManager;
+    private ServiceManagerModel serviceManager;
     private String serviceId;
 
-    public SetAttributesStep(final Project project, final ServiceManager serviceManager) {
+    public SetAttributesStep(final Project project, final ServiceManagerModel serviceManager) {
         super(new CreateProjectStep(project), new ResourceModel("setAttribute.title"),
             new ResourceModel("setAttribute.summary"), new Model<Project>(project));
         this.project = project;
@@ -58,19 +59,19 @@ public class SetAttributesStep extends DynamicWizardStep {
         IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
             @Override
             protected List<AttributeDefinition> load() {
-                return buildAttributeList(serviceManager);
+                return buildAttributeList(serviceManager.getObject());
             }
         };
         Map<String, String> values = new HashMap<String, String>();
 
         editorPanel = new ServiceEditorPanel("editor", attributes.getObject(), values,
-            serviceManager.getDescriptor().getFormValidator()) {
+            serviceManager.getObject().getDescriptor().getFormValidator()) {
             @Override
             public void onSubmit() {
                 CheckBox component = (CheckBox) editorPanel.get("form:validate");
                 boolean checkBoxValue = component.getModelObject();
                 if (checkBoxValue) {
-                    MultipleAttributeValidationResult updateWithValidation = serviceManager
+                    MultipleAttributeValidationResult updateWithValidation = serviceManager.getObject()
                         .update(getValues().get("id"), getValues());
                     if (!updateWithValidation.isValid()) {
                         Map<String, String> attributeErrorMessages = updateWithValidation.getAttributeErrorMessages();
@@ -84,7 +85,7 @@ public class SetAttributesStep extends DynamicWizardStep {
                     }
                 } else {
                     serviceId = getValues().get("id");
-                    serviceManager.update(serviceId, getValues());
+                    serviceManager.getObject().update(serviceId, getValues());
                     setComplete(true);
                 }
             }
@@ -110,7 +111,7 @@ public class SetAttributesStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        project.addService(serviceManager.getDescriptor().getServiceType(), serviceId);
+        project.addService(serviceManager.getObject().getDescriptor().getServiceType(), serviceId);
         if (project.getServices().size() == 6) {
             return new FinalStep(this, project);
         }
@@ -118,4 +119,3 @@ public class SetAttributesStep extends DynamicWizardStep {
     }
 
 }
-

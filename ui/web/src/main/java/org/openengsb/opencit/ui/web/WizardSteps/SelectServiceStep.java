@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -33,6 +32,7 @@ import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ManagerMapModel;
+import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 
 public class SelectServiceStep extends DynamicWizardStep implements SpringBeanProvider<DomainService> {
@@ -40,7 +40,7 @@ public class SelectServiceStep extends DynamicWizardStep implements SpringBeanPr
     @SpringBean
     private DomainService domainService;
 
-    private String serviceDescriptor;
+    private String serviceDescriptor = "";
 
     private Project project;
 
@@ -63,7 +63,7 @@ public class SelectServiceStep extends DynamicWizardStep implements SpringBeanPr
             descriptors.add(sm.getDescriptor().getName().getString(getLocale()));
         }
 
-        if (descriptors.size() == 1) {
+        if (descriptors.size() > 0) {
             serviceDescriptor = descriptors.get(0);
         }
 
@@ -74,28 +74,22 @@ public class SelectServiceStep extends DynamicWizardStep implements SpringBeanPr
             }
         };
 
-        DropDownChoice<String> descriptorDropDownChoice = new DropDownChoice<String>(dropDownID,
-            dropDownModel, new IChoiceRenderer<String>() {
+        DropDownChoice<String> descriptorDropDownChoice = new DropDownChoice<String>(dropDownID, new IModel<String>() {
 
-                public String getDisplayValue(String object) {
-                    return object;
-                }
-
-                public String getIdValue(String object, int index) {
-                    return object;
-                }
-            }) {
-
-            protected boolean wantOnSelectionChangedNotifications() {
-                return true;
+            @Override
+            public String getObject() {
+                return serviceDescriptor;
             }
 
             @Override
-            protected void onSelectionChanged(String newSelection) {
-                super.onSelectionChanged(newSelection);
-                serviceDescriptor = newSelection;
+            public void setObject(String newValue) {
+                serviceDescriptor = newValue;
             }
-        };
+
+            @Override
+            public void detach() {
+            }
+        }, dropDownModel);
 
         return descriptorDropDownChoice;
     }
@@ -107,8 +101,7 @@ public class SelectServiceStep extends DynamicWizardStep implements SpringBeanPr
 
     @Override
     public IDynamicWizardStep next() {
-        ServiceManager serviceManager = managerMap.getObject().get(serviceDescriptor);
-        return new SetAttributesStep(project, serviceManager);
+        return new SetAttributesStep(project, new ServiceManagerModel(serviceDescriptor, managerMap));
     }
 
     @Override
