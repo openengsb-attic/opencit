@@ -25,6 +25,8 @@ import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
 import org.openengsb.core.common.persistence.PersistenceService;
+import org.openengsb.core.common.workflow.WorkflowService;
+import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -43,8 +45,22 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     private BundleContext bundleContext;
 
+    private ScmDomain scmDomain;
+
+    private WorkflowService workflowService;
+
+    private long timeout = 600000l;
+
     public void init() {
         this.persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
+        startPollingForPresentProjects();
+    }
+
+    private void startPollingForPresentProjects() {
+        List<Project> projects = getAllProjects();
+        for (Project project : projects) {
+            setupAndStartScmPoller(project);
+        }
     }
 
     @Override
@@ -65,6 +81,17 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         if (oldCurrent != null) {
             contextService.setThreadLocalContext(oldCurrent);
         }
+        setupAndStartScmPoller(project);
+    }
+
+    private void setupAndStartScmPoller(Project project) {
+        ScmStatePoller poller = new ScmStatePoller();
+        poller.setProjectId(project.getId());
+        poller.setContextService(contextService);
+        poller.setTimeout(timeout);
+        poller.setScm(scmDomain);
+        poller.setWorkflowService(workflowService);
+        poller.start();
     }
 
     private void createAndSetContext(Project project) {
@@ -107,6 +134,10 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         Project old = getProject(project.getId());
         try {
             persistence.update(old, project);
+            String oldContext = contextService.getCurrentContextId();
+            contextService.setThreadLocalContext(project.getId());
+            setDefaultConnectors(project);
+            contextService.setThreadLocalContext(oldContext);
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not update project", e);
         }
@@ -137,6 +168,18 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     public void setContextService(ContextCurrentService contextService) {
         this.contextService = contextService;
+    }
+
+    public void setWorkflowService(WorkflowService workflowService) {
+        this.workflowService = workflowService;
+    }
+
+    public void setScmDomain(ScmDomain scmDomain) {
+        this.scmDomain = scmDomain;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 
 }
