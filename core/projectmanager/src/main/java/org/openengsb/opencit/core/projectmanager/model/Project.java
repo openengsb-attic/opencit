@@ -25,7 +25,7 @@ import org.openengsb.core.common.Domain;
 
 public class Project implements Serializable {
 
-    private Map<String, String> services = new HashMap<String, String>();
+    private Map<String, String> services;
 
     public enum State {
             OK,
@@ -41,10 +41,6 @@ public class Project implements Serializable {
     }
 
     public Project(String id) {
-        this.id = id;
-    }
-
-    public void setId(String id) {
         this.id = id;
     }
 
@@ -65,6 +61,9 @@ public class Project implements Serializable {
      * the created services, key is the type, and value the id of the service
      */
     public Map<Class<? extends Domain>, String> getServices() {
+        if (services == null) {
+            return new HashMap<Class<? extends Domain>, String>();
+        }
         Map<Class<? extends Domain>, String> map = new HashMap<Class<? extends Domain>, String>(services.size());
         for (Entry<String, String> entry : services.entrySet()) {
             map.put(getClass(entry.getKey()), entry.getValue());
@@ -82,6 +81,9 @@ public class Project implements Serializable {
     }
 
     public void addService(Class<? extends Domain> type, String id) {
+        if (services == null) {
+            services = new HashMap<String, String>();
+        }
         services.put(type.getName(), id);
     }
 }

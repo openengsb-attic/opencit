@@ -66,7 +66,7 @@ public class ScmStatePoller {
         }
     }
 
-    private void waitForFixedTime() {
+    private synchronized void waitForFixedTime() {
         try {
             wait(timeout);
         } catch (InterruptedException ie) {
@@ -84,7 +84,7 @@ public class ScmStatePoller {
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         log.info("ScmStatePoller stopped");
         stopped = true;
         notifyAll();
