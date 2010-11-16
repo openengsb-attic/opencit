@@ -18,8 +18,10 @@ package org.openengsb.opencit.ui.web.WizardSteps;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
@@ -45,7 +47,6 @@ public class DomainSelectionStep extends DynamicWizardStep {
     private Project project;
     private Map<String, Class<? extends Domain>> managersMap = new HashMap<String, Class<? extends Domain>>();
 
-
     public DomainSelectionStep(Project project) {
         super(new CreateProjectStep(project), new ResourceModel("selectDomain.title"),
             new ResourceModel("selectDomain.summary"), new Model<Project>(project));
@@ -64,11 +65,11 @@ public class DomainSelectionStep extends DynamicWizardStep {
 
     private DropDownChoice<String> initSCMDomains() {
 
-
         IModel<List<String>> dropDownModel = new LoadableDetachableModel<List<String>>() {
             @Override
             protected List<String> load() {
-                return new ArrayList<String>(managersMap.keySet());
+                Set<String> domains = new HashSet<String>(managersMap.keySet());
+                return new ArrayList<String>(domains);
             }
         };
 

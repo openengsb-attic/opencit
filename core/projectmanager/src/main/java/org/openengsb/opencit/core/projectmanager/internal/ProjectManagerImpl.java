@@ -17,7 +17,10 @@
 package org.openengsb.opencit.core.projectmanager.internal;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
@@ -49,8 +52,32 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         checkId(project.getId());
         try {
             persistence.create(project);
+            setupProject(project);
         } catch (PersistenceException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void setupProject(Project project) {
+        String oldCurrent = contextService.getThreadLocalContext();
+        createAndSetContext(project);
+        setDefaultConnectors(project);
+        if (oldCurrent != null) {
+            contextService.setThreadLocalContext(oldCurrent);
+        }
+    }
+
+    private void createAndSetContext(Project project) {
+        contextService.createContext(project.getId());
+        contextService.setThreadLocalContext(project.getId());
+    }
+
+    private void setDefaultConnectors(Project project) {
+        Map<Class<? extends Domain>, String> services = project.getServices();
+        for (Entry<Class<? extends Domain>, String> entry : services.entrySet()) {
+            String domain = entry.getKey().getSimpleName();
+            String id = entry.getValue();
+            contextService.putValue("domain/" + domain + "/defaultConnector/id", id);
         }
     }
 
