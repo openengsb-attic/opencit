@@ -19,18 +19,15 @@ package org.openengsb.opencit.ui.web.model;
 import java.util.List;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 
 @SuppressWarnings("serial")
 public class ReportModel extends LoadableDetachableModel<Report> {
-    @SpringBean
-    private ReportDomain reportDomain;
+    private SpringBeanProvider<ReportDomain> reportDomainProvider;
 
-    @SpringBean
-    private ContextCurrentService contextService;
+    private SpringBeanProvider<ContextCurrentService> contextServiceProvider;
 
     private String reportName;
 
@@ -49,13 +46,21 @@ public class ReportModel extends LoadableDetachableModel<Report> {
 
     @Override
     protected Report load() {
-        contextService.setThreadLocalContext(projectId);
-        List<Report> reports = reportDomain.getAllReports(projectId);
+        contextServiceProvider.getSpringBean().setThreadLocalContext(projectId);
+        List<Report> reports = reportDomainProvider.getSpringBean().getAllReports(projectId);
         for (Report report : reports) {
             if (report.getName().equals(reportName)) {
                 return report;
             }
         }
         throw new RuntimeException("No report with name '" + reportName + "' in project '" + projectId + "' found.");
+    }
+
+    public void setContextServiceProvider(SpringBeanProvider<ContextCurrentService> contextServiceProvider) {
+        this.contextServiceProvider = contextServiceProvider;
+    }
+
+    public void setReportDomainProvider(SpringBeanProvider<ReportDomain> reportDomainProvider) {
+        this.reportDomainProvider = reportDomainProvider;
     }
 }

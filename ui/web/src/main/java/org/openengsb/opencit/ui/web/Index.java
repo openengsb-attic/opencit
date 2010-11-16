@@ -32,9 +32,10 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ProjectModel;
+import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
 
-public class Index extends BasePage {
+public class Index extends BasePage implements SpringBeanProvider<ProjectManager> {
 
     @SpringBean
     private ProjectManager projectManager;
@@ -68,6 +69,11 @@ public class Index extends BasePage {
 
     }
 
+    @Override
+    public ProjectManager getSpringBean() {
+        return projectManager;
+    }
+
     @SuppressWarnings("serial")
     private ListView<Project> createProjectListView(IModel<List<Project>> projectsModel,
             String id) {
@@ -82,7 +88,9 @@ public class Index extends BasePage {
                 item.add(new Link<Project>("project.details", item.getModel()) {
                     @Override
                     public void onClick() {
-                        setResponsePage(new ProjectDetails(new ProjectModel(getModelObject())));
+                        ProjectModel projectModel = new ProjectModel(getModelObject());
+                        projectModel.setProjectManagerProvider(Index.this);
+                        setResponsePage(new ProjectDetails(projectModel));
                     }
                 });
             }

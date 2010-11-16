@@ -22,15 +22,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.service.DomainService;
 
 public class ManagerMapModel extends LoadableDetachableModel<Map<String, ServiceManager>> {
 
-    @SpringBean
-    private DomainService domainService;
+    private SpringBeanProvider<DomainService> domainServiceProvider;
 
     private Class<? extends Domain> domain;
 
@@ -43,11 +41,17 @@ public class ManagerMapModel extends LoadableDetachableModel<Map<String, Service
 
     @Override
     protected Map<String, ServiceManager> load() {
-        List<ServiceManager> serviceManagers = domainService.serviceManagersForDomain(domain);
+        List<ServiceManager> serviceManagers =
+            domainServiceProvider.getSpringBean().serviceManagersForDomain(domain);
         Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
         for (ServiceManager sm : serviceManagers) {
             managersMap.put(sm.getDescriptor().getName().getString(locale), sm);
         }
         return managersMap;
     }
+
+    public void setDomainServiceProvider(SpringBeanProvider<DomainService> domainServiceProvider) {
+        this.domainServiceProvider = domainServiceProvider;
+    }
+
 }

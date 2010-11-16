@@ -17,15 +17,14 @@
 package org.openengsb.opencit.ui.web.model;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 @SuppressWarnings("serial")
 public class ProjectModel extends LoadableDetachableModel<Project> {
-    @SpringBean
-    private ProjectManager projectManager;
+
+    private SpringBeanProvider<ProjectManager> projectManagerProvider;
 
     private String projectId;
 
@@ -41,9 +40,13 @@ public class ProjectModel extends LoadableDetachableModel<Project> {
     @Override
     protected Project load() {
         try {
-            return projectManager.getProject(projectId);
+            return projectManagerProvider.getSpringBean().getProject(projectId);
         } catch (NoSuchProjectException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public void setProjectManagerProvider(SpringBeanProvider<ProjectManager> projectManagerProvider) {
+        this.projectManagerProvider = projectManagerProvider;
     }
 }

@@ -35,6 +35,7 @@ import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ReportModel;
+import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
 
 public class ProjectDetails extends BasePage {
@@ -97,8 +98,21 @@ public class ProjectDetails extends BasePage {
                 item.add(new Link<Report>("report.link", item.getModel()) {
                     @Override
                     public void onClick() {
-                        IModel<Report> reportModel = new ReportModel(projectModel.getObject()
+                        ReportModel reportModel = new ReportModel(projectModel.getObject()
                             .getId(), getModelObject());
+                        reportModel.setReportDomainProvider(new SpringBeanProvider<ReportDomain>() {
+
+                            @Override
+                            public ReportDomain getSpringBean() {
+                                return reportDomain;
+                            }
+                        });
+                        reportModel.setContextServiceProvider(new SpringBeanProvider<ContextCurrentService>() {
+                            @Override
+                            public ContextCurrentService getSpringBean() {
+                                return contextService;
+                            }
+                        });
                         setResponsePage(new ReportViewPage(projectModel, reportModel));
                     }
                 });

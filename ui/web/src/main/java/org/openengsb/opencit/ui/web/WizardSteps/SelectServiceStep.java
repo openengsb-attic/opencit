@@ -27,16 +27,23 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ManagerMapModel;
+import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 
-public class SelectServiceStep extends DynamicWizardStep {
+public class SelectServiceStep extends DynamicWizardStep implements SpringBeanProvider<DomainService> {
+
+    @SpringBean
+    private DomainService domainService;
 
     private String serviceDescriptor;
 
     private Project project;
+
     private ManagerMapModel managerMap;
 
     public SelectServiceStep(Project project, Class<? extends Domain> currentDomain) {
@@ -44,6 +51,7 @@ public class SelectServiceStep extends DynamicWizardStep {
             new ResourceModel("selectService.summary"), new Model<Project>(project));
         this.project = project;
         managerMap = new ManagerMapModel(currentDomain, getLocale());
+        managerMap.setDomainServiceProvider(this);
         DropDownChoice<String> descriptorDropDownChoice = initSCMDomains("serviceDescriptor");
         add(descriptorDropDownChoice);
     }
@@ -111,4 +119,10 @@ public class SelectServiceStep extends DynamicWizardStep {
             return false;
         }
     }
+
+    @Override
+    public DomainService getSpringBean() {
+        return domainService;
+    }
+
 }
