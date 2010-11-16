@@ -17,9 +17,7 @@
 package org.openengsb.opencit.ui.web.WizardSteps;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
@@ -29,36 +27,31 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
-import org.openengsb.core.common.service.DomainService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.ManagerMapModel;
 
 public class SelectServiceStep extends DynamicWizardStep {
 
-    @SpringBean
-    private DomainService domainService;
     private String serviceDescriptor;
 
     private Project project;
-    private Map<String, ServiceManager> managersMap = new HashMap<String, ServiceManager>();
+    private ManagerMapModel managerMap;
 
     public SelectServiceStep(Project project, Class<? extends Domain> currentDomain) {
         super(new CreateProjectStep(project), new ResourceModel("selectService.title"),
             new ResourceModel("selectService.summary"), new Model<Project>(project));
         this.project = project;
-        List<ServiceManager> serviceManagers = domainService.serviceManagersForDomain(currentDomain);
-        DropDownChoice<String> descriptorDropDownChoice = initSCMDomains(serviceManagers,
-            "serviceDescriptor");
+        managerMap = new ManagerMapModel(currentDomain, getLocale());
+        DropDownChoice<String> descriptorDropDownChoice = initSCMDomains("serviceDescriptor");
         add(descriptorDropDownChoice);
     }
 
-    private DropDownChoice<String> initSCMDomains(List<ServiceManager> managers, String dropDownID) {
+    private DropDownChoice<String> initSCMDomains(String dropDownID) {
         final List<String> descriptors = new ArrayList<String>();
 
-        for (ServiceManager sm : managers) {
-            managersMap.put(sm.getDescriptor().getName().getString(getLocale()), sm);
+        for (ServiceManager sm : managerMap.getObject().values()) {
             descriptors.add(sm.getDescriptor().getName().getString(getLocale()));
         }
 
@@ -106,14 +99,14 @@ public class SelectServiceStep extends DynamicWizardStep {
 
     @Override
     public IDynamicWizardStep next() {
-        ServiceManager serviceManager = managersMap.get(serviceDescriptor);
+        ServiceManager serviceManager = managerMap.getObject().get(serviceDescriptor);
         return new SetAttributesStep(project, serviceManager);
     }
 
     @Override
     public boolean isComplete() {
         if (serviceDescriptor != null) {
-            return (managersMap.containsKey(serviceDescriptor));
+            return (managerMap.getObject().containsKey(serviceDescriptor));
         } else {
             return false;
         }
