@@ -75,7 +75,7 @@ public class Project implements Serializable {
     @SuppressWarnings("unchecked")
     private Class<? extends Domain> getClass(String key) {
         try {
-            return (Class<? extends Domain>) Class.forName(key);
+            return (Class<? extends Domain>) getClass().getClassLoader().loadClass(key);
         } catch (ClassNotFoundException cnfe) {
             throw new RuntimeException(cnfe);
         }
