@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -59,6 +59,18 @@ public class DomainSelectionStep extends DynamicWizardStep {
         managersMap.put("Deploy Domain", DeployDomain.class);
         managersMap.put("Report Domain", ReportDomain.class);
 
+        Map<Class<? extends Domain>, String> services = project.getServices();
+        Set<String> toRemove = new HashSet<String>();
+        for (Entry<String, Class<? extends Domain>> entry : managersMap.entrySet()) {
+            if (services.containsKey(entry.getValue())) {
+                toRemove.add(entry.getKey());
+            }
+        }
+        for (String s : toRemove) {
+            managersMap.remove(s);
+        }
+        domainDropDown = managersMap.keySet().iterator().next();
+
         DropDownChoice<String> descriptorDropDownChoice = initSCMDomains();
         add(descriptorDropDownChoice);
     }
@@ -73,28 +85,19 @@ public class DomainSelectionStep extends DynamicWizardStep {
             }
         };
 
-        DropDownChoice<String> descriptorDropDownChoice = new DropDownChoice<String>("domainDropDown", dropDownModel,
-            new IChoiceRenderer<String>() {
-
-                public String getDisplayValue(String object) {
-                    return object;
+        DropDownChoice<String> descriptorDropDownChoice =
+            new DropDownChoice<String>("domainDropDown", new IModel<String>() {
+                public String getObject() {
+                    return domainDropDown;
                 }
 
-                public String getIdValue(String object, int index) {
-                    return object;
+                public void setObject(String object) {
+                    domainDropDown = object;
                 }
-            }) {
-            @Override
-            protected boolean wantOnSelectionChangedNotifications() {
-                return true;
-            }
 
-            @Override
-            protected void onSelectionChanged(String newSelection) {
-                super.onSelectionChanged(newSelection);
-                domainDropDown = newSelection;
-            }
-        };
+                public void detach() {
+                }
+            }, dropDownModel);
         return descriptorDropDownChoice;
     }
 
