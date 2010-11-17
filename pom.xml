@@ -18,6 +18,10 @@
     <plugin.assembly.version>2.2-beta-5</plugin.assembly.version>
     <jdk.version>1.6</jdk.version>
     <plugin.pax.version>1.4</plugin.pax.version>
+    <plugin.deploy.version>2.5</plugin.deploy.version>
+    <maven.plugin.compiler.version>2.3.1</maven.plugin.compiler.version>
+    <maven.plugin.enforcer.version>1.0</maven.plugin.enforcer.version>
+    <plugin.resources.version>2.4.3</plugin.resources.version>
   </properties>
 
   <packaging>pom</packaging>
@@ -31,7 +35,7 @@
   </modules>
 
  <build>
-    <finalName>opencit-${version}</finalName>
+    <finalName>opencit-${project.version}</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -44,6 +48,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.plugin.compiler.version}</version>
         <configuration>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
@@ -55,6 +60,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven.plugin.enforcer.version}</version>
         <executions>
           <execution>
             <id>enforce-maven</id>
@@ -87,11 +93,21 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
+        <version>${plugin.deploy.version}</version>
         <configuration>
           <remoteOBR>true</remoteOBR>
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${plugin.resources.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <profiles>
