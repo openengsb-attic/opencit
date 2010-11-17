@@ -134,7 +134,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         Project old = getProject(project.getId());
         try {
             persistence.update(old, project);
-            String oldContext = contextService.getCurrentContextId();
+            String oldContext = contextService.getThreadLocalContext();
             contextService.setThreadLocalContext(project.getId());
             setDefaultConnectors(project);
             contextService.setThreadLocalContext(oldContext);
@@ -145,7 +145,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     @Override
     public void updateCurrentContextProjectState(State state) throws NoSuchProjectException {
-        String projectId = contextService.getCurrentContextId();
+        String projectId = contextService.getThreadLocalContext();
         Project project = getProject(projectId);
         project.setState(state);
         updateProject(project);
@@ -153,7 +153,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     @Override
     public Project getCurrentContextProject() throws NoSuchProjectException {
-        String projectId = contextService.getCurrentContextId();
+        String projectId = contextService.getThreadLocalContext();
         return getProject(projectId);
     }
 

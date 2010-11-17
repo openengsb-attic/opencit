@@ -49,7 +49,7 @@ public class ProjectManagerImplTest {
         persistenceMock = Mockito.mock(PersistenceService.class);
         contextMock = Mockito.mock(ContextCurrentService.class);
 
-        Mockito.when(contextMock.getCurrentContextId()).thenReturn("test");
+        Mockito.when(contextMock.getThreadLocalContext()).thenReturn("test");
 
         PersistenceManager persistenceManagerMock = Mockito.mock(PersistenceManager.class);
         Mockito.when(persistenceManagerMock.getPersistenceForBundle(Mockito.any(Bundle.class))).thenReturn(
