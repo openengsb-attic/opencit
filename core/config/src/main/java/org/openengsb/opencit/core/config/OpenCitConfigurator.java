@@ -183,9 +183,19 @@ public class OpenCitConfigurator {
 
     private void addGlobal(String clazz, String name) throws RuleBaseException {
         if (isGlobalPresent(name)) {
-            ruleManager.removeGlobal(name);
+            checkGlobal(clazz, name);
+        } else {
+            ruleManager.addGlobal(clazz, name);
         }
-        ruleManager.addGlobal(clazz, name);
+    }
+
+    private void checkGlobal(String clazz, String name) throws RuleBaseException {
+        Map<String, String> globals = ruleManager.listGlobals();
+        String oldClazz = globals.get(name);
+        if (!oldClazz.equals(clazz)) {
+            throw new IllegalStateException("Uncompatible global with name '" + name + "' former global class '"
+                    + oldClazz + "' new global class '" + clazz + "'.");
+        }
     }
 
     private boolean isGlobalPresent(String global) {
