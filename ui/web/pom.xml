@@ -121,8 +121,8 @@
       <version>${openengsb.version}</version>
       <type>jar</type>
       <classifier>classes</classifier>
-  </dependency>
-    
+    </dependency>
+
     <dependency>
       <groupId>org.openengsb.opencit.core</groupId>
       <artifactId>opencit-core-config</artifactId>
@@ -185,6 +185,24 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
