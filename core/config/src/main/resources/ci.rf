@@ -18,7 +18,7 @@
       <constraints>
         <constraint toNodeId="5" toType="DROOLS_DEFAULT" name="testSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
 TestEndEvent(success == true, testId == v.value)</constraint>
-        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >v : Value( key == "testId" )
+        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
 TestEndEvent(success == false, testId == v.value)</constraint>
       </constraints>
     </split>
@@ -31,7 +31,7 @@ insert(new Value("deployId", deployId));</action>
       <constraints>
         <constraint toNodeId="26" toType="DROOLS_DEFAULT" name="buildSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "buildId" )
 BuildEndEvent( success == true, buildId == v.value)</constraint>
-        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >v : Value( key == "buildId" )
+        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="1" type="rule" dialect="mvel" >v : Value( key == "buildId" )
 BuildEndEvent( success == false, buildId == v.value)</constraint>
       </constraints>
     </split>
@@ -59,16 +59,16 @@ BuildEndEvent( success == false, buildId == v.value)</constraint>
       <constraints>
         <constraint toNodeId="105" toType="DROOLS_DEFAULT" name="deploySuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "deployId")
 DeployEndEvent( success == true, deployId == v.value)</constraint>
-        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="2" type="rule" dialect="mvel" >v : Value( key == "deployId")
+        <constraint toNodeId="103" toType="DROOLS_DEFAULT" name="otherwise" priority="1" type="rule" dialect="mvel" >v : Value( key == "deployId")
 DeployEndEvent( success == false, deployId == v.value)</constraint>
       </constraints>
     </split>
-    <actionNode id="105" name="setStateToSuccess" x="478" y="794" width="123" height="48" >
-        <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.OK);</action>
-    </actionNode>
     <actionNode id="15" name="startReport" x="287" y="79" width="137" height="64" >
         <action type="expression" dialect="java" >Object reportId = report.collectData();
 insert(new Value("reportId", reportId));</action>
+    </actionNode>
+    <actionNode id="105" name="setStateToSuccess" x="478" y="794" width="123" height="48" >
+        <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.OK);</action>
     </actionNode>
     <actionNode id="16" name="Start build" x="299" y="174" width="112" height="48" >
         <action type="expression" dialect="java" >Object buildId = build.build();
@@ -98,8 +98,8 @@ insert(new Value("testId", testId));</action>
     <connection from="107" to="108" />
     <connection from="20" to="106" />
     <connection from="112" to="104" />
-    <connection from="104" to="105" />
     <connection from="1" to="15" />
+    <connection from="104" to="105" />
     <connection from="15" to="16" />
     <connection from="102" to="20" />
     <connection from="105" to="20" />

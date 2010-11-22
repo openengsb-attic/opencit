@@ -35,6 +35,6 @@ then
     message = message + new String(part.getContent()) + "\n\n";
   }
   n.setMessage(message);
-  n.setRecipient("michael.handler86@gmail.com");
+  n.setRecipient(project.getEmail());
   notification.notify(n);
   
