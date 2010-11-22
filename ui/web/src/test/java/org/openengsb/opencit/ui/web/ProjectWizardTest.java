@@ -76,6 +76,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         tester.assertContains("newProject.title");
         FormTester formTester = tester.newFormTester("wizard:form");
         formTester.setValue("view:project.id", "testID");
+        formTester.setValue("view:project.email", "someMail");
 
         nextStep(formTester);
         ProjectWizard wizard = (ProjectWizard) tester.getComponentFromLastRenderedPage("wizard");
