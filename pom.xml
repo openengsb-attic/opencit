@@ -9,7 +9,7 @@
 
   <name>OpenCIT :: Parent</name>
 
-  <description>Continuous Integration Server based on the OpenEngsB</description>
+  <description>Continuous Integration Server based on the OpenEngSB</description>
 
   <properties>
     <openengsb.version>1.0.0-SNAPSHOT</openengsb.version>
