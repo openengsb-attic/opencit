@@ -19,6 +19,10 @@ The OpenCIT is developed and released under the Apache 2 license. The license
 file is packaged with this distribution (LICENSE), but also available at [1]. The 
 included NOTICE file lists all external libraries and there specific licenses.
 
+== OpenCIT ==
+
+The OpenCIT is a continuous integration and test automation tool.
+
 == OpenEngSB ==
 
 The OpenCIT is developed based upon the OpenEngSB. Currently the project is
