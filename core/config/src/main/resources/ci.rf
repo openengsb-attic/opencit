@@ -8,11 +8,29 @@
   </header>
 
   <nodes>
+    <start id="1" name="Start" x="46" y="43" width="80" height="40" />
+    <actionNode id="5" name="deployProject" x="66" y="678" width="103" height="40" >
+        <action type="expression" dialect="java" >Object deployId = deploy.deploy();
+insert(new Value("deployId", deployId));</action>
+    </actionNode>
+    <end id="6" name="End" x="310" y="884" width="80" height="40" />
+    <actionNode id="15" name="startReport" x="287" y="29" width="137" height="64" >
+        <action type="expression" dialect="java" >Object reportId = report.collectData();
+insert(new Value("reportId", reportId));</action>
+    </actionNode>
+    <actionNode id="16" name="Start build" x="303" y="120" width="112" height="48" >
+        <action type="expression" dialect="java" >Object buildId = build.build();
+insert(new Value("buildId", buildId));</action>
+    </actionNode>
+    <join id="20" name="jointoSendReport" x="626" y="793" width="123" height="49" type="2" />
+    <actionNode id="26" name="Start Tests" x="66" y="353" width="95" height="48" >
+        <action type="expression" dialect="java" >Object testId = test.runTests();
+insert(new Value("testId", testId));</action>
+    </actionNode>
     <actionNode id="102" name="setStateToFailed" x="587" y="605" width="130" height="48" >
         <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.FAILURE);</action>
     </actionNode>
     <join id="103" name="Gateway" x="344" y="604" width="49" height="49" type="2" />
-    <start id="1" name="Start" x="41" y="89" width="80" height="40" />
     <ruleSet id="101" name="SendReport" x="439" y="883" width="80" height="48" ruleFlowGroup="finishWorkflow" />
     <split id="39" name="Split" x="77" y="608" width="80" height="40" type="2" >
       <constraints>
@@ -22,11 +40,6 @@ TestEndEvent(success == true, testId == v.value)</constraint>
 TestEndEvent(success == false, testId == v.value)</constraint>
       </constraints>
     </split>
-    <actionNode id="5" name="deployProject" x="63" y="698" width="103" height="40" >
-        <action type="expression" dialect="java" >Object deployId = deploy.deploy();
-insert(new Value("deployId", deployId));</action>
-    </actionNode>
-    <end id="6" name="End" x="310" y="884" width="80" height="40" />
     <split id="37" name="Split" x="325" y="360" width="80" height="40" type="2" >
       <constraints>
         <constraint toNodeId="26" toType="DROOLS_DEFAULT" name="buildSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "buildId" )
@@ -41,7 +54,7 @@ BuildEndEvent( success == false, buildId == v.value)</constraint>
         <eventFilter type="eventType" eventType="DeployEndEvent" />
       </eventFilters>
     </eventNode>
-    <join id="108" name="Join" x="321" y="259" width="80" height="40" type="1" />
+    <join id="108" name="Join" x="322" y="288" width="80" height="40" type="1" />
     <eventNode id="109" name="WaitForTestEndEvent" x="192" y="545" width="146" height="40" >
       <eventFilters>
         <eventFilter type="eventType" eventType="TestEndEvent" />
@@ -50,7 +63,7 @@ BuildEndEvent( success == false, buildId == v.value)</constraint>
     <actionNode id="106" name="addFinishedHint" x="587" y="883" width="126" height="48" >
         <action type="expression" dialect="java" >insert(new Value("citFinished", new Object()));</action>
     </actionNode>
-    <eventNode id="107" name="WaitForBuildEndEvent" x="581" y="258" width="170" height="40" >
+    <eventNode id="107" name="WaitForBuildEndEvent" x="577" y="287" width="170" height="40" >
       <eventFilters>
         <eventFilter type="eventType" eventType="BuildEndEvent" />
       </eventFilters>
@@ -66,52 +79,45 @@ DeployEndEvent( success == false, deployId == v.value)</constraint>
     <actionNode id="105" name="setStateToSuccess" x="478" y="794" width="123" height="48" >
         <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.OK);</action>
     </actionNode>
-    <actionNode id="15" name="startReport" x="287" y="79" width="137" height="64" >
-        <action type="expression" dialect="java" >Object reportId = report.collectData();
-insert(new Value("reportId", reportId));</action>
-    </actionNode>
-    <actionNode id="16" name="Start build" x="299" y="174" width="112" height="48" >
-        <action type="expression" dialect="java" >Object buildId = build.build();
-insert(new Value("buildId", buildId));</action>
-    </actionNode>
+    <ruleSet id="118" name="ForwardEvent" x="77" y="743" width="80" height="40" ruleFlowGroup="forwardEvents" />
+    <ruleSet id="117" name="ForwardEvent" x="73" y="422" width="80" height="40" ruleFlowGroup="forwardEvents" />
+    <ruleSet id="116" name="ForwardEvent" x="319" y="203" width="80" height="40" ruleFlowGroup="forwardEvents" />
     <ruleSet id="115" name="ForwardEvent" x="226" y="484" width="80" height="40" ruleFlowGroup="forwardEvents" />
-    <ruleSet id="114" name="ForwardEvent" x="449" y="260" width="80" height="40" ruleFlowGroup="forwardEvents" />
-    <join id="20" name="jointoSendReport" x="626" y="793" width="123" height="49" type="2" />
+    <ruleSet id="114" name="ForwardEvent" x="445" y="286" width="80" height="40" ruleFlowGroup="forwardEvents" />
     <ruleSet id="113" name="ForwardEvent" x="75" y="862" width="80" height="40" ruleFlowGroup="forwardEvents" />
     <join id="112" name="Join" x="76" y="800" width="80" height="40" type="1" />
-    <actionNode id="26" name="Start Tests" x="66" y="353" width="95" height="48" >
-        <action type="expression" dialect="java" >Object testId = test.runTests();
-insert(new Value("testId", testId));</action>
-    </actionNode>
   </nodes>
 
   <connections>
+    <connection from="39" to="5" />
+    <connection from="101" to="6" />
+    <connection from="1" to="15" />
+    <connection from="15" to="16" />
+    <connection from="102" to="20" />
+    <connection from="105" to="20" />
+    <connection from="37" to="26" />
     <connection from="103" to="102" />
     <connection from="37" to="103" />
     <connection from="39" to="103" />
     <connection from="104" to="103" />
     <connection from="106" to="101" />
     <connection from="110" to="39" />
-    <connection from="39" to="5" />
-    <connection from="101" to="6" />
     <connection from="108" to="37" />
-    <connection from="26" to="110" />
     <connection from="115" to="110" />
-    <connection from="16" to="108" />
+    <connection from="117" to="110" />
     <connection from="114" to="108" />
+    <connection from="116" to="108" />
     <connection from="20" to="106" />
     <connection from="112" to="104" />
     <connection from="104" to="105" />
-    <connection from="1" to="15" />
-    <connection from="15" to="16" />
+    <connection from="5" to="118" />
+    <connection from="26" to="117" />
+    <connection from="16" to="116" />
     <connection from="109" to="115" />
     <connection from="107" to="114" />
-    <connection from="102" to="20" />
-    <connection from="105" to="20" />
     <connection from="111" to="113" />
-    <connection from="5" to="112" />
     <connection from="113" to="112" />
-    <connection from="37" to="26" />
+    <connection from="118" to="112" />
   </connections>
 
 </process>
