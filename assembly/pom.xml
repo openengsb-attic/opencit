@@ -41,8 +41,8 @@
     <settings.karaf.home>.</settings.karaf.home>
     <settings.karaf.base>.</settings.karaf.base>
     <settings.karaf.data>${settings.karaf.base}/data</settings.karaf.data>
-    <org.osgi.service.http.port>8090</org.osgi.service.http.port>
-    <org.osgi.service.http.port.secure>8091</org.osgi.service.http.port.secure>
+    <org.osgi.service.http.port>8095</org.osgi.service.http.port>
+    <org.osgi.service.http.port.secure>8096</org.osgi.service.http.port.secure>
 
     <!-- platform/settings.debug.composite -->
     <debug.felix.fileinstall.dir>../assembly/target/opencit-${project.version}-config/opencit-${project.version}/config</debug.felix.fileinstall.dir>
