@@ -16,7 +16,6 @@
 
 ruleflow-group "updateProjectState"
 when
-  v : Value(key == "buildId")
-  b : BuildStartEvent(buildId == v.value)
+  b : BuildStartEvent()
 then
   projectManager.updateCurrentContextProjectState(State.IN_PROGRESS);

@@ -28,15 +28,13 @@ then
   Notification n = new Notification();
   n.setSubject("CIT workflow report");
   String message = "OpenCIT finished executing CI and T workflow.\n\n";
-  n.setMessage(message);
   List parts = r.getParts();
-  List attachments = new ArrayList();
   for(int i = 0; i < parts.size(); i++) {
     ReportPart part = (ReportPart) parts.get(i); 
-    Attachment a = new Attachment(part.getContent(), part.getContentType(), part.getPartName());
-    attachments.add(a);
+    message = message + "Report Part: " + part.getPartName() + "\n";
+    message = message + new String(part.getBytes()) + "\n\n";
   }
-  n.setAttachments(attachments);
+  n.setMessage(message);
   n.setRecipient(project.getNotificationRecipient());
   notification.notify(n);
   
