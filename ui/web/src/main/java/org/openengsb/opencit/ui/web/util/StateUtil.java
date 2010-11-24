@@ -24,7 +24,7 @@ public final class StateUtil {
 
     public static String getImage(Project project) {
         if (project.getState() == null) {
-            return "images/traffic_light_green.png";
+            return "images/traffic_light_none.png";
         }
         switch (project.getState()) {
             case OK:
@@ -34,7 +34,7 @@ public final class StateUtil {
             case FAILURE:
                 return "images/traffic_light_red.png";
             default:
-                return "images/traffic_light_green.png";
+                return "images/traffic_light_none.png";
         }
     }
 }

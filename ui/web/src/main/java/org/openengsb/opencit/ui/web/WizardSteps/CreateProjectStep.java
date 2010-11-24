@@ -31,7 +31,7 @@ public class CreateProjectStep extends DynamicWizardStep {
             new Model<Project>(project));
         this.project = project;
         add(new RequiredTextField<String>("project.id"));
-        add(new RequiredTextField<String>("project.email"));
+        add(new RequiredTextField<String>("project.notificationRecipient"));
     }
 
     @Override

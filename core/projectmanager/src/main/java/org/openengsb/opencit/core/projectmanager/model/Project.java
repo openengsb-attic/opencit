@@ -35,7 +35,7 @@ public class Project implements Serializable {
 
     private State state;
     private String id;
-    private String email;
+    private String notificationRecipient;
 
     public Project() {
 
@@ -49,12 +49,12 @@ public class Project implements Serializable {
         return id;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNotificationRecipient(String notificationRecipient) {
+        this.notificationRecipient = notificationRecipient;
     }
 
-    public String getEmail() {
-        return email;
+    public String getNotificationRecipient() {
+        return notificationRecipient;
     }
 
     public State getState() {
