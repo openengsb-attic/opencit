@@ -65,8 +65,9 @@ public class ProjectDetails extends BasePage {
     public ProjectDetails(IModel<Project> projectModel) {
         this.projectModel = projectModel;
 
-        add(new Label("project.id", projectModel.getObject().getId()));
-        add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(projectModel.getObject()))));
+        Project project = projectModel.getObject();
+        add(new Label("project.id", project.getId()));
+        add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(project))));
         add(new BookmarkablePageLink<Index>("back", Index.class));
 
         Form<Project> form = new Form<Project>("workflowForm");
@@ -93,7 +94,7 @@ public class ProjectDetails extends BasePage {
 
         };
         flowButton.setOutputMarkupId(true);
-        flowButton.setEnabled(projectModel.getObject().getState() != State.IN_PROGRESS);
+        flowButton.setEnabled(project.getState() != State.IN_PROGRESS);
         form.add(flowButton);
         add(form);
 
