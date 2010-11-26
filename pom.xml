@@ -18,6 +18,7 @@
     <plugin.pax.version>1.4</plugin.pax.version>
     <plugin.deploy.version>2.5</plugin.deploy.version>
     <maven.plugin.compiler.version>2.3.1</maven.plugin.compiler.version>
+    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.enforcer.version>1.0</maven.plugin.enforcer.version>
     <plugin.resources.version>2.4.3</plugin.resources.version>
     <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
@@ -34,6 +35,7 @@
   </licenses>
 
   <modules>
+    <module>docs</module>
     <module>poms</module>
     <module>provision</module>
     <module>core</module>
@@ -51,6 +53,50 @@
     <system>JIRA</system>
     <url>http://issues.openengsb.org/jira/browse/OPENCIT</url>
   </issueManagement>
+
+  <developers>
+    <developer>
+      <id>mha</id>
+      <name>Michael Handler</name>
+      <email>michael.handler [at] fullstop.at</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Project Lead</role>
+        <role>Developer</role>
+        <role>Release Manager</role>
+        <role>Administrator</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>api</id>
+      <name>Andreas Pieber</name>
+      <email>andreas.pieber [at] ifs.tuwien.ac.at</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+        <role>Release Manager</role>
+        <role>Administrator</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>cgr</id>
+      <name>Christoph Gritschenberger</name>
+      <email>e0525747 [at] student.tuwien.ac.at</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>pho</id>
+      <name>Philipp Hoenisch</name>
+      <email>philipp.hoenisch [at] gmail.com</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
 
   <build>
     <finalName>opencit-${project.version}</finalName>
@@ -213,6 +259,14 @@
       <url>dav:http://maven.openengsb.org/nexus/content/repositories/opencit-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jai.repository</id>
+      <name>JAI Repository (indirectly used by Docbook plugin)</name>
+      <url>https://m2proxy.atlassian.com/repository/public</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <repositories>
     <repository>
