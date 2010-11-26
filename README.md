@@ -18,8 +18,9 @@ LICENSE
 ==========================
 
 The OpenCIT is developed and released under the Apache 2 license. The license 
-file is packaged with this distribution (LICENSE), but also available at [1]. The 
-included NOTICE file lists all external libraries and there specific licenses.
+file is packaged with this distribution (LICENSE), but also available 
+[here](http://www.apache.org/licenses/LICENSE-2.0.html). The included
+NOTICE file lists all external libraries and there specific licenses.
 
 OpenCIT
 -------
@@ -31,9 +32,7 @@ OpenEngSB
 The OpenCIT is developed based upon the OpenEngSB. Currently the project is
 maintained by the same developers working on the OpenEngSB. So if you need help
 or further information about the OpenCIT feel free to contact the OpenEngSB
-developer team. Further information about the OpenEngSB can be found at [2].
+developer team. Further information about the OpenEngSB can be found at 
+[http://openengsb.org/](http://openengsb.org/).
 
-
-[1] http://www.apache.org/licenses/LICENSE-2.0.html
-[2] http://openengsb.org/
 
