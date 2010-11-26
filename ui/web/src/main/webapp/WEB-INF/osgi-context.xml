@@ -29,5 +29,6 @@
   <osgi:list id="domains" interface="org.openengsb.core.common.DomainProvider" />
   <osgi:reference id="reportDomain" interface="org.openengsb.domain.report.ReportDomain"/>
   <osgi:reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
+  <osgi:reference id="workflowService" interface="org.openengsb.core.common.workflow.WorkflowService" />
 
 </beans>

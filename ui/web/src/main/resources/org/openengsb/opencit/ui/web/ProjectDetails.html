@@ -31,6 +31,10 @@
     </h3>
     <img wicket:id="project.state" height="84" width="234"/><br />
     <a href="#" wicket:id="back"><wicket:message key="back">[back]</wicket:message></a>
+    <form wicket:id="workflowForm">
+      <input type="submit" wicket:id="flowButton" wicket:message="value:flow.start" />
+    </form>
+    <span wicket:id="feedback" />
     <div wicket:id="reportsPanel">
       <ul wicket:id="reportlist">
         <li>

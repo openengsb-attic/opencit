@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.service.DomainService;
+import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -57,6 +58,8 @@ public class IndexPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         mockedBeansMap.put("domainService", mock(DomainService.class));
+        mockedBeansMap.put("workflowService", mock(WorkflowService.class));
+
         return mockedBeansMap;
     }
 
@@ -74,7 +77,7 @@ public class IndexPageTest extends AbstractCitPageTest {
 
     @Test
     public void testProjectsAvailable_shouldShowProjectId() {
-        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{new Project("test")}));
+        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
         getTester().startPage(new Index());
         getTester().assertContains("test");
         String item = "projectlistPanel:projectlist:0";

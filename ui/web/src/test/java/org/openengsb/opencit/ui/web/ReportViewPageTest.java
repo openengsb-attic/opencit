@@ -29,6 +29,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.SimpleReportPart;
@@ -41,16 +42,15 @@ public class ReportViewPageTest extends AbstractCitPageTest {
 
     private IModel<Project> testProjectModel;
 
-
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
         mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
+        mockedBeansMap.put("workflowService", mock(WorkflowService.class));
         mockedBeansMap.put("projectManager", mock(ProjectManager.class));
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         return mockedBeansMap;
     }
-
 
     @Before
     @SuppressWarnings("serial")

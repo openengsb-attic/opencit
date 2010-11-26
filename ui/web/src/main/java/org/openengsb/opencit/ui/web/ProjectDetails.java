@@ -18,32 +18,46 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.workflow.WorkflowException;
+import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.ui.web.model.ReportModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
 
 public class ProjectDetails extends BasePage {
 
+    private static Log log = LogFactory.getLog(BasePage.class);
+
     private IModel<Project> projectModel;
 
     @SpringBean
     private ContextCurrentService contextService;
+
+    @SpringBean
+    private WorkflowService workflowService;
 
     @SpringBean
     private ReportDomain reportDomain;
@@ -54,6 +68,38 @@ public class ProjectDetails extends BasePage {
         add(new Label("project.id", projectModel.getObject().getId()));
         add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(projectModel.getObject()))));
         add(new BookmarkablePageLink<Index>("back", Index.class));
+
+        Form<Project> form = new Form<Project>("workflowForm");
+        form.setModel(projectModel);
+        form.setOutputMarkupId(true);
+
+        AjaxButton flowButton = new AjaxButton("flowButton", form) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                Project project = ProjectDetails.this.projectModel.getObject();
+                if (project.getState() == State.IN_PROGRESS) {
+                    error(new StringResourceModel("error", this, null).getString());
+                    return;
+                }
+                String contextId = project.getId();
+                log.info("CIT workflow for project '" + contextId + "' started manually through UI");
+                try {
+                    contextService.setThreadLocalContext(contextId);
+                    workflowService.startFlow("ci");
+                } catch (WorkflowException e) {
+                    log.error(e);
+                }
+            }
+
+        };
+        flowButton.setOutputMarkupId(true);
+        flowButton.setEnabled(projectModel.getObject().getState() != State.IN_PROGRESS);
+        form.add(flowButton);
+        add(form);
+
+        FeedbackPanel feedbackPanel = new FeedbackPanel("feedback");
+        feedbackPanel.setOutputMarkupId(true);
+        add(feedbackPanel);
 
         initReportPanel();
     }

@@ -31,9 +31,13 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.workflow.WorkflowException;
+import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -44,18 +48,20 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     private ReportDomain reportDomain;
     private IModel<Project> testProjectModel;
+    private WorkflowService workflowService;
 
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
-         reportDomain = mock(ReportDomain.class);
+        reportDomain = mock(ReportDomain.class);
         mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
         mockedBeansMap.put("projectManager", mock(ProjectManager.class));
         mockedBeansMap.put("reportDomain", reportDomain);
+        workflowService = mock(WorkflowService.class);
+        mockedBeansMap.put("workflowService", workflowService);
 
         return mockedBeansMap;
     }
-
 
     @Before
     @SuppressWarnings("serial")
@@ -64,7 +70,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
             @Override
             protected Project load() {
                 Project testProject = new Project("test");
-                testProject.setState(State.IN_PROGRESS);
+                testProject.setState(State.OK);
                 return testProject;
             }
         };
@@ -101,6 +107,14 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
         getTester().clickLink("back");
         String expectedPage = Index.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
+    }
+
+    @Test
+    public void testRunFlow_shouldWork() throws WorkflowException {
+        WicketTester tester = getTester();
+        tester.startPage(new ProjectDetails(testProjectModel));
+        tester.executeAjaxEvent("workflowForm:flowButton", "onclick");
+        Mockito.verify(workflowService).startFlow("ci");
     }
 
     @Test
