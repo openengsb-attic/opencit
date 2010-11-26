@@ -36,6 +36,7 @@ import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
@@ -54,6 +55,7 @@ public class IndexPageTest extends AbstractCitPageTest {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
 
         projectManager = Mockito.mock(ProjectManager.class);
+
         mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
@@ -76,8 +78,9 @@ public class IndexPageTest extends AbstractCitPageTest {
     }
 
     @Test
-    public void testProjectsAvailable_shouldShowProjectId() {
+    public void testProjectsAvailable_shouldShowProjectId() throws NoSuchProjectException {
         when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
+        when(projectManager.getProject("test")).thenReturn(new Project("test"));
         getTester().startPage(new Index());
         getTester().assertContains("test");
         String item = "projectlistPanel:projectlist:0";
