@@ -25,6 +25,14 @@
 
   <packaging>pom</packaging>
 
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <modules>
     <module>poms</module>
     <module>provision</module>
@@ -33,7 +41,18 @@
     <module>assembly</module>
   </modules>
 
- <build>
+  <scm>
+    <connection>scm:git:git://github.com/openengsb/opencit.git</connection>
+    <developerConnection>scm:git:git@github.com:openengsb/opencit.git</developerConnection>
+    <url>http://github.com/openengsb/opencit</url>
+  </scm>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://issues.openengsb.org/jira/browse/OPENCIT</url>
+  </issueManagement>
+
+  <build>
     <finalName>opencit-${project.version}</finalName>
     <resources>
       <resource>
