@@ -22,6 +22,7 @@
     <maven.plugin.enforcer.version>1.0</maven.plugin.enforcer.version>
     <plugin.resources.version>2.4.3</plugin.resources.version>
     <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
+    <maven.plugin.release.version>2.1</maven.plugin.release.version>
   </properties>
 
   <packaging>pom</packaging>
@@ -159,6 +160,19 @@
         <version>${plugin.deploy.version}</version>
         <configuration>
           <remoteOBR>true</remoteOBR>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${maven.plugin.release.version}</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <useReleaseProfile>false</useReleaseProfile>
+          <pushChanges>false</pushChanges>
+          <preparationGoals>clean install</preparationGoals>
+          <releaseProfiles>release</releaseProfiles>
+          <goals>clean install</goals>
         </configuration>
       </plugin>
     </plugins>
