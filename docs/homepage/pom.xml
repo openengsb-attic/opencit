@@ -54,6 +54,30 @@
     </site>
   </distributionManagement>
 
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>${maven.plugin.site.version}</version>
+            <executions>
+              <execution>
+                <id>mvnSiteDeploy</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
@@ -91,13 +115,6 @@
             <phase>package</phase>
             <goals>
               <goal>site</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>mvnDeploy</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>deploy</goal>
             </goals>
           </execution>
         </executions>
