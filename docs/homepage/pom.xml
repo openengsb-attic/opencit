@@ -47,6 +47,13 @@
 
   <url>http://opencit.openengsb.org</url>
 
+  <distributionManagement>
+    <site>
+      <id>OpenengsbWebServer</id>
+      <url>scp://openengsb.org/var/www/opencit</url>
+    </site>
+  </distributionManagement>
+
   <build>
     <plugins>
       <plugin>
