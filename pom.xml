@@ -252,14 +252,6 @@
     </profile>
   </profiles>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>opencit-snapshots</id>
-      <name>OpenEngSB Snapshot Repository</name>
-      <url>dav:http://maven.openengsb.org/nexus/content/repositories/opencit-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <pluginRepositories>
     <pluginRepository>
       <id>jai.repository</id>
@@ -276,7 +268,7 @@
     <repository>
       <id>thirdparty</id>
       <name>OpenEngSB 3rd Party Repository</name>
-      <url>http://maven.openengsb.org/nexus/content/repositories/thirdparty</url>      
+      <url>http://maven.openengsb.org/nexus/content/repositories/thirdparty</url>
     </repository>
   </repositories>
 
