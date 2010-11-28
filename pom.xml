@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openengsb.opencit</groupId>
@@ -21,8 +20,11 @@
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.enforcer.version>1.0</maven.plugin.enforcer.version>
     <plugin.resources.version>2.4.3</plugin.resources.version>
+    <maven.plugin.install.version>2.3.1</maven.plugin.install.version>
     <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
     <maven.plugin.release.version>2.1</maven.plugin.release.version>
+    <maven.plugin.surefire.version>2.6</maven.plugin.surefire.version>
+    <maven.plugin.deploy.version>2.5</maven.plugin.deploy.version>
   </properties>
 
   <packaging>pom</packaging>
@@ -167,6 +169,14 @@
           <goals>clean install</goals>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>${maven.plugin.deploy.version}</version>
+        <configuration>
+          <remoteOBR>true</remoteOBR>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -174,6 +184,16 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>${plugin.resources.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven.plugin.install.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven.plugin.surefire.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
