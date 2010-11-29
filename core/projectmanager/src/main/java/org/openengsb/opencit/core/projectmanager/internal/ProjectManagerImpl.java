@@ -16,6 +16,7 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,6 +49,8 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     private ScmDomain scmDomain;
 
     private WorkflowService workflowService;
+
+    private Map<String, ScmStatePoller> pollers = new HashMap<String, ScmStatePoller>();
 
     private long timeout = 600000l;
 
@@ -91,11 +94,16 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         poller.setTimeout(timeout);
         poller.setScm(scmDomain);
         poller.setWorkflowService(workflowService);
+        pollers.put(project.getId(), poller);
         poller.start();
     }
 
     private void createAndSetContext(Project project) {
-        contextService.createContext(project.getId());
+        try {
+            contextService.createContext(project.getId());
+        } catch (IllegalArgumentException iae) {
+            // ignore - means that context already exists
+        }
         contextService.setThreadLocalContext(project.getId());
     }
 
@@ -155,6 +163,21 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     public Project getCurrentContextProject() throws NoSuchProjectException {
         String projectId = contextService.getThreadLocalContext();
         return getProject(projectId);
+    }
+
+    @Override
+    public void deleteProject(String projectId) throws NoSuchProjectException {
+        Project project = getProject(projectId);
+        try {
+            ScmStatePoller scmStatePoller = pollers.get(projectId);
+            if (scmStatePoller != null) {
+                scmStatePoller.stop();
+                pollers.remove(projectId);
+            }
+            persistence.delete(project);
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Could not delete project " + projectId, e);
+        }
     }
 
     public void setPersistenceManager(PersistenceManager persistenceManager) {

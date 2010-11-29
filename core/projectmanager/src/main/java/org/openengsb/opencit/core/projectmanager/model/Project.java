@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.openengsb.core.common.Domain;
 
 public class Project implements Serializable {
@@ -94,5 +95,26 @@ public class Project implements Serializable {
             services = new HashMap<String, String>();
         }
         services.put(type.getName(), id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Project)) {
+            return false;
+        }
+        Project other = (Project) obj;
+        return ObjectUtils.equals(this.id, other.id) && ObjectUtils.equals(this.state, other.state)
+                && ObjectUtils.equals(this.notificationRecipient, other.notificationRecipient) &&
+                ObjectUtils.equals(this.services, other.services);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        hash += 31 * ObjectUtils.hashCode(id);
+        hash += 31 * ObjectUtils.hashCode(state);
+        hash += 31 * ObjectUtils.hashCode(notificationRecipient);
+        hash += 31 * ObjectUtils.hashCode(services);
+        return hash;
     }
 }

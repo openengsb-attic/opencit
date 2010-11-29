@@ -18,6 +18,8 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -29,6 +31,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ProjectModel;
@@ -39,10 +42,14 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
 
     @SpringBean
     private ProjectManager projectManager;
+    private Label noProjects;
+    private WebMarkupContainer projectListPanel;
+    private ListView<Project> projectListView;
 
     public Index() {
-        WebMarkupContainer projectListPanel = new WebMarkupContainer("projectlistPanel");
+        projectListPanel = new WebMarkupContainer("projectlistPanel");
         projectListPanel.setOutputMarkupId(true);
+        add(projectListPanel);
 
         @SuppressWarnings("serial")
         IModel<List<Project>> projectsModel = new LoadableDetachableModel<List<Project>>() {
@@ -53,20 +60,16 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
             }
         };
 
-        Label noProjects =
-            new Label("noProjects", new StringResourceModel("noProjectsAvailable", this, null));
-        noProjects.setVisible(false);
+        noProjects = new Label("noProjects", new StringResourceModel("noProjectsAvailable", this, null));
         noProjects.setOutputMarkupId(true);
-
-        projectListPanel.add(createProjectListView(projectsModel, "projectlist"));
+        noProjects.setVisible(projectsModel.getObject().isEmpty());
         projectListPanel.add(noProjects);
 
-        add(projectListPanel);
-        if (projectsModel.getObject().isEmpty()) {
-            noProjects.setVisible(true);
-        }
-        this.add(new WizardLink("newProject", ProjectWizard.class));
+        projectListView = createProjectListView(projectsModel, "projectlist");
+        projectListView.setOutputMarkupId(true);
+        projectListPanel.add(projectListView);
 
+        this.add(new WizardLink("newProject", ProjectWizard.class));
     }
 
     @Override
@@ -91,6 +94,25 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
                         ProjectModel projectModel = new ProjectModel(getModelObject());
                         projectModel.setProjectManagerProvider(Index.this);
                         setResponsePage(new ProjectDetails(projectModel));
+                    }
+                });
+                ProjectModel projectModel = new ProjectModel(project);
+                projectModel.setProjectManagerProvider(Index.this);
+                item.add(new AjaxLink<Project>("deleteProject",
+                        projectModel) {
+
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        Project project = getModelObject();
+                        getList().remove(project);
+                        try {
+                            projectManager.deleteProject(project.getId());
+                        } catch (NoSuchProjectException e) {
+                            throw new RuntimeException(e);
+                        }
+                        noProjects.setVisible(getList().size() <= 0);
+                        target.addComponent(projectListPanel);
+                        target.addComponent(noProjects);
                     }
                 });
             }

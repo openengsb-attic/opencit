@@ -94,6 +94,17 @@ public class IndexPageTest extends AbstractCitPageTest {
     }
 
     @Test
+    public void testDeleteProject_shouldDeleteProject() throws NoSuchProjectException {
+        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
+        when(projectManager.getProject("test")).thenReturn(new Project("test"));
+        Page indexPage = getTester().startPage(new Index());
+        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{}));
+        getTester().clickLink("projectlistPanel:projectlist:0:deleteProject", true);
+        Mockito.verify(projectManager).deleteProject("test");
+        getTester().assertContains(indexPage.getString("noProjectsAvailable"));
+    }
+
+    @Test
     public void testCreateProjectLink_shouldBeCreateNewProject() {
         Page indexPage = wicketTester.startPage(new Index());
         wicketTester.assertContains(indexPage.getString("newProject.title"));

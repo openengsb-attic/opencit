@@ -35,4 +35,6 @@ public interface ProjectManager {
 
     Project getCurrentContextProject() throws NoSuchProjectException;
 
+    void deleteProject(String projectId) throws NoSuchProjectException;
+
 }

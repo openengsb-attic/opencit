@@ -29,6 +29,7 @@ import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
 import org.openengsb.core.common.persistence.PersistenceService;
+import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
@@ -56,6 +57,7 @@ public class ProjectManagerImplTest {
             persistenceMock);
         projectManager.setPersistenceManager(persistenceManagerMock);
         projectManager.setContextService(contextMock);
+        projectManager.setScmDomain(Mockito.mock(ScmDomain.class));
         projectManager.init();
     }
 
@@ -113,6 +115,18 @@ public class ProjectManagerImplTest {
     @Test(expected = NoSuchProjectException.class)
     public void updateProject_souldFail() throws NoSuchProjectException {
         projectManager.updateProject(new Project("test"));
+    }
+
+    @Test
+    public void deleteProject_souldWork() throws NoSuchProjectException, PersistenceException {
+        addTestData();
+        projectManager.deleteProject("test");
+        Mockito.verify(persistenceMock).delete(Mockito.refEq(new Project("test"), "state"));
+    }
+
+    @Test(expected = NoSuchProjectException.class)
+    public void deleteProject_souldFail() throws NoSuchProjectException {
+        projectManager.deleteProject("test");
     }
 
     @Test
