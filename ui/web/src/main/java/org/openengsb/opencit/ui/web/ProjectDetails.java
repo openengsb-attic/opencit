@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,6 +42,8 @@ import org.openengsb.core.common.workflow.WorkflowException;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
+import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.ui.web.model.ReportModel;
@@ -60,6 +63,9 @@ public class ProjectDetails extends BasePage {
     private WorkflowService workflowService;
 
     @SpringBean
+    private ProjectManager projectManager;
+
+    @SpringBean
     private ReportDomain reportDomain;
 
     public ProjectDetails(IModel<Project> projectModel) {
@@ -67,6 +73,28 @@ public class ProjectDetails extends BasePage {
 
         Project project = projectModel.getObject();
         add(new Label("project.id", project.getId()));
+        add(new AjaxEditableLabel<String>("project.notification", new IModel<String>() {
+            @Override
+            public void detach() {
+                // do nothing
+            }
+
+            @Override
+            public String getObject() {
+                return ProjectDetails.this.projectModel.getObject().getNotificationRecipient();
+            }
+
+            @Override
+            public void setObject(String recipient) {
+                Project p = ProjectDetails.this.projectModel.getObject();
+                p.setNotificationRecipient(recipient);
+                try {
+                    projectManager.updateProject(p);
+                } catch (NoSuchProjectException e) {
+                    log.error(e);
+                }
+            }
+        }));
         add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(project))));
         add(new BookmarkablePageLink<Index>("back", Index.class));
 

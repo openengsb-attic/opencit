@@ -27,7 +27,9 @@
     </h2>
     <h3>
       <wicket:message key="projectId.label">[projectId.label]</wicket:message>
-      <span wicket:id="project.id">[project.id]</span>
+      <span wicket:id="project.id">[project.id]</span><br />
+       <wicket:message key="notificationRecipient.label">[notificationRecipient.label]</wicket:message>
+       <span wicket:id="project.notification" class="inline-edit">[[project.notification]]</span>
     </h3>
     <img wicket:id="project.state" height="84" width="234"/><br />
     <a href="#" wicket:id="back"><wicket:message key="back">[back]</wicket:message></a>
