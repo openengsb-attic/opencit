@@ -54,6 +54,8 @@
     <menu name="OpenCIT">
       <item name="Welcome" href="index.html" />
       <item name="What is OpenCIT?" href="about.html" />
+      <item name="Latest Version" href="https://github.com/downloads/openengsb/opencit/opencit-${project.version}.zip" />
+      <item name="Older Versions" href="https://github.com/openengsb/opencit/downloads" />
     </menu>
 
     <menu name="Documentation" >

@@ -16,8 +16,20 @@
 
 About OpenCIT
 
-  TBW
-
+  The Open Continuous Integration and Test (OpenCIT) server can be used to automatically build,
+  test and deploy projects. It makes it easier for developers to integrate changes and easier for
+  users to obtain fresh builds of a project. 
+  
+  The OpenCIT tries to provide additional benefits
+  compared to other CI & T solutions by building upon the open and highly customizable 
+  {{{http://www.openengsb.org}OpenEngSB}} platform. Furthermore the OpenCIT itself is also a FOSS
+  project, which provides its users with the possibility to adapt all aspects of the CI & T process.
+  
+  The domain and connector concept of the OpenEngSB make it possible to define the OpenCIT workflow
+  completely independent of specific tools. Therefore any build, test and deploy tool can be used together
+  with the OpenCIT.
+  
 Further Information
 
-  TBW
+  For further information about the OpenCIT please take a look into the 
+  {{{http://opencit.openengsb.org/manual/index.html}user manual}}.
