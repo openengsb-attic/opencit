@@ -27,11 +27,20 @@
         For further information please consult the <a href="http://opencit.openengsb.org/manual/index.html">user manual</a>.
       </answer>
     </faq>
+    <faq id="help">
+      <question>Where can I find help?</question>
+      <answer>
+        <p>
+          The <a href="http://opencit.openengsb.org/manual/index.html">user manual</a> contains basic information about the OpenCIT and how to use it.
+          For further information please contact the respective mailing lists available <a href="http://opencit.openengsb.org/community/mailinglists.html">here</a>.
+        </p>
+      </answer>
+    </faq>
     <faq id="license">
       <question>What is the license?</question>
       <answer>
         <p>
-          The OpenEngSB is licensed under the business friendly Apache License, Version 2.0.
+          The OpenCIT is licensed under the business friendly Apache License, Version 2.0.
         </p>
       </answer>
     </faq>
@@ -40,6 +49,38 @@
       <answer>
         <p>
           The source code is available at <a href="http://github.com/openengsb/opencit">http://github.com/openengsb/opencit</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="issues">
+      <question>Where can I file an issue?</question>
+      <answer>
+        <p>
+          <a href="http://opencit.openengsb.org/issue-tracking.html">Here</a> is information about our issue tracking process. Please feel free
+          to let us know about any bugs, issues or other problems you encounter. We are especially happy about feedback regarding the
+          documentation of the OpenCIT project. If you have ideas how to improve the OpenCIT please contact us via the
+          <a href="http://opencit.openengsb.org/community/mailinglists.html">mailing list</a> or feel free to create an issue.
+        </p>
+      </answer>
+    </faq>
+  </part>
+  <part id="Development">
+    <title>Development</title>
+    <faq id="contribute">
+      <question>How can I contribute to the OpenCIT project?</question>
+      <answer>
+        <p>
+          If you have an idea how the OpenCIT can be improved please contact us on the developer <a href="http://opencit.openengsb.org/community/mailinglists.html">mailing list</a>.
+          Further information can be found <a href="http://opencit.openengsb.org/contribution.html">here</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="contribute">
+      <question>Can I debug the OpenCIT source?</question>
+      <answer>
+        <p>
+          Yes; the moment you startup the OpenCIT using maven pax:provision (or one of the scripts using this command, such as the run script) you can attach a
+          remote debugger to localhost:5005 (from Eclipse, or any other IDE of your choice). That's it.
         </p>
       </answer>
     </faq>
