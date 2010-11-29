@@ -36,14 +36,49 @@
     </author>
   </info>
 
-  <part xml:id="user.manual">
+  <part xml:id="introduction.manual">
     <title>OpenCIT Server</title>
     <partintro>
       <para>
-        This parts gives an introduction into how to use the OpenCIT.</para>
+        This part gives an introduction into the OpenCIT. It explains the idea behind the OpenCIt
+        and its purpose.
+      </para>
+      <para>
+        The target audience of this part is everyone interested into the OpenCIT.
+      </para>
+    </partintro>
+    <xi:include href="introduction/howtoread.xml"/>
+    <xi:include href="introduction/about.xml"/>
+  </part>
+  
+  <part xml:id="user.manual">
+    <title>Using the OpenCIT Server</title>
+    <partintro>
+      <para>
+        This part gives an introduction into how to use the OpenCIT.</para>
       <para>The target audience of this part are users of the OpenCIT.</para>
     </partintro>
     <xi:include href="user/quickstart.xml"/>
+  </part>
+
+  <part xml:id="developer.customization">
+    <title>Customizing the OpenCIT Server</title>
+    <partintro>
+      <para>
+        This part gives an introduction into how to customize the OpenCIT.</para>
+      <para>The target audience of this part are developers, who want to customize the OpenCIT.</para>
+    </partintro>
+    <xi:include href="customization/intro.xml"/>
+  </part>
+
+  <part xml:id="developer.contribution">
+    <title>Contributing to the OpenCIT Project</title>
+    <partintro>
+      <para>
+        This part contains information for developers, who want to contribute to the OpenCIT project.</para>
+      <para>The target audience of this part are developers, who want to contribute to the OpenCIT project.</para>
+    </partintro>
+    <xi:include href="contribution/intro.xml"/>
   </part>
 
 </book>

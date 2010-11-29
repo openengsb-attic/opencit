@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2010 OpenEngSB Division, Vienna University of Technology
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<chapter xml:id="contribution.intro" version="5.0" xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd
+    http://www.w3.org/1999/xlink http://www.docbook.org/xml/5.0/xsd/xlink.xsd
+    http://www.w3.org/2001/XMLSchema-instance http://www.w3.org/2001/XMLSchema-instance.xsd">
+
+  <title>How to contribute to the OpenCIT project?</title>
+
+  <para>
+    If you have a good idea for the improvement of the OpenCIT project, please feel free to contact
+    us on the <link xlink:href="http://groups.google.com/group/opencit-dev">developer mailing list</link>.
+  </para>
+  
+  <para>
+    The guidelines for the development of the OpenCIT correspond to the guidelines for the development of the
+    OpenEngSB. Therefore everyone who wants to contribute to the OpenCIT, should read the 
+    <link xlink:href="http://www.opencit.openengsb.org/manual/html-single/openengsb-manual.html#developer.manual">contribution section</link> 
+    of the OpenEngSB manual.
+  </para>
+  
+  <para>
+    The OpenCIT <link xlink:href="http://issues.openengsb.org/jira/browse/OPENCIT">issue tracker</link> 
+    can be used to file issue, bugs or other problems. Furthermore it is a great entry point for developers, who 
+    want to contribute, as they can browse the issues and find out in which direction the OpenCIT will develop in 
+    the future.
+  </para>
+  
+  <para>
+    If there are any further questions about the development process for the OpenCIT, please feel free to contact
+    the OpenCIT developer team through the mailing list.
+  </para>
+</chapter>
+
