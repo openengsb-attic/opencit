@@ -13,7 +13,7 @@
         <action type="expression" dialect="java" >Object deployId = deploy.deploy();
 insert(new Value("deployId", deployId));</action>
     </actionNode>
-    <end id="6" name="End" x="310" y="884" width="80" height="40" />
+    <end id="6" name="End" x="310" y="912" width="80" height="40" />
     <actionNode id="15" name="startFlow" x="287" y="1" width="137" height="64" >
         <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.IN_PROGRESS);
 Object reportId = report.collectData();
@@ -33,7 +33,7 @@ insert(new Value("testId", testId));</action>
 insert(new Value("citResult", "FAILURE"));</action>
     </actionNode>
     <join id="103" name="Gateway" x="344" y="604" width="49" height="49" type="2" />
-    <ruleSet id="101" name="SendReport" x="439" y="883" width="80" height="48" ruleFlowGroup="finishWorkflow" />
+    <ruleSet id="101" name="SendReport" x="440" y="908" width="80" height="48" ruleFlowGroup="finishWorkflow" />
     <split id="39" name="Split" x="77" y="608" width="80" height="40" type="2" >
       <constraints>
         <constraint toNodeId="5" toType="DROOLS_DEFAULT" name="testSuccess" priority="1" type="rule" dialect="mvel" >v : Value( key == "testId" )
@@ -51,7 +51,7 @@ BuildEndEvent( success == false, buildId == v.value)</constraint>
       </constraints>
     </split>
     <join id="110" name="Join" x="76" y="455" width="80" height="40" type="1" />
-    <eventNode id="111" name="WaitForDeployEndEvent" x="32" y="880" width="174" height="40" >
+    <eventNode id="111" name="WaitForDeployEndEvent" x="34" y="913" width="174" height="40" >
       <eventFilters>
         <eventFilter type="eventType" eventType="DeployEndEvent" />
       </eventFilters>
@@ -62,10 +62,10 @@ BuildEndEvent( success == false, buildId == v.value)</constraint>
         <eventFilter type="eventType" eventType="TestEndEvent" />
       </eventFilters>
     </eventNode>
-    <actionNode id="106" name="addFinishedHint" x="587" y="883" width="126" height="48" >
+    <actionNode id="106" name="addFinishedHint" x="630" y="906" width="126" height="48" >
         <action type="expression" dialect="java" >insert(new Value("citFinished", new Object()));</action>
     </actionNode>
-    <eventNode id="107" name="WaitForBuildEndEvent" x="461" y="205" width="170" height="40" >
+    <eventNode id="107" name="WaitForBuildEndEvent" x="441" y="143" width="170" height="40" >
       <eventFilters>
         <eventFilter type="eventType" eventType="BuildEndEvent" />
       </eventFilters>
@@ -82,6 +82,12 @@ DeployEndEvent( success == false, deployId == v.value)</constraint>
         <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.OK);
 insert(new Value("citResult", "SUCCESS"));</action>
     </actionNode>
+    <ruleSet id="118" name="ForwardDeployEndEvent" x="186" y="856" width="139" height="40" ruleFlowGroup="forwardDeployEnd" />
+    <ruleSet id="117" name="ForwardDeployStartEvent" x="42" y="739" width="146" height="40" ruleFlowGroup="forwardDeployStart" />
+    <ruleSet id="116" name="ForwardTestEndEvent" x="48" y="538" width="138" height="40" ruleFlowGroup="forwardTestEnd" />
+    <ruleSet id="115" name="ForwardTestStartEvent" x="41" y="377" width="157" height="40" ruleFlowGroup="forwardTestStart" />
+    <ruleSet id="114" name="ForwardBuildEndEvent" x="483" y="298" width="126" height="40" ruleFlowGroup="forwardBuildEnd" />
+    <ruleSet id="113" name="ForwardBuildStartEvent" x="133" y="167" width="136" height="40" ruleFlowGroup="forwardBuildStart" />
     <join id="112" name="Join" x="78" y="800" width="80" height="40" type="1" />
   </nodes>
 
@@ -98,17 +104,23 @@ insert(new Value("citResult", "SUCCESS"));</action>
     <connection from="39" to="103" />
     <connection from="104" to="103" />
     <connection from="106" to="101" />
-    <connection from="110" to="39" />
-    <connection from="108" to="37" />
+    <connection from="116" to="39" />
+    <connection from="114" to="37" />
     <connection from="109" to="110" />
-    <connection from="26" to="110" />
-    <connection from="16" to="108" />
+    <connection from="115" to="110" />
     <connection from="107" to="108" />
+    <connection from="113" to="108" />
     <connection from="20" to="106" />
-    <connection from="112" to="104" />
+    <connection from="118" to="104" />
     <connection from="104" to="105" />
+    <connection from="112" to="118" />
+    <connection from="5" to="117" />
+    <connection from="110" to="116" />
+    <connection from="26" to="115" />
+    <connection from="108" to="114" />
+    <connection from="16" to="113" />
     <connection from="111" to="112" />
-    <connection from="5" to="112" />
+    <connection from="117" to="112" />
   </connections>
 
 </process>

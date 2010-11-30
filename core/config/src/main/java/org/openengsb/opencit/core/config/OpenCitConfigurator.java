@@ -160,8 +160,8 @@ public class OpenCitConfigurator {
 
     private void addRules() {
         List<String> rules =
-            Arrays.asList(new String[]{ "sendReportRule", "forwardEvents" });
-
+            Arrays.asList(new String[]{ "sendReportRule", "forwardBuildStartEvent", "forwardBuildEndEvent",
+                "forwardTestStartEvent", "forwardTestEndEvent", "forwardDeployStartEvent", "forwardDeployEndEvent" });
         for (String rule : rules) {
             addRule(rule);
         }

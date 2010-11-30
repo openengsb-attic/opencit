@@ -14,8 +14,9 @@
 # limitations under the License.
 #
 
+ruleflow-group "forwardDeployEnd"
 when
-  e : Event ()
+  e : DeployEndEvent ()
   v : Value (key == "reportId")
 then
   String reportId = (String) v.getValue();
