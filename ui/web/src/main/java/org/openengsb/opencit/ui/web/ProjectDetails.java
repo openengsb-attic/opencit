@@ -16,6 +16,12 @@
 
 package org.openengsb.opencit.ui.web;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -138,14 +144,7 @@ public class ProjectDetails extends BasePage {
         reportsPanel.setOutputMarkupId(true);
 
         @SuppressWarnings("serial")
-        IModel<List<Report>> reportsModel = new LoadableDetachableModel<List<Report>>() {
-            @Override
-            protected List<Report> load() {
-                String projectId = projectModel.getObject().getId();
-                contextService.setThreadLocalContext(projectId);
-                return reportDomain.getAllReports(projectId);
-            }
-        };
+        IModel<List<Report>> reportsModel = createReportsModel();
 
         Label noReports =
             new Label("noReports", new StringResourceModel("noReportsAvailable", this, null));
@@ -159,6 +158,35 @@ public class ProjectDetails extends BasePage {
         if (reportsModel.getObject().isEmpty()) {
             noReports.setVisible(true);
         }
+    }
+
+    @SuppressWarnings("serial")
+    private IModel<List<Report>> createReportsModel() {
+        return new LoadableDetachableModel<List<Report>>() {
+            @Override
+            protected List<Report> load() {
+                String projectId = projectModel.getObject().getId();
+                contextService.setThreadLocalContext(projectId);
+                List<Report> reports = new ArrayList<Report>(reportDomain.getAllReports(projectId));
+                Comparator<Report> comparator = Collections.reverseOrder(new Comparator<Report>() {
+                    @Override
+                    public int compare(Report report1, Report report2) {
+                        String name1 = report1.getName();
+                        String name2 = report2.getName();
+                        try {
+                            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS");
+                            Date date1 = format.parse(name1);
+                            Date date2 = format.parse(name2);
+                            return date1.compareTo(date2);
+                        } catch (ParseException pe) {
+                            return name1.compareTo(name2);
+                        }
+                    }
+                });
+                Collections.sort(reports, comparator);
+                return reports;
+            }
+        };
     }
 
     @SuppressWarnings("serial")
