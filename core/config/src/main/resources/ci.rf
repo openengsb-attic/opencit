@@ -28,7 +28,8 @@ insert(new Value("buildId", buildId));</action>
 insert(new Value("testId", testId));</action>
     </actionNode>
     <actionNode id="102" name="setStateToFailed" x="587" y="605" width="130" height="48" >
-        <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.FAILURE);</action>
+        <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.FAILURE);
+insert(new Value("citResult", "FAILURE"));</action>
     </actionNode>
     <join id="103" name="Gateway" x="344" y="604" width="49" height="49" type="2" />
     <ruleSet id="101" name="SendReport" x="439" y="883" width="80" height="48" ruleFlowGroup="finishWorkflow" />
@@ -77,7 +78,8 @@ DeployEndEvent( success == false, deployId == v.value)</constraint>
       </constraints>
     </split>
     <actionNode id="105" name="setStateToSuccess" x="478" y="794" width="123" height="48" >
-        <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.OK);</action>
+        <action type="expression" dialect="java" >projectManager.updateCurrentContextProjectState(State.OK);
+insert(new Value("citResult", "SUCCESS"));</action>
     </actionNode>
     <ruleSet id="119" name="UpdateProjectState" x="303" y="154" width="108" height="40" ruleFlowGroup="updateProjectState" />
     <ruleSet id="118" name="ForwardEvent" x="77" y="743" width="80" height="40" ruleFlowGroup="forwardEvents" />

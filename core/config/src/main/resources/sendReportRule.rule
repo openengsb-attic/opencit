@@ -18,6 +18,7 @@ ruleflow-group "finishWorkflow"
 when
   finished : Value (key == "citFinished")
   v : Value (key == "reportId")
+  result : Value (key == "citResult")
 then
   retract(finished);
   retract(v);
@@ -26,8 +27,8 @@ then
   String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
   Report r = report.generateReport(reportId, project.getId(), reportName);
   Notification n = new Notification();
-  n.setSubject("CIT workflow report");
-  String message = "OpenCIT finished executing CI and T workflow.\n\n";
+  n.setSubject("CIT workflow report - "+result.getValue());
+  String message = "OpenCIT finished executing CI and T workflow with result: "+result.getValue()+".\n\n";
   List parts = r.getParts();
   for(int i = 0; i < parts.size(); i++) {
     ReportPart part = (ReportPart) parts.get(i); 
