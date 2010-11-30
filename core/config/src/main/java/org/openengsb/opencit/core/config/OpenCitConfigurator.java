@@ -160,7 +160,7 @@ public class OpenCitConfigurator {
 
     private void addRules() {
         List<String> rules =
-            Arrays.asList(new String[]{ "updateStateOnFlowStart", "sendReportRule", "forwardEvents" });
+            Arrays.asList(new String[]{ "sendReportRule", "forwardEvents" });
 
         for (String rule : rules) {
             addRule(rule);
