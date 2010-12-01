@@ -44,11 +44,13 @@ public class IndexPageTest extends AbstractCitPageTest {
 
     private ProjectManager projectManager;
     private WicketTester wicketTester;
+    private ContextCurrentService contextService;
 
     @Before
     public void setUp() throws NoSuchProjectException {
         wicketTester = getTester();
         when(projectManager.getProject("test")).thenReturn(new Project("test"));
+        when(contextService.getThreadLocalContext()).thenReturn("test");
     }
 
     @Override
@@ -57,7 +59,8 @@ public class IndexPageTest extends AbstractCitPageTest {
 
         projectManager = Mockito.mock(ProjectManager.class);
 
-        mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
+        contextService = mock(ContextCurrentService.class);
+        mockedBeansMap.put("contextCurrentService", contextService);
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         mockedBeansMap.put("domainService", mock(DomainService.class));

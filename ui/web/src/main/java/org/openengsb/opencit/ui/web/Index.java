@@ -18,7 +18,6 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.List;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -32,6 +31,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -43,6 +43,10 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
 
     @SpringBean
     private ProjectManager projectManager;
+
+    @SpringBean
+    private ContextCurrentService contextService;
+
     private Label noProjects;
     private WebMarkupContainer projectListPanel;
     private ListView<Project> projectListView;
@@ -94,9 +98,8 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
                     public void onClick() {
                         ProjectModel projectModel = new ProjectModel(getModelObject());
                         projectModel.setProjectManagerProvider(Index.this);
-                        PageParameters params = new PageParameters();
-                        params.put("projectId", projectModel.getObject().getId());
-                        setResponsePage(new ProjectDetails(params));
+                        contextService.setThreadLocalContext(getModelObject().getId());
+                        setResponsePage(ProjectDetails.class);
                     }
                 });
                 ProjectModel projectModel = new ProjectModel(project);

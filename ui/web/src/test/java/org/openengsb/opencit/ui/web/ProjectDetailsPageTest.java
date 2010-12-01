@@ -101,14 +101,14 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     @Test
     public void testProjectStatePresent_shouldWork() {
         getTester().startPage(getProjectDetails());
-        Image image = (Image) getTester().getComponentFromLastRenderedPage("project.state");
+        Image image = (Image) getTester().getComponentFromLastRenderedPage("projectPanel:project.state");
         assertThat(image.isVisible(), is(true));
     }
 
     @Test
     public void testBackLink_shouldWork() {
         getTester().startPage(getProjectDetails());
-        getTester().clickLink("back");
+        getTester().clickLink("projectPanel:back");
         String expectedPage = Index.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
     }
@@ -117,7 +117,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     public void testRunFlow_shouldWork() throws WorkflowException {
         WicketTester tester = getTester();
         tester.startPage(getProjectDetails());
-        tester.executeAjaxEvent("workflowForm:flowButton", "onclick");
+        tester.executeAjaxEvent("projectPanel:workflowForm:flowButton", "onclick");
         Mockito.verify(workflowService).startFlow("ci");
     }
 

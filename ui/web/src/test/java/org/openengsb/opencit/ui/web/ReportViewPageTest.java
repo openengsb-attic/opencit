@@ -47,10 +47,13 @@ public class ReportViewPageTest extends AbstractCitPageTest {
 
     private ProjectManager projectManager;
 
+    private ContextCurrentService contextService;
+
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
-        mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
+        contextService = mock(ContextCurrentService.class);
+        mockedBeansMap.put("contextCurrentService", contextService);
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
         projectManager = mock(ProjectManager.class);
         mockedBeansMap.put("projectManager", projectManager);
@@ -75,6 +78,7 @@ public class ReportViewPageTest extends AbstractCitPageTest {
             }
         };
         when(projectManager.getProject("bar")).thenReturn(new Project("bar"));
+        when(contextService.getThreadLocalContext()).thenReturn("bar");
     }
 
     @Test

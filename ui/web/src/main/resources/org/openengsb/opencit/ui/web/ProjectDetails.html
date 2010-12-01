@@ -22,21 +22,23 @@
 
 <body>
   <wicket:extend>
-    <h2>
-      <wicket:message key="projectDetail.title">[projectDetail.title]</wicket:message>
-    </h2>
-    <h3>
-      <wicket:message key="projectId.label">[projectId.label]</wicket:message>
-      <span wicket:id="project.id">[project.id]</span><br />
-       <wicket:message key="notificationRecipient.label">[notificationRecipient.label]</wicket:message>
-       <span wicket:id="project.notification" class="inline-edit">[[project.notification]]</span>
-    </h3>
-    <img wicket:id="project.state" height="84" width="234"/><br />
-    <a href="#" wicket:id="back"><wicket:message key="back">[back]</wicket:message></a>
-    <form wicket:id="workflowForm">
-      <input type="submit" wicket:id="flowButton" wicket:message="value:flow.start" />
-    </form>
-    <span wicket:id="feedback" />
+    <div wicket:id="projectPanel">
+      <h2>
+        <wicket:message key="projectDetail.title">[projectDetail.title]</wicket:message>
+      </h2>
+      <h3>
+        <wicket:message key="projectId.label">[projectId.label]</wicket:message>
+        <span wicket:id="project.id">[project.id]</span><br />
+         <wicket:message key="notificationRecipient.label">[notificationRecipient.label]</wicket:message>
+         <span wicket:id="project.notification" class="inline-edit">[[project.notification]]</span>
+      </h3>
+      <img wicket:id="project.state" height="84" width="234"/><br />
+      <a href="#" wicket:id="back"><wicket:message key="back">[back]</wicket:message></a>
+      <form wicket:id="workflowForm">
+        <input type="submit" wicket:id="flowButton" wicket:message="value:flow.start" />
+      </form>
+      <span wicket:id="feedback" />
+    </div>
     <div wicket:id="reportsPanel">
       <ul wicket:id="reportlist">
         <li>

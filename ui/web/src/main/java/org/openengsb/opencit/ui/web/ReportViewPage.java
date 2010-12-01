@@ -18,7 +18,6 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.List;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -61,9 +60,7 @@ public class ReportViewPage extends BasePage implements SpringBeanProvider<Proje
         add(new Link<Project>("back") {
             @Override
             public void onClick() {
-                PageParameters params = new PageParameters();
-                params.put("projectId", projectModel.getObject().getId());
-                setResponsePage(new ProjectDetails(params));
+                setResponsePage(ProjectDetails.class);
             }
         });
     }

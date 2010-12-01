@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
@@ -76,9 +75,15 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
     @SpringBean
     private ReportDomain reportDomain;
 
-    public ProjectDetails(PageParameters parameters) {
-        super(parameters);
-        this.projectModel = new ProjectModel(parameters.getString("projectId"));
+    private Image projectStateImage;
+
+    private AjaxButton flowButton;
+
+    private WebMarkupContainer projectPanel;
+
+    public ProjectDetails() {
+        String projectId = contextService.getThreadLocalContext();
+        this.projectModel = new ProjectModel(projectId);
         init();
     }
 
@@ -90,9 +95,13 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
     private void init() {
         this.projectModel.setProjectManagerProvider(this);
 
+        projectPanel = new WebMarkupContainer("projectPanel");
+        projectPanel.setOutputMarkupId(true);
+        add(projectPanel);
+
         Project project = projectModel.getObject();
-        add(new Label("project.id", project.getId()));
-        add(new AjaxEditableLabel<String>("project.notification", new IModel<String>() {
+        projectPanel.add(new Label("project.id", project.getId()));
+        projectPanel.add(new AjaxEditableLabel<String>("project.notification", new IModel<String>() {
             @Override
             public void detach() {
                 // do nothing
@@ -114,14 +123,19 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                 }
             }
         }));
-        add(new Image("project.state", new ContextRelativeResource(StateUtil.getImage(project))));
-        add(new BookmarkablePageLink<Index>("back", Index.class));
+        ContextRelativeResource stateResource = new ContextRelativeResource(StateUtil.getImage(project));
+        stateResource.setCacheable(false);
+        projectStateImage = new Image("project.state", stateResource);
+        projectStateImage.setOutputMarkupId(true);
+
+        projectPanel.add(projectStateImage);
+        projectPanel.add(new BookmarkablePageLink<Index>("back", Index.class));
 
         Form<Project> form = new Form<Project>("workflowForm");
         form.setModel(projectModel);
         form.setOutputMarkupId(true);
 
-        AjaxButton flowButton = new AjaxButton("flowButton", form) {
+        flowButton = new AjaxButton("flowButton", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 Project project = ProjectDetails.this.projectModel.getObject();
@@ -133,9 +147,12 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                 log.info("CIT workflow for project '" + contextId + "' started manually through UI");
                 try {
                     contextService.setThreadLocalContext(contextId);
-                    workflowService.startFlow("ci");
                     project.setState(State.IN_PROGRESS);
                     projectManager.updateProject(project);
+                    workflowService.startFlow("ci");
+                    projectStateImage.setImageResource(new ContextRelativeResource(StateUtil.getImage(project)));
+                    flowButton.setEnabled(false);
+                    target.addComponent(projectPanel);
                 } catch (WorkflowException e) {
                     log.error(e);
                 } catch (NoSuchProjectException e) {
@@ -147,11 +164,11 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         flowButton.setOutputMarkupId(true);
         flowButton.setEnabled(project.getState() != State.IN_PROGRESS);
         form.add(flowButton);
-        add(form);
+        projectPanel.add(form);
 
         FeedbackPanel feedbackPanel = new FeedbackPanel("feedback");
         feedbackPanel.setOutputMarkupId(true);
-        add(feedbackPanel);
+        projectPanel.add(feedbackPanel);
 
         initReportPanel();
     }
@@ -183,7 +200,6 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
             @Override
             protected List<Report> load() {
                 String projectId = projectModel.getObject().getId();
-                contextService.setThreadLocalContext(projectId);
                 List<Report> reports = new ArrayList<Report>(reportDomain.getAllReports(projectId));
                 Comparator<Report> comparator = Collections.reverseOrder(new Comparator<Report>() {
                     @Override
