@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.util.tester.WicketTester;
@@ -117,7 +118,8 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     public void testRunFlow_shouldWork() throws WorkflowException {
         WicketTester tester = getTester();
         tester.startPage(getProjectDetails());
-        tester.executeAjaxEvent("projectPanel:workflowForm:flowButton", "onclick");
+        Button button = (Button) tester.getComponentFromLastRenderedPage("projectPanel:workflowForm:flowButton");
+        button.onSubmit();
         Mockito.verify(workflowService).startFlow("ci");
     }
 

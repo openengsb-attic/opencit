@@ -26,14 +26,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -77,7 +75,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
 
     private Image projectStateImage;
 
-    private AjaxButton flowButton;
+    private Button flowButton;
 
     private WebMarkupContainer projectPanel;
 
@@ -129,15 +127,21 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         projectStateImage.setOutputMarkupId(true);
 
         projectPanel.add(projectStateImage);
-        projectPanel.add(new BookmarkablePageLink<Index>("back", Index.class));
+        projectPanel.add(new Link<Index>("back") {
+            @Override
+            public void onClick() {
+                setResponsePage(Index.class);
+            }
+        });
 
         Form<Project> form = new Form<Project>("workflowForm");
         form.setModel(projectModel);
         form.setOutputMarkupId(true);
 
-        flowButton = new AjaxButton("flowButton", form) {
+        flowButton = new Button("flowButton") {
+
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            public void onSubmit() {
                 Project project = ProjectDetails.this.projectModel.getObject();
                 if (project.getState() == State.IN_PROGRESS) {
                     error(new StringResourceModel("error", this, null).getString());
@@ -150,9 +154,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                     project.setState(State.IN_PROGRESS);
                     projectManager.updateProject(project);
                     workflowService.startFlow("ci");
-                    projectStateImage.setImageResource(new ContextRelativeResource(StateUtil.getImage(project)));
-                    flowButton.setEnabled(false);
-                    target.addComponent(projectPanel);
+                    setResponsePage(ProjectDetails.class);
                 } catch (WorkflowException e) {
                     log.error(e);
                 } catch (NoSuchProjectException e) {
