@@ -18,6 +18,7 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.Locale;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.WebPage;
@@ -28,6 +29,11 @@ import org.apache.wicket.markup.html.link.Link;
 public class BasePage extends WebPage {
 
     public BasePage() {
+        initWebPage();
+    }
+
+    BasePage(PageParameters parameters) {
+        super(parameters);
         initWebPage();
     }
 

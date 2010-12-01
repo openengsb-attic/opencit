@@ -18,6 +18,7 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.List;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -28,18 +29,26 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.ReportPart;
+import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.ProjectModel;
+import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 
-public class ReportViewPage extends BasePage {
+public class ReportViewPage extends BasePage implements SpringBeanProvider<ProjectManager> {
 
-    private IModel<Project> projectModel;
+    private ProjectModel projectModel;
 
     private IModel<Report> reportModel;
 
-    public ReportViewPage(IModel<Project> projectModel, IModel<Report> reportModel) {
+    @SpringBean
+    private ProjectManager projectManager;
+
+    public ReportViewPage(ProjectModel projectModel, IModel<Report> reportModel) {
         this.projectModel = projectModel;
+        this.projectModel.setProjectManagerProvider(this);
         this.reportModel = reportModel;
         add(new Label("project.id", projectModel.getObject().getId()));
         add(new Label("report.name", reportModel.getObject().getName()));
@@ -52,7 +61,9 @@ public class ReportViewPage extends BasePage {
         add(new Link<Project>("back") {
             @Override
             public void onClick() {
-                setResponsePage(new ProjectDetails(projectModel));
+                PageParameters params = new PageParameters();
+                params.put("projectId", projectModel.getObject().getId());
+                setResponsePage(new ProjectDetails(params));
             }
         });
     }
@@ -96,5 +107,10 @@ public class ReportViewPage extends BasePage {
             }
 
         };
+    }
+
+    @Override
+    public ProjectManager getSpringBean() {
+        return projectManager;
     }
 }

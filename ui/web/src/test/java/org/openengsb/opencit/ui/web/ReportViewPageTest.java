@@ -19,6 +19,7 @@ package org.openengsb.opencit.ui.web;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,32 +34,38 @@ import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.SimpleReportPart;
+import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.ProjectModel;
 
 public class ReportViewPageTest extends AbstractCitPageTest {
 
     private IModel<Report> testReportModel;
 
-    private IModel<Project> testProjectModel;
+    private ProjectModel testProjectModel;
+
+    private ProjectManager projectManager;
 
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
         mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
-        mockedBeansMap.put("projectManager", mock(ProjectManager.class));
+        projectManager = mock(ProjectManager.class);
+        mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         return mockedBeansMap;
     }
 
     @Before
     @SuppressWarnings("serial")
-    public void setUp() {
-        testProjectModel = new LoadableDetachableModel<Project>() {
+    public void setUp() throws NoSuchProjectException {
+        testProjectModel = new ProjectModel("bar") {
             @Override
-            protected Project load() {
-                return new Project("bar");
+            public Project getObject() {
+                Project testProject = new Project("bar");
+                return testProject;
             }
         };
         testReportModel = new LoadableDetachableModel<Report>() {
@@ -67,6 +74,7 @@ public class ReportViewPageTest extends AbstractCitPageTest {
                 return new Report("foo");
             }
         };
+        when(projectManager.getProject("bar")).thenReturn(new Project("bar"));
     }
 
     @Test

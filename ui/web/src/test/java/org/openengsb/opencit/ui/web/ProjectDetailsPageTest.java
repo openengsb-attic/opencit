@@ -29,8 +29,6 @@ import java.util.Map;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,11 +41,12 @@ import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.ui.web.model.ProjectModel;
 
 public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     private ReportDomain reportDomain;
-    private IModel<Project> testProjectModel;
+    private ProjectModel testProjectModel;
     private WorkflowService workflowService;
 
     @Override
@@ -66,9 +65,9 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     @Before
     @SuppressWarnings("serial")
     public void setUp() {
-        testProjectModel = new LoadableDetachableModel<Project>() {
+        testProjectModel = new ProjectModel("test") {
             @Override
-            protected Project load() {
+            public Project getObject() {
                 Project testProject = new Project("test");
                 testProject.setState(State.OK);
                 return testProject;
@@ -78,32 +77,37 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     @Test
     public void testProjectDetailsHeaderPresent_shouldWork() {
-        Page detailPage = getTester().startPage(new ProjectDetails(testProjectModel));
+        Page detailPage = getTester().startPage(getProjectDetails());
         getTester().assertContains(detailPage.getString("projectDetail.title"));
+    }
+
+    private ProjectDetails getProjectDetails() {
+        ProjectDetails pd = new ProjectDetails(testProjectModel);
+        return pd;
     }
 
     @Test
     public void testProjectIdLabelPresent_shouldWork() {
-        Page detailPage = getTester().startPage(new ProjectDetails(testProjectModel));
+        Page detailPage = getTester().startPage(getProjectDetails());
         getTester().assertContains(detailPage.getString("projectId.label"));
     }
 
     @Test
     public void testProjectIdPresent_shouldWork() {
-        getTester().startPage(new ProjectDetails(testProjectModel));
+        getTester().startPage(getProjectDetails());
         getTester().assertContains(testProjectModel.getObject().getId());
     }
 
     @Test
     public void testProjectStatePresent_shouldWork() {
-        getTester().startPage(new ProjectDetails(testProjectModel));
+        getTester().startPage(getProjectDetails());
         Image image = (Image) getTester().getComponentFromLastRenderedPage("project.state");
         assertThat(image.isVisible(), is(true));
     }
 
     @Test
     public void testBackLink_shouldWork() {
-        getTester().startPage(new ProjectDetails(testProjectModel));
+        getTester().startPage(getProjectDetails());
         getTester().clickLink("back");
         String expectedPage = Index.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
@@ -112,14 +116,14 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     @Test
     public void testRunFlow_shouldWork() throws WorkflowException {
         WicketTester tester = getTester();
-        tester.startPage(new ProjectDetails(testProjectModel));
+        tester.startPage(getProjectDetails());
         tester.executeAjaxEvent("workflowForm:flowButton", "onclick");
         Mockito.verify(workflowService).startFlow("ci");
     }
 
     @Test
     public void testNoReports_shouldShowLabel() {
-        Page detailPage = getTester().startPage(new ProjectDetails(testProjectModel));
+        Page detailPage = getTester().startPage(getProjectDetails());
         getTester().assertContains(detailPage.getString("noReportsAvailable"));
     }
 
@@ -127,7 +131,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     public void testReportPanel_shouldWork() {
         List<Report> reports = Arrays.asList(new Report[]{ new Report("rep1") });
         when(reportDomain.getAllReports(testProjectModel.getObject().getId())).thenReturn(reports);
-        getTester().startPage(new ProjectDetails(testProjectModel));
+        getTester().startPage(getProjectDetails());
         getTester().assertContains("rep1");
         String item = "reportsPanel:reportlist:0";
         Link<?> link = (Link<?>) getTester().getComponentFromLastRenderedPage(item + ":report.link");

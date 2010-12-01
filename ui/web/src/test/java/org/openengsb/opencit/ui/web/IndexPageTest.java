@@ -46,8 +46,9 @@ public class IndexPageTest extends AbstractCitPageTest {
     private WicketTester wicketTester;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchProjectException {
         wicketTester = getTester();
+        when(projectManager.getProject("test")).thenReturn(new Project("test"));
     }
 
     @Override

@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
@@ -52,15 +53,16 @@ import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.ui.web.model.ProjectModel;
 import org.openengsb.opencit.ui.web.model.ReportModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
 
-public class ProjectDetails extends BasePage {
+public class ProjectDetails extends BasePage implements SpringBeanProvider<ProjectManager> {
 
     private static Log log = LogFactory.getLog(BasePage.class);
 
-    private IModel<Project> projectModel;
+    private ProjectModel projectModel;
 
     @SpringBean
     private ContextCurrentService contextService;
@@ -74,8 +76,19 @@ public class ProjectDetails extends BasePage {
     @SpringBean
     private ReportDomain reportDomain;
 
-    public ProjectDetails(IModel<Project> projectModel) {
+    public ProjectDetails(PageParameters parameters) {
+        super(parameters);
+        this.projectModel = new ProjectModel(parameters.getString("projectId"));
+        init();
+    }
+
+    public ProjectDetails(ProjectModel projectModel) {
         this.projectModel = projectModel;
+        init();
+    }
+
+    private void init() {
+        this.projectModel.setProjectManagerProvider(this);
 
         Project project = projectModel.getObject();
         add(new Label("project.id", project.getId()));
@@ -121,7 +134,11 @@ public class ProjectDetails extends BasePage {
                 try {
                     contextService.setThreadLocalContext(contextId);
                     workflowService.startFlow("ci");
+                    project.setState(State.IN_PROGRESS);
+                    projectManager.updateProject(project);
                 } catch (WorkflowException e) {
+                    log.error(e);
+                } catch (NoSuchProjectException e) {
                     log.error(e);
                 }
             }
@@ -222,6 +239,11 @@ public class ProjectDetails extends BasePage {
             }
 
         };
+    }
+
+    @Override
+    public ProjectManager getSpringBean() {
+        return projectManager;
     }
 
 }

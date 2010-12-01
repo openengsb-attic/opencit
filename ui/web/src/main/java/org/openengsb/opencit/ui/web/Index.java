@@ -18,6 +18,7 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.List;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -93,7 +94,9 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
                     public void onClick() {
                         ProjectModel projectModel = new ProjectModel(getModelObject());
                         projectModel.setProjectManagerProvider(Index.this);
-                        setResponsePage(new ProjectDetails(projectModel));
+                        PageParameters params = new PageParameters();
+                        params.put("projectId", projectModel.getObject().getId());
+                        setResponsePage(new ProjectDetails(params));
                     }
                 });
                 ProjectModel projectModel = new ProjectModel(project);
