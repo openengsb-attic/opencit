@@ -202,6 +202,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
             @Override
             protected List<Report> load() {
                 String projectId = projectModel.getObject().getId();
+                contextService.setThreadLocalContext(projectId);
                 List<Report> reports = new ArrayList<Report>(reportDomain.getAllReports(projectId));
                 Comparator<Report> comparator = Collections.reverseOrder(new Comparator<Report>() {
                     @Override
