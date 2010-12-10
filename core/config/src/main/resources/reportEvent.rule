@@ -14,11 +14,14 @@
 # limitations under the License.
 #
 
-ruleflow-group "forwardDeployEnd"
+
+# this rule randomly does not work (concurrency??)
+# it is _not_ added to the rulebase but here for reference
 when
-  e : DeployEndEvent ()
-  v : Value (key == "reportId")
+  p : WorkflowProcessInstance()
+  e : Event ( processId == p.id )
 then
-  String reportId = (String) v.getValue();
-  report.processEvent(reportId, e); 
+  System.out.println("PROCESS+EVENT: " + p.getId() + " + " + e);
+  String reportIdValue = (String) p.getVariable("reportId");
+  report.processEvent(reportIdValue, e); 
 
