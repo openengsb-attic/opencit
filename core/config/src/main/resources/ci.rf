@@ -16,7 +16,8 @@
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="Long" />
       </variable>
       <variable name="processSuccess" >
-        <type name="org.drools.process.core.datatype.impl.type.UndefinedDataType" />
+        <type name="org.drools.process.core.datatype.impl.type.BooleanDataType" />
+        <value>false</value>
       </variable>
       <variable name="buildStartEvent" >
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.common.Event" />
@@ -31,32 +32,37 @@
   </header>
 
   <nodes>
-    <eventNode id="137" name="DeployFail" x="18" y="616" width="126" height="64" variableName="deployEndEvent" scope="external" >
+    <eventNode id="137" name="DeployFail" x="80" y="976" width="126" height="64" variableName="deployEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="DeployFailEvent" />
       </eventFilters>
     </eventNode>
-    <actionNode id="136" name="Deploy" x="398" y="808" width="80" height="40" >
+    <actionNode id="136" name="Deploy" x="238" y="880" width="80" height="64" >
         <action type="expression" dialect="mvel" >Long processId2 = (Long) kcontext.getVariable("processId");
 deploy.deploy(processId2)</action>
     </actionNode>
-    <start id="1" name="Start" x="472" y="16" width="80" height="64" />
-    <join id="139" name="Join" x="203" y="808" width="80" height="40" type="2" />
-    <eventNode id="138" name="DeploySuccess" x="153" y="544" width="144" height="40" variableName="deployEndEvent" scope="external" >
+    <start id="1" name="Start" x="147" y="16" width="80" height="64" />
+    <eventNode id="138" name="DeploySuccess" x="16" y="784" width="144" height="64" variableName="deployEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="DeploySuccessEvent" />
       </eventFilters>
     </eventNode>
-    <join id="140" name="Join" x="398" y="880" width="80" height="40" type="1" />
-    <end id="6" name="End" x="593" y="1185" width="80" height="40" />
-    <actionNode id="129" name="finishIt" x="570" y="1105" width="126" height="48" >
+    <join id="140" name="Join" x="238" y="976" width="80" height="64" type="1" />
+    <end id="6" name="End" x="304" y="1233" width="80" height="40" />
+    <eventNode id="143" name="FlowStarted" x="259" y="16" width="116" height="64" >
+      <eventFilters>
+        <eventFilter type="eventType" eventType="FlowStartedEvent" />
+      </eventFilters>
+    </eventNode>
+    <join id="142" name="Join" x="212" y="112" width="80" height="40" type="1" />
+    <actionNode id="129" name="finishIt" x="281" y="1153" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
 Report r = report.generateReport(reportId, project.getId(), reportName);
 Notification n = new Notification();
 String result;
-boolean success = (boolean) kcontext.getVariable("processSuccess");
-if(success == true){
+Boolean success = (Boolean) kcontext.getVariable("processSuccess");
+if(success == Boolean.TRUE){
 	result = "SUCCESS";
 	projectManager.updateCurrentContextProjectState(State.OK);
 } else {
@@ -75,128 +81,86 @@ n.setMessage(message);
 n.setRecipient(project.getNotificationRecipient());
 notification.notify(n);</action>
     </actionNode>
-    <actionNode id="128" name="setStateToSuccess" x="182" y="712" width="123" height="64" >
-        <action type="expression" dialect="java" >processSuccess = true;</action>
+    <actionNode id="128" name="setStateToSuccess" x="83" y="880" width="123" height="64" >
+        <action type="expression" dialect="java" >kcontext.setVariable("processSuccess", true);</action>
     </actionNode>
-    <eventNode id="131" name="TestSuccess" x="329" y="544" width="80" height="40" variableName="testEndEvent" scope="external" >
+    <eventNode id="131" name="TestSuccess" x="37" y="688" width="123" height="64" variableName="testEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="TestSuccessEvent" />
       </eventFilters>
     </eventNode>
-    <eventNode id="130" name="TestFail" x="584" y="544" width="116" height="40" variableName="testEndEvent" scope="external" >
+    <eventNode id="130" name="TestFail" x="304" y="688" width="116" height="64" variableName="testEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="TestFailEvent" />
       </eventFilters>
     </eventNode>
-    <join id="133" name="Join" x="398" y="712" width="80" height="64" type="1" />
-    <split id="132" name="Split" x="454" y="616" width="80" height="64" type="1" />
-    <actionNode id="135" name="Start Tests" x="441" y="544" width="111" height="40" >
+    <join id="133" name="Join" x="192" y="784" width="80" height="64" type="1" />
+    <split id="132" name="Split" x="192" y="688" width="80" height="64" type="1" />
+    <actionNode id="135" name="Start Tests" x="177" y="616" width="111" height="40" >
         <action type="expression" dialect="mvel" >Long processId2 = (Long) kcontext.getVariable("processId");
 test.runTests(processId2)</action>
     </actionNode>
-    <actionNode id="15" name="startFlow" x="433" y="112" width="159" height="64" >
+    <actionNode id="15" name="startFlow" x="173" y="184" width="159" height="64" >
         <action type="expression" dialect="java" >Long processIdValue = kcontext.getProcessInstance().getId();
 kcontext.setVariable("processId", processIdValue);
 projectManager.updateCurrentContextProjectState(State.IN_PROGRESS);
 String reportIdValue = report.collectData();
 kcontext.setVariable("reportId", reportIdValue);</action>
     </actionNode>
-    <join id="134" name="Join" x="593" y="712" width="80" height="64" type="1" />
-    <actionNode id="16" name="Start build" x="474" y="208" width="112" height="64" >
+    <join id="134" name="Join" x="304" y="784" width="80" height="64" type="1" />
+    <actionNode id="16" name="Start build" x="196" y="280" width="112" height="64" >
         <action type="expression" dialect="java" >Long processId2 = (Long) kcontext.getVariable("processId");
 build.build(processId2);</action>
     </actionNode>
-    <join id="20" name="jointoSendReport" x="572" y="952" width="123" height="49" type="2" />
-    <actionNode id="145" name="reportBuildStart" x="618" y="208" width="134" height="64" >
-        <action type="expression" dialect="java" >Event e = (Event) kcontext.getVariable("buildStartEvent");
-System.out.println("PROCESS + EVENT!!: " + e);
-String reportIdValue = (String) kcontext.getVariable("reportId");
-report.processEvent(reportIdValue, e);</action>
-    </actionNode>
-    <actionNode id="146" name="reportBuildSuccess" x="350" y="376" width="134" height="64" >
-        <action type="expression" dialect="java" >Event e = (Event) kcontext.getVariable("buildEndEvent");
-String reportIdValue = (String) kcontext.getVariable("reportId");
-report.processEvent(reportIdValue, e);</action>
-    </actionNode>
-    <actionNode id="147" name="reportBuildFail" x="735" y="376" width="134" height="64" >
-        <action type="expression" dialect="java" >Event e = (Event) kcontext.getVariable("buildEndEvent");
-String reportIdValue = (String) kcontext.getVariable("reportId");
-report.processEvent(reportIdValue, e);</action>
-    </actionNode>
-    <actionNode id="148" name="reportTestFail" x="566" y="616" width="134" height="64" >
-        <action type="expression" dialect="java" >Event e = (Event) kcontext.getVariable("testEndEvent");
-String reportIdValue = (String) kcontext.getVariable("reportId");
-report.processEvent(reportIdValue, e);</action>
-    </actionNode>
-    <actionNode id="149" name="reportDeploySuccess" x="176" y="616" width="134" height="64" >
-        <action type="expression" dialect="java" >Event e = (Event) kcontext.getVariable("deployEndEvent");
-String reportIdValue = (String) kcontext.getVariable("reportId");
-report.processEvent(reportIdValue, e);</action>
-    </actionNode>
-    <actionNode id="150" name="reportDeployFail" x="16" y="712" width="134" height="64" >
-        <action type="expression" dialect="java" >Event e = (Event) kcontext.getVariable("deployEndEvent");
-String reportIdValue = (String) kcontext.getVariable("reportId");
-report.processEvent(reportIdValue, e);</action>
-    </actionNode>
-    <actionNode id="151" name="reportTestSuccess" x="342" y="616" width="80" height="64" >
-        <action type="expression" dialect="java" >Event e = (Event) kcontext.getVariable("testEndEvent");
-String reportIdValue = (String) kcontext.getVariable("reportId");
-report.processEvent(reportIdValue, e);</action>
-    </actionNode>
-    <join id="108" name="Join" x="686" y="472" width="80" height="40" type="1" />
-    <eventNode id="107" name="BuildSuccess" x="324" y="304" width="187" height="40" variableName="buildEndEvent" scope="external" >
+    <join id="20" name="jointoSendReport" x="283" y="1072" width="123" height="49" type="2" />
+    <join id="108" name="Join" x="406" y="544" width="80" height="40" type="1" />
+    <eventNode id="107" name="BuildSuccess" x="25" y="448" width="187" height="64" variableName="buildEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="BuildSuccessEvent" />
       </eventFilters>
     </eventNode>
-    <eventNode id="119" name="BuildFail" x="709" y="304" width="187" height="40" variableName="buildEndEvent" scope="external" >
+    <eventNode id="119" name="BuildFail" x="463" y="448" width="187" height="64" variableName="buildEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="BuildFailEvent" />
       </eventFilters>
     </eventNode>
-    <join id="125" name="Join" x="569" y="304" width="80" height="40" type="1" />
-    <eventNode id="123" name="BuildStart" x="624" y="112" width="159" height="64" variableName="buildStartEvent" scope="external" >
+    <join id="125" name="Join" x="297" y="376" width="80" height="40" type="1" />
+    <eventNode id="123" name="BuildStart" x="340" y="280" width="159" height="64" variableName="buildStartEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="BuildStartEvent" />
       </eventFilters>
     </eventNode>
-    <join id="121" name="Join" x="456" y="472" width="80" height="40" type="1" />
-    <split id="120" name="Split" x="516" y="376" width="187" height="64" type="1" />
+    <join id="121" name="Join" x="192" y="544" width="80" height="40" type="1" />
+    <split id="120" name="Split" x="244" y="448" width="187" height="64" type="1" />
   </nodes>
 
   <connections>
     <connection from="133" to="136" />
-    <connection from="128" to="139" />
-    <connection from="150" to="139" />
     <connection from="136" to="140" />
-    <connection from="139" to="140" />
+    <connection from="128" to="140" />
     <connection from="129" to="6" />
+    <connection from="143" to="142" />
+    <connection from="1" to="142" />
     <connection from="20" to="129" />
-    <connection from="149" to="128" />
+    <connection from="138" to="128" />
     <connection from="132" to="133" />
-    <connection from="151" to="133" />
+    <connection from="131" to="133" />
     <connection from="135" to="132" />
     <connection from="121" to="135" />
-    <connection from="1" to="15" />
+    <connection from="142" to="15" />
     <connection from="132" to="134" />
-    <connection from="148" to="134" />
+    <connection from="130" to="134" />
     <connection from="15" to="16" />
-    <connection from="108" to="20" bendpoints="[]" />
+    <connection from="108" to="20" bendpoints="[444,724]" />
     <connection from="134" to="20" />
     <connection from="140" to="20" />
-    <connection from="123" to="145" />
-    <connection from="107" to="146" />
-    <connection from="119" to="147" />
-    <connection from="130" to="148" />
-    <connection from="138" to="149" />
-    <connection from="137" to="150" />
-    <connection from="131" to="151" />
+    <connection from="137" to="20" />
     <connection from="120" to="108" />
-    <connection from="147" to="108" />
+    <connection from="119" to="108" />
     <connection from="16" to="125" />
-    <connection from="145" to="125" />
+    <connection from="123" to="125" />
     <connection from="120" to="121" />
-    <connection from="146" to="121" />
+    <connection from="107" to="121" />
     <connection from="125" to="120" />
   </connections>
 

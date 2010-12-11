@@ -168,7 +168,7 @@ public class OpenCitConfigurator {
 
     private void addRules() {
         List<String> rules =
-            Arrays.asList(new String[]{});
+            Arrays.asList(new String[]{ "reportEvent", });
         for (String rule : rules) {
             addRule(rule);
         }
