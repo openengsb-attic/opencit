@@ -27,6 +27,7 @@ import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
 import org.openengsb.core.common.persistence.PersistenceService;
 import org.openengsb.core.common.workflow.WorkflowService;
+import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
@@ -53,6 +54,8 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     private Map<String, ScmStatePoller> pollers = new HashMap<String, ScmStatePoller>();
 
     private long timeout = 600000l;
+
+    private ReportDomain reportDomain;
 
     public void init() {
         this.persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
@@ -175,6 +178,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
                 pollers.remove(projectId);
             }
             persistence.delete(project);
+            reportDomain.removeCategory(projectId);
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not delete project " + projectId, e);
         }
@@ -182,6 +186,10 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     public void setPersistenceManager(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
+    }
+
+    public void setReportDomain(ReportDomain reportDomain) {
+        this.reportDomain = reportDomain;
     }
 
     @Override

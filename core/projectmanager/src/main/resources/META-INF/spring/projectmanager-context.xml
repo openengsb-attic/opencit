@@ -36,6 +36,7 @@
       <property name="contextService" ref="contextService" />
       <property name="scmDomain" ref="scmDomain"/>
       <property name="workflowService" ref="workflowService" />
+      <property name="reportDomain" ref="reportDomain" />
       <property name="timeout" value="600000" />
     </bean>
   </osgi:service>
@@ -44,4 +45,5 @@
   <osgi:reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
   <osgi:reference id="workflowService" interface="org.openengsb.core.common.workflow.WorkflowService" />
   <osgi:reference id="scmDomain" interface="org.openengsb.domain.scm.ScmDomain" />
+  <osgi:reference id="reportDomain" interface="org.openengsb.domain.report.ReportDomain" />
 </beans>
