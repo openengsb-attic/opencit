@@ -45,7 +45,7 @@ public class OpenCitConfiguratorTest {
     public void testInit() throws RuleBaseException {
         configurator.init();
         RuleBaseElementId workflowId = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
-        RuleBaseElementId ruleId1 = new RuleBaseElementId(RuleBaseElementType.Rule, "sendReportRule");
+        RuleBaseElementId ruleId1 = new RuleBaseElementId(RuleBaseElementType.Rule, "reportEvent");
 
         Mockito.verify(ruleManager).add(Mockito.eq(workflowId), Mockito.anyString());
         Mockito.verify(ruleManager).add(Mockito.eq(ruleId1), Mockito.anyString());
