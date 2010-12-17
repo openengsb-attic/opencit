@@ -11,7 +11,7 @@
   <description>Continuous Integration Server based on the OpenEngSB</description>
 
   <properties>
-    <openengsb.version>1.0.2.RELEASE</openengsb.version>
+    <openengsb.version>1.0.3.RELEASE</openengsb.version>
     <plugin.assembly.version>2.2-beta-5</plugin.assembly.version>
     <jdk.version>1.6</jdk.version>
     <plugin.pax.version>1.4</plugin.pax.version>

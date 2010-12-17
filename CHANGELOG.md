@@ -1,5 +1,5 @@
 opencit-3
-  * upgrade OpenEngSB to 1.0.2.RELEASE
+  * upgrade OpenEngSB to 1.0.3.RELEASE
   * rewrite the workflow to make it more clear
 
 opencit-2
