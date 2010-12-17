@@ -26,16 +26,19 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.drools.runtime.process.WorkflowProcessInstance;
 import org.openengsb.core.common.workflow.RuleBaseException;
 import org.openengsb.core.common.workflow.RuleManager;
 import org.openengsb.core.common.workflow.model.RuleBaseElementId;
 import org.openengsb.core.common.workflow.model.RuleBaseElementType;
 import org.openengsb.domain.build.BuildDomain;
-import org.openengsb.domain.build.BuildEndEvent;
+import org.openengsb.domain.build.BuildFailEvent;
 import org.openengsb.domain.build.BuildStartEvent;
+import org.openengsb.domain.build.BuildSuccessEvent;
 import org.openengsb.domain.deploy.DeployDomain;
-import org.openengsb.domain.deploy.DeployEndEvent;
+import org.openengsb.domain.deploy.DeployFailEvent;
 import org.openengsb.domain.deploy.DeployStartEvent;
+import org.openengsb.domain.deploy.DeploySuccessEvent;
 import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.notification.model.Attachment;
 import org.openengsb.domain.notification.model.Notification;
@@ -45,8 +48,9 @@ import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.ReportPart;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;
-import org.openengsb.domain.test.TestEndEvent;
+import org.openengsb.domain.test.TestFailEvent;
 import org.openengsb.domain.test.TestStartEvent;
+import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
@@ -80,6 +84,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(UUID.class.getCanonicalName());
         ruleManager.addImport(SimpleDateFormat.class.getCanonicalName());
         ruleManager.addImport(Date.class.getCanonicalName());
+        ruleManager.addImport(WorkflowProcessInstance.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
@@ -89,21 +94,24 @@ public class OpenCitConfigurator {
 
     private void addBuildGlobalsAndImports() throws RuleBaseException {
         ruleManager.addImport(BuildStartEvent.class.getCanonicalName());
-        ruleManager.addImport(BuildEndEvent.class.getCanonicalName());
+        ruleManager.addImport(BuildSuccessEvent.class.getCanonicalName());
+        ruleManager.addImport(BuildFailEvent.class.getCanonicalName());
         ruleManager.addImport(BuildDomain.class.getCanonicalName());
         addGlobal(BuildDomain.class.getCanonicalName(), "build");
     }
 
     private void addTestGlobalsAndImports() throws RuleBaseException {
         ruleManager.addImport(TestStartEvent.class.getCanonicalName());
-        ruleManager.addImport(TestEndEvent.class.getCanonicalName());
+        ruleManager.addImport(TestSuccessEvent.class.getCanonicalName());
+        ruleManager.addImport(TestFailEvent.class.getCanonicalName());
         ruleManager.addImport(TestDomain.class.getCanonicalName());
         addGlobal(TestDomain.class.getCanonicalName(), "test");
     }
 
     private void addDeployGlobalsAndImports() throws RuleBaseException {
         ruleManager.addImport(DeployStartEvent.class.getCanonicalName());
-        ruleManager.addImport(DeployEndEvent.class.getCanonicalName());
+        ruleManager.addImport(DeploySuccessEvent.class.getCanonicalName());
+        ruleManager.addImport(DeployFailEvent.class.getCanonicalName());
         ruleManager.addImport(DeployDomain.class.getCanonicalName());
         addGlobal(DeployDomain.class.getCanonicalName(), "deploy");
     }
@@ -160,8 +168,7 @@ public class OpenCitConfigurator {
 
     private void addRules() {
         List<String> rules =
-            Arrays.asList(new String[]{ "sendReportRule", "forwardBuildStartEvent", "forwardBuildEndEvent",
-                "forwardTestStartEvent", "forwardTestEndEvent", "forwardDeployStartEvent", "forwardDeployEndEvent" });
+            Arrays.asList(new String[]{ "reportEvent", });
         for (String rule : rules) {
             addRule(rule);
         }
