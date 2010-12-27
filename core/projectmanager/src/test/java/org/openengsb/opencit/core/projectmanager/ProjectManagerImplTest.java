@@ -29,6 +29,7 @@ import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
 import org.openengsb.core.common.persistence.PersistenceService;
+import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -58,6 +59,7 @@ public class ProjectManagerImplTest {
         projectManager.setPersistenceManager(persistenceManagerMock);
         projectManager.setContextService(contextMock);
         projectManager.setScmDomain(Mockito.mock(ScmDomain.class));
+        projectManager.setReportDomain(Mockito.mock(ReportDomain.class));
         projectManager.init();
     }
 
