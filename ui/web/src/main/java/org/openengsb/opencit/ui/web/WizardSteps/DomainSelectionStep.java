@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
@@ -71,20 +70,13 @@ public class DomainSelectionStep extends DynamicWizardStep {
             new ResourceModel("selectDomain.summary"), new Model<Project>(project));
         this.project = project;
 
-        for (Class<? extends Domain> i : OpenCitConfigurator.getRequiredServices()) {
-            managersMap.put(getDomainName(i), i);
-        }
-
         Map<Class<? extends Domain>, String> services = project.getServices();
-        Set<String> toRemove = new HashSet<String>();
-        for (Entry<String, Class<? extends Domain>> entry : managersMap.entrySet()) {
-            if (services.containsKey(entry.getValue())) {
-                toRemove.add(entry.getKey());
+        for (Class<? extends Domain> i : OpenCitConfigurator.getRequiredServices()) {
+            if (!services.containsKey(i)) {
+                managersMap.put(getDomainName(i), i);
             }
         }
-        for (String s : toRemove) {
-            managersMap.remove(s);
-        }
+
         domainDropDown = managersMap.keySet().iterator().next();
 
         DropDownChoice<String> descriptorDropDownChoice = initSCMDomains();
