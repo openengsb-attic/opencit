@@ -30,10 +30,12 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
+import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
 import org.openengsb.ui.web.editor.ServiceEditorPanel;
@@ -112,10 +114,13 @@ public class SetAttributesStep extends DynamicWizardStep {
     @Override
     public IDynamicWizardStep next() {
         project.addService(serviceManager.getObject().getDescriptor().getServiceType(), serviceId);
-        if (project.getServices().size() == 6) {
-            return new FinalStep(this, project);
+        Map<Class<? extends Domain>, String> configured = project.getServices();
+        for (Class<? extends Domain> c : OpenCitConfigurator.getRequiredServices()) {
+            if (!configured.containsKey(c)) {
+                return new DomainSelectionStep(project);
+            }
         }
-        return new DomainSelectionStep(project);
+        return new FinalStep(this, project);
     }
 
 }
