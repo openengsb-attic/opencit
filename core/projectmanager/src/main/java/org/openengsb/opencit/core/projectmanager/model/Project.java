@@ -76,13 +76,13 @@ public class Project implements Serializable {
         }
         Map<Class<? extends Domain>, String> map = new HashMap<Class<? extends Domain>, String>(services.size());
         for (Entry<String, String> entry : services.entrySet()) {
-            map.put(getClass(entry.getKey()), entry.getValue());
+            map.put(getDomainClass(entry.getKey()), entry.getValue());
         }
         return map;
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends Domain> getClass(String key) {
+    private Class<? extends Domain> getDomainClass(String key) {
         try {
             return (Class<? extends Domain>) getClass().getClassLoader().loadClass(key);
         } catch (ClassNotFoundException cnfe) {
