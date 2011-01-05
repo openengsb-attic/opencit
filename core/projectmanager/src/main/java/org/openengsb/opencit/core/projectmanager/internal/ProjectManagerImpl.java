@@ -53,12 +53,12 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     private Map<String, ScmStatePoller> pollers = new HashMap<String, ScmStatePoller>();
 
-    private long timeout = 600000l;
+    private long timeout = 600000L;
 
     private ReportDomain reportDomain;
 
     public void init() {
-        this.persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
+        persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
         startPollingForPresentProjects();
     }
 

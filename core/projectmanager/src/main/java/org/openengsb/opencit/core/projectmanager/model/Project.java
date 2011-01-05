@@ -103,9 +103,9 @@ public class Project implements Serializable {
             return false;
         }
         Project other = (Project) obj;
-        return ObjectUtils.equals(this.id, other.id) && ObjectUtils.equals(this.state, other.state)
-                && ObjectUtils.equals(this.notificationRecipient, other.notificationRecipient) &&
-                ObjectUtils.equals(this.services, other.services);
+        return ObjectUtils.equals(id, other.id) && ObjectUtils.equals(state, other.state)
+                && ObjectUtils.equals(notificationRecipient, other.notificationRecipient)
+                && ObjectUtils.equals(services, other.services);
     }
 
     @Override
