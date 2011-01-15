@@ -107,7 +107,7 @@ public class SelectServiceStep extends DynamicWizardStep implements SpringBeanPr
     @Override
     public boolean isComplete() {
         if (serviceDescriptor != null) {
-            return (managerMap.getObject().containsKey(serviceDescriptor));
+            return managerMap.getObject().containsKey(serviceDescriptor);
         } else {
             return false;
         }

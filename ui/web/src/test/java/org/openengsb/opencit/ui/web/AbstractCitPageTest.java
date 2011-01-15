@@ -46,7 +46,7 @@ public abstract class AbstractCitPageTest {
     private WicketTester tester;
     public ApplicationContextMock appContext;
 
-    protected abstract Map<String,Object> getBeansForAppContextAsMap();
+    protected abstract Map<String, Object> getBeansForAppContextAsMap();
 
     @Before
     public void setup() {
@@ -54,7 +54,7 @@ public abstract class AbstractCitPageTest {
 
         Map<String, Object> mockedBeans = getBeansForAppContextAsMap();
         for (String key : mockedBeans.keySet()) {
-            appContext.putBean(key,mockedBeans.get(key));
+            appContext.putBean(key, mockedBeans.get(key));
         }
 
         mockAuthentication();

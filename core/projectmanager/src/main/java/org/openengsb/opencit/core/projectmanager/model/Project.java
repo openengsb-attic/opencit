@@ -76,13 +76,13 @@ public class Project implements Serializable {
         }
         Map<Class<? extends Domain>, String> map = new HashMap<Class<? extends Domain>, String>(services.size());
         for (Entry<String, String> entry : services.entrySet()) {
-            map.put(getClass(entry.getKey()), entry.getValue());
+            map.put(getDomainClass(entry.getKey()), entry.getValue());
         }
         return map;
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends Domain> getClass(String key) {
+    private Class<? extends Domain> getDomainClass(String key) {
         try {
             return (Class<? extends Domain>) getClass().getClassLoader().loadClass(key);
         } catch (ClassNotFoundException cnfe) {
@@ -103,9 +103,9 @@ public class Project implements Serializable {
             return false;
         }
         Project other = (Project) obj;
-        return ObjectUtils.equals(this.id, other.id) && ObjectUtils.equals(this.state, other.state)
-                && ObjectUtils.equals(this.notificationRecipient, other.notificationRecipient) &&
-                ObjectUtils.equals(this.services, other.services);
+        return ObjectUtils.equals(id, other.id) && ObjectUtils.equals(state, other.state)
+                && ObjectUtils.equals(notificationRecipient, other.notificationRecipient)
+                && ObjectUtils.equals(services, other.services);
     }
 
     @Override

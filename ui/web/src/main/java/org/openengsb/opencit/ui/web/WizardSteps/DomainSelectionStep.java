@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
@@ -38,6 +37,7 @@ import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;
+import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public class DomainSelectionStep extends DynamicWizardStep {
@@ -47,28 +47,36 @@ public class DomainSelectionStep extends DynamicWizardStep {
     private Project project;
     private Map<String, Class<? extends Domain>> managersMap = new HashMap<String, Class<? extends Domain>>();
 
+    private static Map<Class<? extends Domain>, String> nameMap = new HashMap<Class<? extends Domain>, String>();
+    static {
+        nameMap.put(ScmDomain.class, "SCM Domain");
+        nameMap.put(NotificationDomain.class, "Notification Domain");
+        nameMap.put(BuildDomain.class, "Build Domain");
+        nameMap.put(TestDomain.class, "Test Domain");
+        nameMap.put(DeployDomain.class, "Deploy Domain");
+        nameMap.put(ReportDomain.class, "Report Domain");
+    }
+
+    private String getDomainName(Class<? extends Domain> clazz) {
+        if (nameMap.containsKey(clazz)) {
+            return nameMap.get(clazz);
+        } else {
+            return clazz.getCanonicalName();
+        }
+    }
+
     public DomainSelectionStep(Project project) {
         super(new CreateProjectStep(project), new ResourceModel("selectDomain.title"),
             new ResourceModel("selectDomain.summary"), new Model<Project>(project));
         this.project = project;
 
-        managersMap.put("SCM Domain", ScmDomain.class);
-        managersMap.put("Notification Domain", NotificationDomain.class);
-        managersMap.put("Build Domain", BuildDomain.class);
-        managersMap.put("Test Domain", TestDomain.class);
-        managersMap.put("Deploy Domain", DeployDomain.class);
-        managersMap.put("Report Domain", ReportDomain.class);
-
         Map<Class<? extends Domain>, String> services = project.getServices();
-        Set<String> toRemove = new HashSet<String>();
-        for (Entry<String, Class<? extends Domain>> entry : managersMap.entrySet()) {
-            if (services.containsKey(entry.getValue())) {
-                toRemove.add(entry.getKey());
+        for (Class<? extends Domain> i : OpenCitConfigurator.getRequiredServices()) {
+            if (!services.containsKey(i)) {
+                managersMap.put(getDomainName(i), i);
             }
         }
-        for (String s : toRemove) {
-            managersMap.remove(s);
-        }
+
         domainDropDown = managersMap.keySet().iterator().next();
 
         DropDownChoice<String> descriptorDropDownChoice = initSCMDomains();
@@ -87,14 +95,17 @@ public class DomainSelectionStep extends DynamicWizardStep {
 
         DropDownChoice<String> descriptorDropDownChoice =
             new DropDownChoice<String>("domainDropDown", new IModel<String>() {
+                @Override
                 public String getObject() {
                     return domainDropDown;
                 }
 
+                @Override
                 public void setObject(String object) {
                     domainDropDown = object;
                 }
 
+                @Override
                 public void detach() {
                 }
             }, dropDownModel);

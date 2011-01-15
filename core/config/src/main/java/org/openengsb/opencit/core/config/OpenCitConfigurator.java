@@ -21,12 +21,15 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.drools.runtime.process.WorkflowProcessInstance;
+import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.workflow.RuleBaseException;
 import org.openengsb.core.common.workflow.RuleManager;
 import org.openengsb.core.common.workflow.model.RuleBaseElementId;
@@ -58,6 +61,17 @@ import org.openengsb.opencit.core.projectmanager.model.Project.State;
 public class OpenCitConfigurator {
 
     private RuleManager ruleManager;
+
+    public static Set<Class<? extends Domain>> getRequiredServices() {
+        Set<Class<? extends Domain>> serviceSet = new HashSet<Class<? extends Domain>>();
+        serviceSet.add(ScmDomain.class);
+        serviceSet.add(NotificationDomain.class);
+        serviceSet.add(BuildDomain.class);
+        serviceSet.add(TestDomain.class);
+        serviceSet.add(DeployDomain.class);
+        serviceSet.add(ReportDomain.class);
+        return serviceSet;
+    }
 
     public void init() {
         addGlobalsAndImports();
