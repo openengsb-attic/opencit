@@ -16,6 +16,9 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openengsb.core.common.context.ContextCurrentService;
@@ -27,6 +30,29 @@ public class ScmStatePoller {
 
     private Log log = LogFactory.getLog(this.getClass());
 
+    public class PollTask extends TimerTask {
+        private void runFlow() {
+            try {
+                workflowService.startFlow("ci");
+            } catch (WorkflowException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void run() {
+            try {
+                contextService.setThreadLocalContext(projectId);
+                log.debug("polling");
+                if (scm.poll()) {
+                    runFlow();
+                }
+            } catch (Exception e) { // just swallow it here for now
+                log.error("error when polling scm ", e);
+            }
+        }
+    }
+
     private ScmDomain scm;
 
     private String projectId;
@@ -35,59 +61,19 @@ public class ScmStatePoller {
 
     private ContextCurrentService contextService;
 
-    private boolean stopped = false;
-
     private long timeout;
 
+    private PollTask task;
+
+    private static Timer timer = new Timer();
+
     public void start() {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                stop();
-            }
-        }));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doRun();
-            }
-        }).start();
+        task = new PollTask();
+        timer.schedule(task, 0, timeout);
     }
 
-    public void doRun() {
-        contextService.setThreadLocalContext(projectId);
-        log.info("ScmStatePoller started");
-        while (!stopped) {
-            if (scm.poll()) {
-                log.info("ScmStatePoller found SCM change - starting CI & T workflow.");
-                runFlow();
-            } else {
-                waitForFixedTime();
-            }
-        }
-    }
-
-    private synchronized void waitForFixedTime() {
-        try {
-            wait(timeout);
-        } catch (InterruptedException ie) {
-            log.warn("ScmStatePoller was interrupted.", ie);
-            Thread.interrupted();
-        }
-    }
-
-    private void runFlow() {
-        try {
-            workflowService.startFlow("ci");
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public synchronized void stop() {
-        log.info("ScmStatePoller stopped");
-        stopped = true;
-        notifyAll();
+    public void stop() {
+        task.cancel();
     }
 
     public void setContextService(ContextCurrentService contextService) {
