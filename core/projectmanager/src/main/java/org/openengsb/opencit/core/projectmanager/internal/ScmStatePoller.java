@@ -22,7 +22,6 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.core.common.workflow.WorkflowException;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.scm.ScmDomain;
@@ -34,29 +33,23 @@ public class ScmStatePoller {
     public class PollTask extends TimerTask {
         private void runFlow() {
             try {
-                log.info("starting workflow \"CI\"");
                 workflowService.startFlow("ci");
-            } catch (WorkflowException e) { // just swallow it here for now
-                log.error("error occured in workflow-execution", e);
+            } catch (WorkflowException e) {
+                throw new RuntimeException(e);
             }
         }
 
         @Override
         public void run() {
             try {
-                log.info("running pollertask");
-                log.debug(projectId + " - " + Thread.currentThread().getId());
-                log.debug("ContextHolder had " + ContextHolder.get().getCurrentContextId());
                 contextService.setThreadLocalContext(projectId);
-                log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
+                log.debug("polling");
                 if (scm.poll()) {
-                    log.info("running flow");
                     runFlow();
                 }
             } catch (Exception e) { // just swallow it here for now
                 log.error("error when polling scm ", e);
             }
-            log.info("poller done done");
         }
     }
 
