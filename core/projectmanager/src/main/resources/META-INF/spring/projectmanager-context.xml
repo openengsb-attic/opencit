@@ -37,7 +37,7 @@
       <property name="scmDomain" ref="scmDomain" />
       <property name="workflowService" ref="workflowService" />
       <property name="reportDomain" ref="reportDomain" />
-      <property name="timeout" value="30000" />
+      <property name="timeout" value="600000" />
     </bean>
   </osgi:service>
 
