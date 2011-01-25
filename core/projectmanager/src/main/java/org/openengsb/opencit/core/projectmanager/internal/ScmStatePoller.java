@@ -65,7 +65,7 @@ public class ScmStatePoller {
 
     private PollTask task;
 
-    private static Timer timer = new Timer();
+    private Timer timer = new Timer();
 
     public void start() {
         task = new PollTask();
