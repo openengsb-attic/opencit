@@ -35,10 +35,18 @@
 
   <description>Parent project for projects regarding Homepage and Manual for OpenCIT</description>
 
-  <modules>
-    <module>manual</module>
-    <module>homepage</module>
-  </modules>
+  <profiles>
+    <profile>
+      <id>docs</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>manual</module>
+        <module>homepage</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>
 
