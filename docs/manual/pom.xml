@@ -24,12 +24,12 @@
   <parent>
     <groupId>org.openengsb.opencit.docs</groupId>
     <artifactId>opencit-docs-parent</artifactId>
-    <version>4-SNAPSHOT</version>
+    <version>4</version>
   </parent>
 
   <groupId>org.openengsb.opencit.docs</groupId>
   <artifactId>opencit-docs-manual</artifactId>
-  <version>4-SNAPSHOT</version>
+  <version>4</version>
   <name>OpenCIT :: Documentation :: Manual</name>
   <packaging>pom</packaging>
 
