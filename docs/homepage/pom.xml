@@ -23,12 +23,12 @@
   <parent>
     <groupId>org.openengsb.opencit.docs</groupId>
     <artifactId>opencit-docs-parent</artifactId>
-    <version>5</version>
+    <version>6-SNAPSHOT</version>
   </parent>
 
   <groupId>org.openengsb.opencit.docs</groupId>
   <artifactId>opencit-docs-homepage</artifactId>
-  <version>5</version>
+  <version>6-SNAPSHOT</version>
   <name>OpenCIT :: Documentation :: Homepage</name>
   <packaging>pom</packaging>
 
