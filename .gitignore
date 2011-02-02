@@ -8,6 +8,8 @@ eclipse-workspace
 *.iml
 *.ipr
 *.iws
+*~
+*bin
 
 
 classes
