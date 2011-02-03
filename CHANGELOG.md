@@ -1,3 +1,13 @@
+opencit-5
+  * upgrade OpenEngSB to 1.0.4.RELEASE
+  * properly display reports when multiple projects are present.
+
+opencit-4
+  * Delete reports when a project is deleted
+  * increase stability of SCM-Polling (it should no longer stop polling when the connection times out)
+  * upgrade OpenEngSB to 1.0.4.RELEASE
+  * make sure that clicking on project details always points to the correct details
+
 opencit-3
   * upgrade OpenEngSB to 1.0.3.RELEASE
   * rewrite the workflow to make it more clear
