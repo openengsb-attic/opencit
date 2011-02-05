@@ -80,6 +80,11 @@
       <version>${openengsb.wrapped.wicket.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>com.google.guava-all</artifactId>
+      <version>${openengsb.wrapped.guava.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.openengsb.core</groupId>
       <artifactId>openengsb-core-common</artifactId>
       <version>${openengsb.version}</version>

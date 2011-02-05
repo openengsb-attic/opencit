@@ -61,7 +61,7 @@
     <openengsb.ui.web.version>${openengsb.version}</openengsb.ui.web.version>
     <openengsb.ui.common.wicket.version>${openengsb.version}</openengsb.ui.common.wicket.version>
     <openengsb.wrapped.wicket.version>1.4.13.w1</openengsb.wrapped.wicket.version>
-    <openengsb.wrapped.guava.version>${openengsb.version}</openengsb.wrapped.guava.version>
+    <openengsb.wrapped.guava.version>1.0.0.r07.w1</openengsb.wrapped.guava.version>
     <openengsb.wrapped.jaxb.version>2.2.1.w1</openengsb.wrapped.jaxb.version>
     <openengsb.wrapped.jsch.version>0.1.42.w1</openengsb.wrapped.jsch.version>
     <openengsb.wrapped.xmlrpc.version>3.1.3.w1</openengsb.wrapped.xmlrpc.version>
