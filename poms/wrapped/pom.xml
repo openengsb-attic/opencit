@@ -40,11 +40,6 @@
         <groupId>org.ops4j</groupId>
         <artifactId>maven-pax-plugin</artifactId>
         <version>${plugin.pax.version}</version>
-          <configuration>
-          <provision>
-            <param>--platform=felix</param>
-          </provision>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
