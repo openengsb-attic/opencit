@@ -21,32 +21,32 @@
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>com.google.guava-all</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.wrapped.guava.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>javax.xml.jaxb-all</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.wrapped.jaxb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>org.apache.wicket-all</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.wrapped.wicket.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>com.jcraft.jsch-all</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.wrapped.jsch.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>org.apache.xmlrpc-all</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.wrapped.xmlrpc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>org.neodatis.odb-all</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.wrapped.odb.version}</version>
     </dependency>
 
     <dependency>
@@ -74,73 +74,73 @@
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-example</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.example.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.connector</groupId>
       <artifactId>openengsb-connector-example</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.connector.example.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-notification</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.notification.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.connector</groupId>
       <artifactId>openengsb-connector-email</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.connector.email.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-report</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.report.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.connector</groupId>
       <artifactId>openengsb-connector-plaintextreport</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.connector.plaintextreport.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-scm</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.scm.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openengsb.connector</groupId>
       <artifactId>openengsb-connector-git</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.connector.git.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-build</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.build.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-test</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.test.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-deploy</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.deploy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.connector</groupId>
       <artifactId>openengsb-connector-maven</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.connector.maven.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-web</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.ui.web.version}</version>
       <type>war</type>
     </dependency>
 

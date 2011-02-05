@@ -56,37 +56,37 @@
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-report</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.report.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-notification</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.notification.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-scm</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.scm.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-build</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.build.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-test</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.test.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-deploy</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.deploy.version}</version>
       <scope>provided</scope>
     </dependency>
 

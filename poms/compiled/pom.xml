@@ -75,7 +75,7 @@
     <dependency>
       <groupId>org.openengsb.build</groupId>
       <artifactId>provision</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.build.version}</version>
       <type>pom</type>
       <scope>provided</scope>
       <optional>true</optional>

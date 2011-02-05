@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>org.apache.wicket-all</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.wrapped.wicket.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openengsb.core</groupId>
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-report</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.domain.report.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-web</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.ui.web.version}</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
@@ -117,7 +117,7 @@
     <dependency>
       <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-web</artifactId>
-      <version>${openengsb.version}</version>
+      <version>${openengsb.ui.web.version}</version>
       <type>jar</type>
       <classifier>classes</classifier>
     </dependency>

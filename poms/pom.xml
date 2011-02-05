@@ -50,8 +50,28 @@
     <maven.war.plugin>2.1-beta-1</maven.war.plugin>
     <mockito.version>1.8.5</mockito.version>
     <wicket.version>1.4.12</wicket.version>
-    <!-- Component Versions -->
+    <!--  OpenEngSB component versions -->
     <openengsb.version>1.0.5.RELEASE</openengsb.version>
+    <openengsb.domain.report.version>${openengsb.version}</openengsb.domain.report.version>
+    <openengsb.domain.notification.version>${openengsb.version}</openengsb.domain.notification.version>
+    <openengsb.domain.scm.version>${openengsb.version}</openengsb.domain.scm.version>
+    <openengsb.domain.build.version>${openengsb.version}</openengsb.domain.build.version>
+    <openengsb.domain.test.version>${openengsb.version}</openengsb.domain.test.version>
+    <openengsb.domain.deploy.version>${openengsb.version}</openengsb.domain.deploy.version>
+    <openengsb.domain.example.version>${openengsb.version}</openengsb.domain.example.version>
+    <openengsb.connector.example.version>${openengsb.version}</openengsb.connector.example.version>
+    <openengsb.connector.email.version>${openengsb.version}</openengsb.connector.email.version>
+    <openengsb.connector.plaintextreport.version>${openengsb.version}</openengsb.connector.plaintextreport.version>
+    <openengsb.connector.git.version>${openengsb.version}</openengsb.connector.git.version>
+    <openengsb.connector.maven.version>${openengsb.version}</openengsb.connector.maven.version>
+    <openengsb.ui.web.version>${openengsb.version}</openengsb.ui.web.version>
+    <openengsb.wrapped.wicket.version>${openengsb.version}</openengsb.wrapped.wicket.version>
+    <openengsb.wrapped.guava.version>${openengsb.version}</openengsb.wrapped.guava.version>
+    <openengsb.wrapped.jaxb.version>${openengsb.version}</openengsb.wrapped.jaxb.version>
+    <openengsb.wrapped.jsch.version>${openengsb.version}</openengsb.wrapped.jsch.version>
+    <openengsb.wrapped.xmlrpc.version>${openengsb.version}</openengsb.wrapped.xmlrpc.version>
+     <openengsb.wrapped.odb.version>${openengsb.version}</openengsb.wrapped.odb.version>
+   <!-- Component Versions -->
     <osgi.version>4.2.0</osgi.version>
     <slf4j.version>1.6.1</slf4j.version>
   </properties>
