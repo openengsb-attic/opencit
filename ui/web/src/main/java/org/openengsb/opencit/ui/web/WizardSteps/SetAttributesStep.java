@@ -38,12 +38,13 @@ import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
-import org.openengsb.ui.web.editor.ServiceEditorPanel;
+import org.openengsb.ui.common.wicket.editor.ServiceEditorPanel;
+import org.openengsb.ui.web.ServiceEditor;
 import org.openengsb.ui.web.model.WicketStringLocalizer;
 
 public class SetAttributesStep extends DynamicWizardStep {
     private Project project;
-    private ServiceEditorPanel editorPanel;
+    private ServiceEditor editor;
     private FeedbackPanel feedbackPanel;
     private ServiceManagerModel serviceManager;
     private String serviceId;
@@ -66,11 +67,10 @@ public class SetAttributesStep extends DynamicWizardStep {
         };
         Map<String, String> values = new HashMap<String, String>();
 
-        editorPanel = new ServiceEditorPanel("editor", attributes.getObject(), values,
-            serviceManager.getObject().getDescriptor().getFormValidator()) {
+        editor = new ServiceEditor("editor", attributes.getObject(), values) {
             @Override
             public void onSubmit() {
-                CheckBox component = (CheckBox) editorPanel.get("form:validate");
+                CheckBox component = (CheckBox) editor.get("form:validate");
                 boolean checkBoxValue = component.getModelObject();
                 if (checkBoxValue) {
                     MultipleAttributeValidationResult updateWithValidation = serviceManager.getObject()
@@ -92,7 +92,7 @@ public class SetAttributesStep extends DynamicWizardStep {
                 }
             }
         };
-        add(editorPanel);
+        add(editor);
     }
 
     private List<AttributeDefinition> buildAttributeList(ServiceManager service) {

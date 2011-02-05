@@ -40,7 +40,7 @@ import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.ui.web.editor.ServiceEditorPanel;
+import org.openengsb.ui.web.ServiceEditor;
 
 public class ProjectWizardTest extends AbstractCitPageTest {
 
@@ -182,7 +182,7 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         attributeFormTester.setValue("fields:2:row:field", "attribute1Value1");
         attributeFormTester.setValue("validate", false);
         // step next
-        ServiceEditorPanel comp = (ServiceEditorPanel) tester
+        ServiceEditor comp = (ServiceEditor) tester
             .getComponentFromLastRenderedPage("wizard:form:view:editor");
         comp.onSubmit();
         nextStep(formTester);

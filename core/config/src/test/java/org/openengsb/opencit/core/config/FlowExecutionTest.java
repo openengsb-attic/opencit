@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.workflow.internal.WorkflowServiceImpl;
-import org.openengsb.core.workflow.internal.dirsource.DirectoryRuleSource;
+import org.openengsb.core.workflow.internal.persistence.PersistenceRuleManager;
 import org.openengsb.domain.build.BuildDomain;
 import org.openengsb.domain.build.BuildStartEvent;
 import org.openengsb.domain.build.BuildSuccessEvent;
@@ -68,7 +68,7 @@ public class FlowExecutionTest {
 
     @Test
     public void testExecuteWorkflow() throws Exception {
-        DirectoryRuleSource directoryRuleSource = new DirectoryRuleSource("data");
+        PersistenceRuleManager directoryRuleSource = new PersistenceRuleManager(); /* FIXME */
         directoryRuleSource.init();
 
         WorkflowServiceImpl service = new WorkflowServiceImpl();
