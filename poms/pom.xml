@@ -59,6 +59,7 @@
     <openengsb.connector.git.version>${openengsb.version}</openengsb.connector.git.version>
     <openengsb.connector.maven.version>${openengsb.version}</openengsb.connector.maven.version>
     <openengsb.ui.web.version>${openengsb.version}</openengsb.ui.web.version>
+    <openengsb.ui.common.wicket.version>${openengsb.version}</openengsb.ui.common.wicket.version>
     <openengsb.wrapped.wicket.version>1.4.13.w1</openengsb.wrapped.wicket.version>
     <openengsb.wrapped.guava.version>${openengsb.version}</openengsb.wrapped.guava.version>
     <openengsb.wrapped.jaxb.version>2.2.1.w1</openengsb.wrapped.jaxb.version>
