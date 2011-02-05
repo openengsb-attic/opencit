@@ -79,6 +79,18 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.openengsb</groupId>
+        <artifactId>openengsb</artifactId>
+        <type>zip</type>
+        <version>${openengsb.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openengsb</groupId>
+        <artifactId>openengsb</artifactId>
+        <type>tar.gz</type>
+        <version>${openengsb.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
