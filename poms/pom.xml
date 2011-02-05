@@ -45,10 +45,13 @@
     <junit.version>4.8.1</junit.version>
     <maven.plugin.project.info.reports.version>2.2</maven.plugin.project.info.reports.version>
     <maven.plugin.assembly.version>2.2-beta-5</maven.plugin.assembly.version>
+    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
+    <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
     <maven.war.plugin>2.1-beta-1</maven.war.plugin>
     <mockito.version>1.8.5</mockito.version>
     <wicket.version>1.4.12</wicket.version>
     <!-- Component Versions -->
+    <openengsb.version>1.0.5.RELEASE</openengsb.version>
     <osgi.version>4.2.0</osgi.version>
     <slf4j.version>1.6.1</slf4j.version>
   </properties>

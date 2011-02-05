@@ -11,17 +11,13 @@
   <description>Continuous Integration Server based on the OpenEngSB</description>
 
   <properties>
-    <openengsb.version>1.0.6.RELEASE</openengsb.version>
     <plugin.assembly.version>2.2-beta-5</plugin.assembly.version>
     <jdk.version>1.6</jdk.version>
     <plugin.pax.version>1.4</plugin.pax.version>
-    <plugin.deploy.version>2.5</plugin.deploy.version>
     <maven.plugin.compiler.version>2.3.1</maven.plugin.compiler.version>
-    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.enforcer.version>1.0</maven.plugin.enforcer.version>
     <plugin.resources.version>2.4.3</plugin.resources.version>
     <maven.plugin.install.version>2.3.1</maven.plugin.install.version>
-    <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
     <maven.plugin.release.version>2.1</maven.plugin.release.version>
     <maven.plugin.surefire.version>2.6</maven.plugin.surefire.version>
     <maven.plugin.deploy.version>2.5</maven.plugin.deploy.version>
