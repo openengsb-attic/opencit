@@ -45,7 +45,6 @@
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
     <!--  OpenEngSB component versions -->
-    <openengsb.version>1.1.0.RC1</openengsb.version>
     <openengsb.domain.report.version>${openengsb.version}</openengsb.domain.report.version>
     <openengsb.domain.notification.version>${openengsb.version}</openengsb.domain.notification.version>
     <openengsb.domain.scm.version>${openengsb.version}</openengsb.domain.scm.version>
