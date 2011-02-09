@@ -56,8 +56,37 @@
 
     <section>
         <title>Using the OpenCIT</title>
-        <para>TBW</para>
+        <para>
+            Once OpenCIT is running use a webbrowser to open http://localhost:8095. Log in at the login screen with the
+            (currently hardcoded) username "user" and password "password". After a successful login you will see a list
+            of configured projects, which is empty in a freshly installed OpenCIT.
+        </para>
+        <section>
+            <title>Setting up a project</title>
+            <para>
+                To set up a new project you have to configure 6 connectors:
+                <itemizedlist>
+                    <listitem>
+                        SCM Domain: The SCM domain connector is responsible for downloading the source code and
+                        notifying OpenCIT when new commits arrive.
+                    </listitem>
+                    <listitem> Build Domain: This connector is responsible for compiling the source code. </listitem>
+                    <listitem> Test Domain: This connector executes your unit and/or integration tests. </listitem>
+                    <listitem> Deploy Domain: ??? </listitem>
+                    <listitem> Notification Domain: This connector sends out notifications(e.g. Emails) with the
+                        results of test runs.
+                    </listitem>
+                    <listitem> Report Domain: This connector archives the results of past test runs.</listitem>
+                </itemizedlist>
+                For detailed information consult the next chapter.
+            </para>
+        </section>
+        <section>
+            <title>Executing the CI and T workflow</title>
+            <para>
+                TBD
+            </para>
+        </section>
     </section>
 
 </chapter>
-
