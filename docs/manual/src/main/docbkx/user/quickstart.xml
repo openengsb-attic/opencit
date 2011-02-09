@@ -25,11 +25,33 @@
 
     <title>Quickstart</title>
 
-    <para>TBW</para>
-
     <section>
         <title>Setting up the OpenCIT</title>
-        <para>TBW</para>
+        <para>
+            To set up a basic OpenCIT setup follow these steps:
+            <itemizedlist>
+                <listitem>
+                    Create a new unpriviledged user on your host. This is not strictly needed, but highly recommended for
+                    security purposes
+                </listitem>
+                <listitem> Unpack the OpenCIT archive in a folder of your choice</listitem>
+                <listitem>
+                    Execute
+                    <programlisting>
+                        opencit/bin/karaf.sh server
+                    </programlisting>
+                    to run the server. To be able to log off from the shell without terminating the server you can user
+                    <programlisting>
+                        screen opencit/bin/karaf.sh
+                    </programlisting>
+                    There is also a start script for Microsoft Windows systems in opencit/bin/karaf.bat
+                </listitem>
+                <listitem>
+                    OpenCIT is now running and listening to port 8095. To configure it and set up projects use any webbrowser
+                    to navigate to http://localhost:8095
+                </listitem>
+            </itemizedlist>
+        </para>
     </section>
 
     <section>
