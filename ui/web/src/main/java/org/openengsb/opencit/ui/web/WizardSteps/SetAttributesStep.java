@@ -43,84 +43,73 @@ import org.openengsb.ui.web.ServiceEditor;
 import org.openengsb.ui.web.model.WicketStringLocalizer;
 
 public class SetAttributesStep extends DynamicWizardStep {
-    private Project project;
-    private ServiceEditor editor;
-    private FeedbackPanel feedbackPanel;
-    private ServiceManagerModel serviceManager;
-    private String serviceId;
+	private Project project;
+	private ServiceEditor editor;
+	private FeedbackPanel feedbackPanel;
+	private ServiceManagerModel serviceManager;
+	private String serviceId;
 
-    public SetAttributesStep(final Project project, final ServiceManagerModel serviceManager) {
-        super(new CreateProjectStep(project), new ResourceModel("setAttribute.title"),
-            new ResourceModel("setAttribute.summary"), new Model<Project>(project));
-        this.project = project;
-        this.serviceManager = serviceManager;
-        feedbackPanel = new FeedbackPanel("feedback");
-        feedbackPanel.setOutputMarkupId(true);
-        add(feedbackPanel);
-        setComplete(false);
+	public SetAttributesStep(final Project project,
+			final ServiceManagerModel serviceManager) {
+		super(new CreateProjectStep(project), new ResourceModel(
+				"setAttribute.title"),
+				new ResourceModel("setAttribute.summary"), new Model<Project>(
+						project));
+		this.project = project;
+		this.serviceManager = serviceManager;
+		feedbackPanel = new FeedbackPanel("feedback");
+		feedbackPanel.setOutputMarkupId(true);
+		add(feedbackPanel);
+		setComplete(false);
 
-        IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
-            @Override
-            protected List<AttributeDefinition> load() {
-                return buildAttributeList(serviceManager.getObject());
-            }
-        };
-        Map<String, String> values = new HashMap<String, String>();
+		IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
+			@Override
+			protected List<AttributeDefinition> load() {
+				return buildAttributeList(serviceManager.getObject());
+			}
+		};
+		Map<String, String> values = new HashMap<String, String>();
 
-        editor = new ServiceEditor("editor", attributes.getObject(), values) {
-            @Override
-            public void onSubmit() {
-                CheckBox component = (CheckBox) editor.get("form:validate");
-                boolean checkBoxValue = component.getModelObject();
-                if (checkBoxValue) {
-                    MultipleAttributeValidationResult updateWithValidation = serviceManager.getObject()
-                        .update(getValues().get("id"), getValues());
-                    if (!updateWithValidation.isValid()) {
-                        Map<String, String> attributeErrorMessages = updateWithValidation.getAttributeErrorMessages();
-                        for (String value : attributeErrorMessages.values()) {
-                            error(new StringResourceModel(value, this, null).getString());
-                        }
-                    } else {
-                        serviceId = getValues().get("id");
-                        info("connector.succeeded");
-                        setComplete(true);
-                    }
-                } else {
-                    serviceId = getValues().get("id");
-                    serviceManager.getObject().update(serviceId, getValues());
-                    setComplete(true);
-                }
-            }
-        };
-        add(editor);
-    }
+		editor = new ServiceEditor("editor", attributes.getObject(), values) {
+			@Override
+			public void onSubmit() {
+				serviceId = getValues().get("id");
+				serviceManager.getObject().update(serviceId, getValues());
+				setComplete(true);
+			}
+		};
+		add(editor);
+	}
 
-    private List<AttributeDefinition> buildAttributeList(ServiceManager service) {
-        AttributeDefinition.Builder builder = AttributeDefinition.builder(new WicketStringLocalizer(this));
-        AttributeDefinition id = builder.id("id").name("attribute.id.name").description("attribute.id.description")
-            .required().build();
-        ServiceDescriptor descriptor = service.getDescriptor();
-        List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
-        attributes.add(id);
-        attributes.addAll(descriptor.getAttributes());
-        return attributes;
-    }
+	private List<AttributeDefinition> buildAttributeList(ServiceManager service) {
+		AttributeDefinition.Builder builder = AttributeDefinition
+				.builder(new WicketStringLocalizer(this));
+		AttributeDefinition id = builder.id("id").name("attribute.id.name")
+				.description("attribute.id.description").required().build();
+		ServiceDescriptor descriptor = service.getDescriptor();
+		List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
+		attributes.add(id);
+		attributes.addAll(descriptor.getAttributes());
+		return attributes;
+	}
 
-    @Override
-    public boolean isLastStep() {
-        return false;
-    }
+	@Override
+	public boolean isLastStep() {
+		return false;
+	}
 
-    @Override
-    public IDynamicWizardStep next() {
-        project.addService(serviceManager.getObject().getDescriptor().getServiceType(), serviceId);
-        Map<Class<? extends Domain>, String> configured = project.getServices();
-        for (Class<? extends Domain> c : OpenCitConfigurator.getRequiredServices()) {
-            if (!configured.containsKey(c)) {
-                return new DomainSelectionStep(project);
-            }
-        }
-        return new FinalStep(this, project);
-    }
+	@Override
+	public IDynamicWizardStep next() {
+		project.addService(serviceManager.getObject().getDescriptor()
+				.getServiceType(), serviceId);
+		Map<Class<? extends Domain>, String> configured = project.getServices();
+		for (Class<? extends Domain> c : OpenCitConfigurator
+				.getRequiredServices()) {
+			if (!configured.containsKey(c)) {
+				return new DomainSelectionStep(project);
+			}
+		}
+		return new FinalStep(this, project);
+	}
 
 }

@@ -35,6 +35,7 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openengsb.ui.common.wicket.OpenEngSBWebSession;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -73,7 +74,7 @@ public abstract class AbstractCitPageTest {
 
             @Override
             public Session newSession(Request request, Response response) {
-                return new WicketSession(request);
+                return new OpenEngSBWebSession(request);
             }
         });
     }

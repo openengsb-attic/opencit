@@ -17,51 +17,18 @@
 package org.openengsb.opencit.ui.web;
 
 import org.apache.wicket.Page;
-import org.apache.wicket.Request;
-import org.apache.wicket.Response;
-import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.authentication.AuthenticatedWebApplication;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.openengsb.ui.common.wicket.OpenEngSBWicketApplication;
 
-public class WicketApplication extends AuthenticatedWebApplication {
+public class WicketApplication extends OpenEngSBWicketApplication {
+	@Override
+	public Class<? extends Page> getHomePage() {
+		return Index.class;
+	}
 
-    @Override
-    protected void init() {
-        super.init();
-        addInjector();
-        getResourceSettings().setAddLastModifiedTimeToResourceReferenceUrl(true);
-    }
-
-    protected void addInjector() {
-        addComponentInstantiationListener(new SpringComponentInjector(this));
-    }
-
-    @Override
-    public Class<? extends Page> getHomePage() {
-        return Index.class;
-    }
-
-    @Override
-    public AjaxRequestTarget newAjaxRequestTarget(Page page) {
-        return super.newAjaxRequestTarget(page);
-    }
-
-    @Override
-    public Session newSession(Request request, Response response) {
-        return new WicketSession(request);
-    }
-
-    @Override
-    protected Class<? extends WebPage> getSignInPageClass() {
-        return LoginPage.class;
-    }
-
-    @Override
-    protected Class<? extends AuthenticatedWebSession> getWebSessionClass() {
-        return WicketSession.class;
-    }
+	@Override
+	protected Class<? extends WebPage> getSignInPageClass() {
+		return LoginPage.class;
+	}
 
 }
