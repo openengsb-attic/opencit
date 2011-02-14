@@ -73,7 +73,9 @@ public class SetAttributesStep extends DynamicWizardStep {
 		editor = new ServiceEditor("editor", attributes.getObject(), values) {
 			@Override
 			public void onSubmit() {
-				serviceId = getValues().get("id");
+				String domain = serviceManager.getObject().getDescriptor().getServiceType().getCanonicalName();
+				String projName = SetAttributesStep.this.project.getId();
+				serviceId = projName + "-" + domain;
 				serviceManager.getObject().update(serviceId, getValues());
 				setComplete(true);
 			}
