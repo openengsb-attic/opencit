@@ -26,7 +26,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.domain.report.model.Report;
@@ -97,10 +96,15 @@ public class ReportViewPage extends BasePage implements SpringBeanProvider<Proje
         return new ListView<ReportPart>(id, projectsModel) {
 
             @Override
-            protected void populateItem(ListItem<ReportPart> item) {
-                ReportPart part = item.getModelObject();
-                item.add(new Label("part.name", part.getPartName()));
-                item.add(new TextArea<String>("part.content", new Model<String>(new String(part.getContent()))));
+            protected void populateItem(final ListItem<ReportPart> item) {
+                item.add(new Label("part.name", item.getModelObject().getPartName()));
+                IModel<String> model = new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        return new String(item.getModelObject().getContent());
+                    }
+                };
+                item.add(new TextArea<String>("part.content", model));
             }
 
         };
