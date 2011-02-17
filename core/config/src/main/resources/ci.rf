@@ -37,23 +37,23 @@
         <eventFilter type="eventType" eventType="DeployFailEvent" />
       </eventFilters>
     </eventNode>
+    <start id="1" name="Start" x="147" y="16" width="80" height="64" />
     <actionNode id="136" name="Deploy" x="238" y="880" width="80" height="64" >
         <action type="expression" dialect="mvel" >Long processId2 = (Long) kcontext.getVariable("processId");
 deploy.deploy(processId2)</action>
     </actionNode>
-    <start id="1" name="Start" x="147" y="16" width="80" height="64" />
     <eventNode id="138" name="DeploySuccess" x="16" y="784" width="144" height="64" variableName="deployEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="DeploySuccessEvent" />
       </eventFilters>
     </eventNode>
     <join id="140" name="Join" x="238" y="976" width="80" height="64" type="1" />
-    <end id="6" name="End" x="304" y="1233" width="80" height="40" />
     <eventNode id="143" name="FlowStarted" x="259" y="16" width="116" height="64" >
       <eventFilters>
         <eventFilter type="eventType" eventType="FlowStartedEvent" />
       </eventFilters>
     </eventNode>
+    <end id="6" name="End" x="304" y="1233" width="80" height="40" />
     <join id="142" name="Join" x="212" y="112" width="80" height="40" type="1" />
     <actionNode id="129" name="finishIt" x="281" y="1153" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
@@ -72,10 +72,15 @@ if(success == Boolean.TRUE){
 n.setSubject("CIT workflow report - "+result);
 String message = "OpenCIT finished executing CI and T workflow with result: "+ result +".\n\n";
 List parts = r.getParts();
+int maxLines = 200;
 for(int i = 0; i &lt; parts.size(); i++) {
   ReportPart part = (ReportPart) parts.get(i);
   message = message + "Report Part: " + part.getPartName() + "\n";
-  message = message + new String(part.getContent()) + "\n\n";
+  String partContent = new String(part.getContent());
+  String[] split = partContent.split("\n");
+  partContent = split.length &gt; maxLines ? "[...]\n" : "";
+  partContent += StringUtils.join(split, "\n", Math.max(0,split.length - maxLines), split.length - 1);
+  message = message + partContent + "\n\n";
 }
 n.setMessage(message);
 n.setRecipient(project.getNotificationRecipient());

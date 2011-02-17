@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.workflow.RuleBaseException;
@@ -142,6 +143,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(NotificationDomain.class.getCanonicalName());
         ruleManager.addImport(Notification.class.getCanonicalName());
         ruleManager.addImport(Attachment.class.getCanonicalName());
+        ruleManager.addImport(StringUtils.class.getCanonicalName());
         addGlobal(NotificationDomain.class.getCanonicalName(), "notification");
     }
 
