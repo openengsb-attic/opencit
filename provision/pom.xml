@@ -5,7 +5,7 @@
     <relativePath>../poms/</relativePath>
     <groupId>org.openengsb.opencit.build</groupId>
     <artifactId>shared-plugin-settings</artifactId>
-    <version>6</version>
+    <version>7-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>

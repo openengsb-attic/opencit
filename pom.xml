@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openengsb.opencit</groupId>
   <artifactId>opencit-parent</artifactId>
-  <version>6</version>
+  <version>7-SNAPSHOT</version>
 
   <name>OpenCIT :: Parent</name>
 
