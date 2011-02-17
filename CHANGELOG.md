@@ -1,5 +1,10 @@
+opencit-6
+  * upgrade OpenEngSB to 1.0.6.RELEASE
+  * improve memory-efficiency when displaying reports
+  * shorten email-notifications
+
 opencit-5
-  * upgrade OpenEngSB to 1.0.4.RELEASE
+  * upgrade OpenEngSB to 1.0.5.RELEASE
   * properly display reports when multiple projects are present.
 
 opencit-4
