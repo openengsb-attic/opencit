@@ -56,7 +56,7 @@
 
   <filter>
     <filter-name>contextFilterChain</filter-name>
-    <filter-class>org.openengsb.ui.web.util.ContextIdFilter</filter-class>
+    <filter-class>org.openengsb.ui.common.wicket.util.ContextIdFilter</filter-class>
   </filter>
 
   <filter-mapping>
