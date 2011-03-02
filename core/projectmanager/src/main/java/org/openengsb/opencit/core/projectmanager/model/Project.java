@@ -72,7 +72,7 @@ public class Project implements Serializable {
      */
     public Map<Class<? extends Domain>, String> getServices() {
         if (services == null) {
-            return new HashMap<Class<? extends Domain>, String>();
+            return null;
         }
         Map<Class<? extends Domain>, String> map = new HashMap<Class<? extends Domain>, String>(services.size());
         for (Entry<String, String> entry : services.entrySet()) {

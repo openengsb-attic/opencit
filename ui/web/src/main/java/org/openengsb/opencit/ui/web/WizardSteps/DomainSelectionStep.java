@@ -72,7 +72,7 @@ public class DomainSelectionStep extends DynamicWizardStep {
 
         Map<Class<? extends Domain>, String> services = project.getServices();
         for (Class<? extends Domain> i : OpenCitConfigurator.getRequiredServices()) {
-            if (!services.containsKey(i)) {
+            if (services == null || !services.containsKey(i)) {
                 managersMap.put(getDomainName(i), i);
             }
         }

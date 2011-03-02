@@ -55,7 +55,7 @@ public class ProjectModelTest {
     @Test
     public void getServices_shouldWork() {
         Map<Class<? extends Domain>, String> services = p.getServices();
-        assertEquals(0, services.size());
+        assertEquals(null, services);
     }
 
     @Test

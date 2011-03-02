@@ -112,6 +112,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     private void setDefaultConnectors(Project project) {
         Map<Class<? extends Domain>, String> services = project.getServices();
+        if (services == null) return;
         for (Entry<Class<? extends Domain>, String> entry : services.entrySet()) {
             String domain = entry.getKey().getSimpleName();
             String id = entry.getValue();

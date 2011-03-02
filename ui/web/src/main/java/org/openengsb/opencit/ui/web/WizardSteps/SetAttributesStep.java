@@ -107,7 +107,7 @@ public class SetAttributesStep extends DynamicWizardStep {
 		Map<Class<? extends Domain>, String> configured = project.getServices();
 		for (Class<? extends Domain> c : OpenCitConfigurator
 				.getRequiredServices()) {
-			if (!configured.containsKey(c)) {
+			if (configured == null || !configured.containsKey(c)) {
 				return new DomainSelectionStep(project);
 			}
 		}
