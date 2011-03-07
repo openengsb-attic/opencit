@@ -36,6 +36,7 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
+import org.springframework.security.authentication.AuthenticationManager;
 
 public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
@@ -56,6 +57,12 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     private long timeout = 600000L;
 
     private ReportDomain reportDomain;
+
+    private AuthenticationManager authenticationManager;
+
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
@@ -91,7 +98,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     }
 
     private void setupAndStartScmPoller(Project project) {
-        ScmStatePoller poller = new ScmStatePoller();
+        ScmStatePoller poller = new ScmStatePoller(authenticationManager);
         poller.setProjectId(project.getId());
         poller.setContextService(contextService);
         poller.setTimeout(timeout);

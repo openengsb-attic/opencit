@@ -25,7 +25,12 @@ import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.core.common.workflow.WorkflowException;
 import org.openengsb.core.common.workflow.WorkflowService;
+import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.domain.scm.ScmDomain;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class ScmStatePoller {
 
@@ -44,6 +49,8 @@ public class ScmStatePoller {
         @Override
         public void run() {
             try {
+                Authentication token = authenticationManager.authenticate(new BundleAuthenticationToken("opencit-core-projectmanager", ""));
+                SecurityContextHolder.getContext().setAuthentication(token);
                 log.info("running pollertask");
                 log.debug(projectId + " - " + Thread.currentThread().getId());
                 log.debug("ContextHolder had " + ContextHolder.get().getCurrentContextId());
@@ -74,6 +81,8 @@ public class ScmStatePoller {
 
     private Timer timer = new Timer();
 
+    private AuthenticationManager authenticationManager;
+
     public void start() {
         task = new PollTask();
         timer.schedule(task, 0, timeout);
@@ -103,4 +112,7 @@ public class ScmStatePoller {
         this.timeout = timeout;
     }
 
+    public ScmStatePoller(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 }
