@@ -37,6 +37,7 @@ import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
@@ -97,15 +98,27 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         setupAndStartScmPoller(project);
     }
 
-    private void setupAndStartScmPoller(Project project) {
-        ScmStatePoller poller = new ScmStatePoller(authenticationManager);
-        poller.setProjectId(project.getId());
-        poller.setContextService(contextService);
-        poller.setTimeout(timeout);
-        poller.setScm(scmDomain);
-        poller.setWorkflowService(workflowService);
-        pollers.put(project.getId(), poller);
-        poller.start();
+    private void setupAndStartScmPoller(final Project project) {
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                SecurityContextHolder.clearContext();
+                ScmStatePoller poller = new ScmStatePoller(authenticationManager);
+                poller.setProjectId(project.getId());
+                poller.setContextService(contextService);
+                poller.setTimeout(timeout);
+                poller.setScm(scmDomain);
+                poller.setWorkflowService(workflowService);
+                pollers.put(project.getId(), poller);
+                poller.start();
+            }
+        };
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void createAndSetContext(Project project) {
