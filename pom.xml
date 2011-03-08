@@ -11,7 +11,7 @@
   <description>Continuous Integration Server based on the OpenEngSB</description>
 
   <properties>
-    <openengsb.version>1.1.0.RC2</openengsb.version>
+    <openengsb.version>1.1.0.RELEASE</openengsb.version>
     <openengsb.maven.plugin.version>1.2.0</openengsb.maven.plugin.version>
     <plugin.assembly.version>2.2-beta-5</plugin.assembly.version>
     <jdk.version>1.6</jdk.version>
