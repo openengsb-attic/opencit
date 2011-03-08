@@ -37,33 +37,44 @@ public class ScmStatePoller {
     private Log log = LogFactory.getLog(this.getClass());
 
     public class PollTask extends TimerTask {
-        private void runFlow() {
-            try {
-                log.info("starting workflow \"CI\"");
-                workflowService.startFlow("ci");
-            } catch (WorkflowException e) { // just swallow it here for now
-                log.error("error occured in workflow-execution", e);
-            }
+
+        private void runFlow() throws InterruptedException, WorkflowException {
+            log.info("starting workflow \"CI\"");
+            long pid = workflowService.startFlow("ci");
+            workflowService.waitForFlowToFinish(pid);
         }
 
         @Override
         public void run() {
             try {
-                Authentication token = authenticationManager.authenticate(new BundleAuthenticationToken("opencit-core-projectmanager", ""));
-                SecurityContextHolder.getContext().setAuthentication(token);
-                log.info("running pollertask");
-                log.debug(projectId + " - " + Thread.currentThread().getId());
-                log.debug("ContextHolder had " + ContextHolder.get().getCurrentContextId());
-                contextService.setThreadLocalContext(projectId);
-                log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
-                if (scm.poll()) {
-                    log.info("running flow");
-                    runFlow();
-                }
+                doRun();
             } catch (Exception e) { // just swallow it here for now
                 log.error("error when polling scm ", e);
             }
             log.info("poller done done");
+        }
+
+        private void doRun() throws InterruptedException, WorkflowException {
+            authenticate();
+            log.info("running pollertask");
+            log.debug(projectId + " - " + Thread.currentThread().getId());
+            log.debug("ContextHolder had " + ContextHolder.get().getCurrentContextId());
+            contextService.setThreadLocalContext(projectId);
+            log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
+            try {
+                if (scm.poll()) {
+                    log.info("running flow");
+                    runFlow();
+                }
+            } finally {
+                SecurityContextHolder.getContext().setAuthentication(null);
+            }
+        }
+
+        private void authenticate() {
+            Authentication token =
+                authenticationManager.authenticate(new BundleAuthenticationToken("opencit-core-projectmanager", ""));
+            SecurityContextHolder.getContext().setAuthentication(token);
         }
     }
 
