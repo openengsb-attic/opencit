@@ -138,6 +138,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
             String id = entry.getValue();
             contextService.putValue("domain/" + domain + "/defaultConnector/id", id);
         }
+        contextService.putValue("domain/AuditingDomain/defaultConnector/id", "auditing");
     }
 
     private void checkId(String id) throws ProjectAlreadyExistsException {
