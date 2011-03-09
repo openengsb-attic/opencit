@@ -27,10 +27,10 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.core.workflow.internal.WorkflowServiceImpl;
 import org.openengsb.core.workflow.internal.persistence.PersistenceRuleManager;
 import org.openengsb.domain.build.BuildDomain;
@@ -68,10 +68,9 @@ public class FlowExecutionTest {
     private NotificationDomain notificationDomain;
 
     @Test
-    @Ignore
     public void testExecuteWorkflow() throws Exception {
-        PersistenceRuleManager directoryRuleSource = new PersistenceRuleManager(); /* FIXME */
-        directoryRuleSource.init();
+        PersistenceRuleManager directoryRuleSource = new PersistenceRuleManager();
+        directoryRuleSource.setPersistence(new DummyPersistence());
 
         WorkflowServiceImpl service = new WorkflowServiceImpl();
         service.setRulemanager(directoryRuleSource);

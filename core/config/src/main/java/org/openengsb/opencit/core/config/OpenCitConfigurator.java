@@ -18,6 +18,7 @@ package org.openengsb.opencit.core.config;
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -31,6 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.openengsb.core.common.Domain;
+import org.openengsb.core.common.Event;
 import org.openengsb.core.common.workflow.RuleBaseException;
 import org.openengsb.core.common.workflow.RuleManager;
 import org.openengsb.core.common.workflow.model.RuleBaseElementId;
@@ -100,6 +102,10 @@ public class OpenCitConfigurator {
         ruleManager.addImport(SimpleDateFormat.class.getCanonicalName());
         ruleManager.addImport(Date.class.getCanonicalName());
         ruleManager.addImport(WorkflowProcessInstance.class.getCanonicalName());
+        ruleManager.addImport(List.class.getCanonicalName());
+        ruleManager.addImport(Collection.class.getCanonicalName());
+        ruleManager.addImport(ArrayList.class.getCanonicalName());
+        ruleManager.addImport(Event.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
