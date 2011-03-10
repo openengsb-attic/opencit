@@ -18,8 +18,8 @@ package org.openengsb.opencit.core.projectmanager;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -28,34 +28,37 @@ import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
-import org.openengsb.core.common.persistence.PersistenceService;
+import org.openengsb.core.test.AbstractOsgiMockServiceTest;
+import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
-public class ProjectManagerImplTest {
+public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
     private ProjectManagerImpl projectManager;
-    private PersistenceService persistenceMock;
     private ContextCurrentService contextMock;
+    private DummyPersistence persistence;
 
+    @Override
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         projectManager = new ProjectManagerImpl();
-        projectManager.setBundleContext(Mockito.mock(BundleContext.class));
+        projectManager.setBundleContext(bundleContext);
 
-        persistenceMock = Mockito.mock(PersistenceService.class);
         contextMock = Mockito.mock(ContextCurrentService.class);
+
 
         Mockito.when(contextMock.getThreadLocalContext()).thenReturn("test");
 
         PersistenceManager persistenceManagerMock = Mockito.mock(PersistenceManager.class);
+        persistence = new DummyPersistence();
         Mockito.when(persistenceManagerMock.getPersistenceForBundle(Mockito.any(Bundle.class))).thenReturn(
-            persistenceMock);
+            persistence);
         projectManager.setPersistenceManager(persistenceManagerMock);
         projectManager.setContextService(contextMock);
         projectManager.setScmDomain(Mockito.mock(ScmDomain.class));
@@ -63,29 +66,29 @@ public class ProjectManagerImplTest {
         projectManager.init();
     }
 
-    private void addTestData() {
+    private void addTestData() throws PersistenceException {
         Project project = new Project("test");
         project.setState(State.OK);
-        Mockito.when(persistenceMock.query(Mockito.any(Project.class))).thenReturn(
-            Arrays.asList(new Project[]{ project }));
+        persistence.create(project);
     }
 
     @Test
-    public void createProject_shouldWork() throws ProjectAlreadyExistsException, PersistenceException {
+    public void createProject_shouldWork() throws Exception {
         Project project = new Project("foo");
         projectManager.createProject(project);
-        Mockito.verify(persistenceMock).create(project);
+        List<Project> allProjects = projectManager.getAllProjects();
+        assertThat(allProjects, hasItem(project));
     }
 
     @Test(expected = ProjectAlreadyExistsException.class)
-    public void createProjectTwice_shouldFail() throws ProjectAlreadyExistsException {
+    public void createProjectTwice_shouldFail() throws Exception {
         addTestData();
         Project project = new Project("test");
         projectManager.createProject(project);
     }
 
     @Test
-    public void getAllProjects_shouldWork() {
+    public void getAllProjects_shouldWork() throws Exception {
         addTestData();
         List<Project> allProjects = projectManager.getAllProjects();
         assertThat(allProjects.size(), is(1));
@@ -93,7 +96,7 @@ public class ProjectManagerImplTest {
     }
 
     @Test
-    public void getProject_souldWork() throws NoSuchProjectException {
+    public void getProject_souldWork() throws Exception {
         addTestData();
         Project project = projectManager.getProject("test");
         assertThat(project.getId(), is("test"));
@@ -111,7 +114,8 @@ public class ProjectManagerImplTest {
         Project project = new Project("test");
         project.setState(State.IN_PROGRESS);
         projectManager.updateProject(project);
-        Mockito.verify(persistenceMock).update(Mockito.refEq(new Project("test"), "state"), Mockito.refEq(project));
+        List<Project> allProjects = projectManager.getAllProjects();
+        assertThat(allProjects, hasItem(project));
     }
 
     @Test(expected = NoSuchProjectException.class)
@@ -123,7 +127,8 @@ public class ProjectManagerImplTest {
     public void deleteProject_souldWork() throws NoSuchProjectException, PersistenceException {
         addTestData();
         projectManager.deleteProject("test");
-        Mockito.verify(persistenceMock).delete(Mockito.refEq(new Project("test"), "state"));
+        List<Project> allProjects = projectManager.getAllProjects();
+        assertThat(allProjects.isEmpty(), is(true));
     }
 
     @Test(expected = NoSuchProjectException.class)
@@ -132,7 +137,7 @@ public class ProjectManagerImplTest {
     }
 
     @Test
-    public void updateCurrentContextProjectState_shouldWork() throws NoSuchProjectException {
+    public void updateCurrentContextProjectState_shouldWork() throws Exception {
         addTestData();
         projectManager.updateCurrentContextProjectState(State.FAILURE);
         Project project = projectManager.getProject("test");
