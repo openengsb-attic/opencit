@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -90,6 +91,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         init();
     }
 
+    @SuppressWarnings("serial")
     private void init() {
         this.projectModel.setProjectManagerProvider(this);
 
@@ -127,6 +129,20 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         projectStateImage.setOutputMarkupId(true);
 
         projectPanel.add(projectStateImage);
+
+        Date lastpollDate = projectManager.getProjectState(project.getId())
+            .getLastpollDate();
+        String dateString;
+        if (lastpollDate == null) {
+            dateString = "-";
+        } else {
+            dateString = lastpollDate.toString();
+        }
+
+        Label pollerStateLabel =
+            new Label("pollerState", new Model<String>(dateString));
+        projectPanel.add(pollerStateLabel);
+
         projectPanel.add(new Link<Index>("back") {
             @Override
             public void onClick() {
@@ -179,7 +195,6 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         WebMarkupContainer reportsPanel = new WebMarkupContainer("reportsPanel");
         reportsPanel.setOutputMarkupId(true);
 
-        @SuppressWarnings("serial")
         IModel<List<Report>> reportsModel = createReportsModel();
 
         Label noReports =

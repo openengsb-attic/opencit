@@ -18,6 +18,7 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +38,7 @@ import org.openengsb.domain.report.model.SimpleReportPart;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.openengsb.opencit.ui.web.model.ProjectModel;
 
 public class ReportViewPageTest extends AbstractCitPageTest {
@@ -56,6 +58,7 @@ public class ReportViewPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("contextCurrentService", contextService);
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
         projectManager = mock(ProjectManager.class);
+        when(projectManager.getProjectState(anyString())).thenReturn(new ProjectStateInfo());
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         return mockedBeansMap;

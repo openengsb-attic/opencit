@@ -18,40 +18,50 @@
 -->
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd"
-      xml:lang="en" lang="en">
+  xml:lang="en" lang="en">
 
-<body>
-  <wicket:extend>
-    <div wicket:id="projectPanel">
-      <h2>
-        <wicket:message key="projectDetail.title">[projectDetail.title]</wicket:message>
-      </h2>
-      <h3>
-        <wicket:message key="projectId.label">[projectId.label]</wicket:message>
-        <span wicket:id="project.id">[project.id]</span><br />
-         <wicket:message key="notificationRecipient.label">[notificationRecipient.label]</wicket:message>
-         <span wicket:id="project.notification" class="inline-edit">[[project.notification]]</span>
-      </h3>
-      <img wicket:id="project.state" height="84" width="234"/><br />
-      <a href="#" wicket:id="back"><wicket:message key="back">[back]</wicket:message></a>
-      <form wicket:id="workflowForm">
-        <input type="submit" wicket:id="flowButton" wicket:message="value:flow.start" />
-      </form>
-      <span wicket:id="feedback" />
-    </div>
-    <div wicket:id="reportsPanel">
-      <ul wicket:id="reportlist">
-        <li>
-          <h4>
-            <span wicket:id="report.name">[report.name]</span>
-            <a href="#" wicket:id="report.link"><wicket:message key="report.link">[report.link]</wicket:message></a>
-          </h4>
-        </li>
-      </ul>
-      <div wicket:id="noReports" class="info" >
-        no results info window
+  <body>
+    <wicket:extend>
+      <div wicket:id="projectPanel">
+        <h2>
+          <wicket:message key="projectDetail.title">[projectDetail.title]</wicket:message>
+        </h2>
+        <h3>
+          <wicket:message key="projectId.label">[projectId.label]</wicket:message>
+          <span wicket:id="project.id">[project.id]</span>
+          <br />
+          <wicket:message key="notificationRecipient.label">[notificationRecipient.label]</wicket:message>
+          <span wicket:id="project.notification" class="inline-edit">[[project.notification]]</span>
+        </h3>
+        <img wicket:id="project.state" height="84" width="234" />
+        <br />
+        <wicket:message key="lastPollTime" />
+        <div wicket:id="pollerState">
+
+        </div>
+        <a href="#" wicket:id="back">
+          <wicket:message key="back">[back]</wicket:message>
+        </a>
+        <form wicket:id="workflowForm">
+          <input type="submit" wicket:id="flowButton" wicket:message="value:flow.start" />
+        </form>
+        <span wicket:id="feedback" />
       </div>
-    </div>
-  </wicket:extend>
-</body>
+      <div wicket:id="reportsPanel">
+        <ul wicket:id="reportlist">
+          <li>
+            <h4>
+              <span wicket:id="report.name">[report.name]</span>
+              <a href="#" wicket:id="report.link">
+                <wicket:message key="report.link">[report.link]</wicket:message>
+              </a>
+            </h4>
+          </li>
+        </ul>
+        <div wicket:id="noReports" class="info">
+          no results info window
+      </div>
+      </div>
+    </wicket:extend>
+  </body>
 </html>

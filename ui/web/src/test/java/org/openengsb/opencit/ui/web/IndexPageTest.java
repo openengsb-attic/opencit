@@ -18,6 +18,7 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +40,7 @@ import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 
 public class IndexPageTest extends AbstractCitPageTest {
 
@@ -50,6 +52,7 @@ public class IndexPageTest extends AbstractCitPageTest {
     public void setUp() throws NoSuchProjectException {
         wicketTester = getTester();
         when(projectManager.getProject("test")).thenReturn(new Project("test"));
+        when(projectManager.getProjectState(anyString())).thenReturn(new ProjectStateInfo());
         when(contextService.getThreadLocalContext()).thenReturn("test");
     }
 
