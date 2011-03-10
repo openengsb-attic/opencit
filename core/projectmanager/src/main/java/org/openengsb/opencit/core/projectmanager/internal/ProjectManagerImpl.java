@@ -38,6 +38,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -58,6 +59,8 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     private WorkflowService workflowService;
 
     protected Map<String, ScheduledFuture<?>> pollers = new HashMap<String, ScheduledFuture<?>>();
+
+    private Map<String, ProjectStateInfo> projectStates = new HashMap<String, ProjectStateInfo>();
 
     private long timeout = 30000L;
 
@@ -109,10 +112,12 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
             @Override
             public void run() {
                 SecurityContextHolder.clearContext();
-                PollTask pollTask = new PollTask(workflowService, authenticationManager, scmDomain, project.getId());
+                PollTask pollTask = new PollTask(workflowService, authenticationManager, scmDomain, project);
+                projectStates.put(project.getId(), pollTask.getInfo());
                 ScheduledFuture<?> poller =
                     scheduler.scheduleWithFixedDelay(pollTask, 0, timeout, TimeUnit.MILLISECONDS);
                 pollers.put(project.getId(), poller);
+
             }
         };
         thread.start();
@@ -238,4 +243,8 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         this.timeout = timeout;
     }
 
+    @Override
+    public ProjectStateInfo getProjectState(String projectId) {
+        return projectStates.get(projectId);
+    }
 }

@@ -177,6 +177,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         projectManager.setScmDomain(scmMock);
         when(scmMock.poll()).thenReturn(false);
         projectManager.createProject(project);
+        Thread.sleep(200);
         ScheduledFuture<?> scheduledFuture = projectManager.pollers.get("test2");
         while (scheduledFuture.getDelay(TimeUnit.SECONDS) <= 0) {
             /* sorry for the busy-waiting */

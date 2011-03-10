@@ -16,6 +16,8 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openengsb.core.common.context.ContextHolder;
@@ -23,6 +25,9 @@ import org.openengsb.core.common.workflow.WorkflowException;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.domain.scm.ScmDomain;
+import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,14 +39,18 @@ public class PollTask implements Runnable {
     private WorkflowService workflowService;
     private AuthenticationManager authenticationManager;
     private ScmDomain scm;
-    private String projectId;
+    private Project project;
+    private ProjectStateInfo info = new ProjectStateInfo();
 
     public PollTask(WorkflowService workflowService, AuthenticationManager authenticationManager,
-            ScmDomain scm, String projectId) {
+            ScmDomain scm, Project project) {
         this.workflowService = workflowService;
         this.authenticationManager = authenticationManager;
         this.scm = scm;
-        this.projectId = projectId;
+        this.project = project;
+        if (Project.State.IN_PROGRESS.equals(project.getState())) {
+            project.setState(State.FAILURE);
+        }
     }
 
     public PollTask() {
@@ -57,6 +66,7 @@ public class PollTask implements Runnable {
         } finally {
             SecurityContextHolder.getContext().setAuthentication(null);
         }
+        info.setLastpollDate(new Date());
         log.info("poller done done");
     }
 
@@ -69,7 +79,7 @@ public class PollTask implements Runnable {
 
     private void doRun() throws InterruptedException, WorkflowException {
         log.info("running pollertask");
-        ContextHolder.get().setCurrentContextId(projectId);
+        ContextHolder.get().setCurrentContextId(project.getId());
         log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
         if (scm.poll()) {
             log.info("running flow");
@@ -83,4 +93,7 @@ public class PollTask implements Runnable {
         workflowService.waitForFlowToFinish(pid);
     }
 
+    public ProjectStateInfo getInfo() {
+        return this.info;
+    }
 }
