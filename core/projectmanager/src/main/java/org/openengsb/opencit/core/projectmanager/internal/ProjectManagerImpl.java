@@ -55,7 +55,7 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     private Map<String, ScmStatePoller> pollers = new HashMap<String, ScmStatePoller>();
 
-    private long timeout = 600000L;
+    private long timeout = 30000L;
 
     private ReportDomain reportDomain;
 

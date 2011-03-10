@@ -38,7 +38,7 @@
       <property name="workflowService" ref="workflowService" />
       <property name="reportDomain" ref="reportDomain" />
       <property name="authenticationManager" ref="authenticationManager" />
-      <property name="timeout" value="600000" />
+      <property name="timeout" value="30000" />
     </bean>
   </osgi:service>
 

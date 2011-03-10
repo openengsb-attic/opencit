@@ -19,7 +19,11 @@ package org.openengsb.opencit.core.projectmanager;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -28,6 +32,7 @@ import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
+import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.domain.report.ReportDomain;
@@ -36,6 +41,9 @@ import org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.Bundle;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
@@ -50,8 +58,13 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         projectManager = new ProjectManagerImpl();
         projectManager.setBundleContext(bundleContext);
 
-        contextMock = Mockito.mock(ContextCurrentService.class);
+        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
+        BundleAuthenticationToken bundleAuthenticationToken =
+            new BundleAuthenticationToken("", "", new ArrayList<GrantedAuthority>());
+        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(bundleAuthenticationToken);
+        projectManager.setAuthenticationManager(authenticationManager);
 
+        contextMock = Mockito.mock(ContextCurrentService.class);
 
         Mockito.when(contextMock.getThreadLocalContext()).thenReturn("test");
 
