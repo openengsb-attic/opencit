@@ -20,6 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.context.ContextCurrentService;
@@ -53,13 +57,15 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     private WorkflowService workflowService;
 
-    private Map<String, ScmStatePoller> pollers = new HashMap<String, ScmStatePoller>();
+    protected Map<String, ScheduledFuture<?>> pollers = new HashMap<String, ScheduledFuture<?>>();
 
     private long timeout = 30000L;
 
     private ReportDomain reportDomain;
 
     private AuthenticationManager authenticationManager;
+
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -99,18 +105,14 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     }
 
     private void setupAndStartScmPoller(final Project project) {
-        Thread thread = new Thread(){
+        Thread thread = new Thread() {
             @Override
             public void run() {
                 SecurityContextHolder.clearContext();
-                ScmStatePoller poller = new ScmStatePoller(authenticationManager);
-                poller.setProjectId(project.getId());
-                poller.setContextService(contextService);
-                poller.setTimeout(timeout);
-                poller.setScm(scmDomain);
-                poller.setWorkflowService(workflowService);
+                PollTask pollTask = new PollTask(workflowService, authenticationManager, scmDomain, project.getId());
+                ScheduledFuture<?> poller =
+                    scheduler.scheduleWithFixedDelay(pollTask, 0, timeout, TimeUnit.MILLISECONDS);
                 pollers.put(project.getId(), poller);
-                poller.start();
             }
         };
         thread.start();
@@ -132,7 +134,8 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
 
     private void setDefaultConnectors(Project project) {
         Map<Class<? extends Domain>, String> services = project.getServices();
-        if (services == null) return;
+        if (services == null)
+            return;
         for (Entry<Class<? extends Domain>, String> entry : services.entrySet()) {
             String domain = entry.getKey().getSimpleName();
             String id = entry.getValue();
@@ -194,9 +197,9 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
     public void deleteProject(String projectId) throws NoSuchProjectException {
         Project project = getProject(projectId);
         try {
-            ScmStatePoller scmStatePoller = pollers.get(projectId);
+            ScheduledFuture<?> scmStatePoller = pollers.get(projectId);
             if (scmStatePoller != null) {
-                scmStatePoller.stop();
+                scmStatePoller.cancel(true);
                 pollers.remove(projectId);
             }
             persistence.delete(project);

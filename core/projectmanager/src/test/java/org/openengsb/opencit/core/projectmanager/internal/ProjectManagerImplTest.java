@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package org.openengsb.opencit.core.projectmanager;
+package org.openengsb.opencit.core.projectmanager.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
@@ -37,10 +41,12 @@ import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
-import org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl;
+import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
+import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.InvalidSyntaxException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -162,4 +168,30 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         projectManager.updateCurrentContextProjectState(State.FAILURE);
     }
 
+    @Test(timeout = 10000)
+    public void createProjectShouldStartPoller() throws Exception {
+        Project project = new Project("test2");
+        project.setNotificationRecipient("test@test.com");
+
+        ScmDomain scmMock = mockDomain(ScmDomain.class);
+        projectManager.setScmDomain(scmMock);
+        when(scmMock.poll()).thenReturn(false);
+        projectManager.createProject(project);
+        ScheduledFuture<?> scheduledFuture = projectManager.pollers.get("test2");
+        while (scheduledFuture.getDelay(TimeUnit.SECONDS) <= 0) {
+            /* sorry for the busy-waiting */
+            Thread.yield();
+        }
+        System.out.println(scheduledFuture.isDone());
+        verify(scmMock).poll();
+    }
+
+    private <T> T mockDomain(Class<T> domainClass) throws InvalidSyntaxException {
+        T mock = mock(domainClass);
+        String id = "my" + domainClass.getSimpleName();
+        registerService(mock, id, Domain.class, domainClass);
+
+        when(contextMock.getValue("/domain/" + domainClass.getSimpleName() + "/defaultConnector/id")).thenReturn(id);
+        return mock;
+    }
 }
