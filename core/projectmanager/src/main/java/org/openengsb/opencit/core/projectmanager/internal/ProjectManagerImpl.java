@@ -40,11 +40,10 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.osgi.framework.BundleContext;
-import org.springframework.osgi.context.BundleContextAware;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
+public class ProjectManagerImpl implements ProjectManager {
 
     private PersistenceManager persistenceManager;
 
@@ -222,7 +221,6 @@ public class ProjectManagerImpl implements ProjectManager, BundleContextAware {
         this.reportDomain = reportDomain;
     }
 
-    @Override
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
