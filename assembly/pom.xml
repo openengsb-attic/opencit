@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.openengsb.opencit.build</groupId>
     <artifactId>compiled-bundle-settings</artifactId>
-    <version>7-SNAPSHOT</version>
+    <version>7</version>
     <relativePath>../poms/compiled/</relativePath>
   </parent>
 
