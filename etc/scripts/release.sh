@@ -16,5 +16,5 @@
 # limitations under the License.
 #
 
-mvn release:prepare release:perform -Pfinal -Dmaven.test.skip=true -DconnectionUrl=scm:git:file://$PWD
+mvn clean install release:prepare release:perform -Prelease -Dmaven.test.skip=true -DconnectionUrl=scm:git:file://$PWD
 
