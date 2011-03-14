@@ -62,7 +62,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
     private Map<String, ProjectStateInfo> projectStates = new HashMap<String, ProjectStateInfo>();
 
-    private long timeout = 30000L;
+    private long timeout = 600000L;
 
     private ReportDomain reportDomain;
 
