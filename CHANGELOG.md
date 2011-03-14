@@ -1,3 +1,9 @@
+opencit-7
+  * upgrade OpenEngSB to 1.1.1.RELEASE
+  * introduce actual user-management
+  * only allow one workflow-execution at a time
+  * make it work in IE again.
+
 opencit-6
   * upgrade OpenEngSB to 1.0.6.RELEASE
   * improve memory-efficiency when displaying reports
