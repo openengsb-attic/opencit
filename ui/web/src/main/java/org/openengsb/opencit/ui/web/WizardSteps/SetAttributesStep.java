@@ -24,25 +24,22 @@ import java.util.Map;
 
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
-import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
-import org.openengsb.ui.common.wicket.editor.ServiceEditorPanel;
 import org.openengsb.ui.web.ServiceEditor;
 import org.openengsb.ui.web.model.WicketStringLocalizer;
 
+@SuppressWarnings("serial")
 public class SetAttributesStep extends DynamicWizardStep {
 	private Project project;
 	private ServiceEditor editor;
@@ -77,7 +74,9 @@ public class SetAttributesStep extends DynamicWizardStep {
 				String domain = serviceManager.getObject().getDescriptor().getServiceType().getCanonicalName();
 				String projName = SetAttributesStep.this.project.getId();
 				serviceId = projName + "-" + domain;
-				serviceManager.getObject().update(serviceId, getValues());
+				Map<String, String> values = getValues();
+				values.put("id", serviceId);
+				serviceManager.getObject().update(serviceId, values);
 				setComplete(true);
 			}
 		};
