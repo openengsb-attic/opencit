@@ -27,7 +27,6 @@ import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -49,9 +48,6 @@ public class PollTask implements Runnable {
         this.authenticationManager = authenticationManager;
         this.scm = scm;
         this.project = project;
-        if (Project.State.IN_PROGRESS.equals(project.getState())) {
-            project.setState(State.FAILURE);
-        }
     }
 
     public PollTask() {
