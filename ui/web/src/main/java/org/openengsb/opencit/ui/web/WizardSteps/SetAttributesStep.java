@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -36,82 +37,83 @@ import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
-import org.openengsb.ui.web.ServiceEditor;
+import org.openengsb.ui.common.wicket.editor.ServiceEditorPanel;
 import org.openengsb.ui.web.model.WicketStringLocalizer;
 
 @SuppressWarnings("serial")
 public class SetAttributesStep extends DynamicWizardStep {
-	private Project project;
-	private ServiceEditor editor;
-	private FeedbackPanel feedbackPanel;
-	private ServiceManagerModel serviceManager;
-	private String serviceId;
+    private Project project;
+    private Panel editor;
+    private FeedbackPanel feedbackPanel;
+    private ServiceManagerModel serviceManager;
+    private String serviceId;
+    private Map<String, String> attributeValues;
 
-	public SetAttributesStep(final Project project,
-			final ServiceManagerModel serviceManager) {
-		super(new CreateProjectStep(project), new ResourceModel(
-				"setAttribute.title"),
-				new ResourceModel("setAttribute.summary"), new Model<Project>(
-						project));
-		this.project = project;
-		this.serviceManager = serviceManager;
-		feedbackPanel = new FeedbackPanel("feedback");
-		feedbackPanel.setOutputMarkupId(true);
-		add(feedbackPanel);
-		setComplete(false);
+    public SetAttributesStep(final Project project,
+            final ServiceManagerModel serviceManager) {
+        super(new CreateProjectStep(project), new ResourceModel(
+                "setAttribute.title"),
+                new ResourceModel("setAttribute.summary"), new Model<Project>(
+                        project));
+        this.project = project;
+        this.serviceManager = serviceManager;
+        feedbackPanel = new FeedbackPanel("feedback");
+        feedbackPanel.setOutputMarkupId(true);
+        add(feedbackPanel);
+        setComplete(false);
 
-		IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
-			@Override
-			protected List<AttributeDefinition> load() {
-				return buildAttributeList(serviceManager.getObject());
-			}
-		};
-		Map<String, String> values = new HashMap<String, String>();
+        IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
+            @Override
+            protected List<AttributeDefinition> load() {
+                return buildAttributeList(serviceManager.getObject());
+            }
+        };
+        attributeValues = new HashMap<String, String>();
 
-		editor = new ServiceEditor("editor", attributes.getObject(), values) {
-			@Override
-			public void onSubmit() {
-				String domain = serviceManager.getObject().getDescriptor().getServiceType().getCanonicalName();
-				String projName = SetAttributesStep.this.project.getId();
-				serviceId = projName + "-" + domain;
-				Map<String, String> values = getValues();
-				values.put("id", serviceId);
-				serviceManager.getObject().update(serviceId, values);
-				setComplete(true);
-			}
-		};
-		add(editor);
-	}
+        editor = new ServiceEditorPanel("editor", attributes.getObject(), attributeValues);
+        add(editor);
+    }
 
-	private List<AttributeDefinition> buildAttributeList(ServiceManager service) {
-		AttributeDefinition.Builder builder = AttributeDefinition
-				.builder(new WicketStringLocalizer(this));
-		AttributeDefinition id = builder.id("id").name("attribute.id.name")
-				.description("attribute.id.description").required().build();
-		ServiceDescriptor descriptor = service.getDescriptor();
-		List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
-		attributes.add(id);
-		attributes.addAll(descriptor.getAttributes());
-		return attributes;
-	}
+    private List<AttributeDefinition> buildAttributeList(ServiceManager service) {
+        AttributeDefinition.Builder builder = AttributeDefinition
+                .builder(new WicketStringLocalizer(this));
+        AttributeDefinition id = builder.id("id").name("attribute.id.name")
+                .description("attribute.id.description").required().build();
+        ServiceDescriptor descriptor = service.getDescriptor();
+        List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
+        attributes.add(id);
+        attributes.addAll(descriptor.getAttributes());
+        return attributes;
+    }
 
-	@Override
-	public boolean isLastStep() {
-		return false;
-	}
+    @Override
+    public boolean isLastStep() {
+        return false;
+    }
 
-	@Override
-	public IDynamicWizardStep next() {
-		project.addService(serviceManager.getObject().getDescriptor()
-				.getServiceType(), serviceId);
-		Map<Class<? extends Domain>, String> configured = project.getServices();
-		for (Class<? extends Domain> c : OpenCitConfigurator
-				.getRequiredServices()) {
-			if (configured == null || !configured.containsKey(c)) {
-				return new DomainSelectionStep(project);
-			}
-		}
-		return new FinalStep(this, project);
-	}
+    @Override
+    public IDynamicWizardStep next() {
+        Map<Class<? extends Domain>, String> configured = project.getServices();
+        for (Class<? extends Domain> c : OpenCitConfigurator
+                .getRequiredServices()) {
+            if (configured == null || !configured.containsKey(c)) {
+                return new DomainSelectionStep(project);
+            }
+        }
+        return new FinalStep(this, project);
+    }
+
+    @Override
+    public void applyState() {
+        String domain = serviceManager.getObject().getDescriptor().getServiceType().getCanonicalName();
+        String projName = SetAttributesStep.this.project.getId();
+        serviceId = projName + "-" + domain;
+        attributeValues.put("id", serviceId);
+        serviceManager.getObject().update(serviceId, attributeValues);
+        setComplete(true);
+        project.addService(serviceManager.getObject().getDescriptor()
+                .getServiceType(), serviceId);
+        setComplete(true);
+    }
 
 }
