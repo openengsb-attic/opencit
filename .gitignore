@@ -20,6 +20,8 @@ runner
 *.classpath
 *.project
 *.settings
+.checkstyle
+.checkstyleCheckerConfig
 eclipse-workspace
 
 *.iml
