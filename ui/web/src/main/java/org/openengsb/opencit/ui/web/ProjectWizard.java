@@ -26,6 +26,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.WizardSteps.CreateProjectStep;
 
+@SuppressWarnings("serial")
 public class ProjectWizard extends Wizard {
 
     @SpringBean

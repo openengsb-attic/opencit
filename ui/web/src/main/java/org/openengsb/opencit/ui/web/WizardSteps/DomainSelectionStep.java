@@ -41,6 +41,7 @@ import org.openengsb.domain.test.TestDomain;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
+@SuppressWarnings("serial")
 public class DomainSelectionStep extends DynamicWizardStep {
 
     private String domainDropDown = "";

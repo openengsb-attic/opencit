@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.ObjectUtils;
 import org.openengsb.core.common.Domain;
 
+@SuppressWarnings("serial")
 public class Project implements Serializable {
 
     private Map<String, String> services;
@@ -68,7 +69,7 @@ public class Project implements Serializable {
     }
 
     /**
-     * 
+     *
      * the created services, key is the type, and value the id of the service
      */
     public Map<Class<? extends Domain>, String> getServices() {

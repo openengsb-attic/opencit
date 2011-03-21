@@ -36,6 +36,7 @@ import org.openengsb.opencit.ui.web.model.ManagerMapModel;
 import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 
+@SuppressWarnings("serial")
 public class SelectServiceStep extends DynamicWizardStep implements SpringBeanProvider<DomainService> {
 
     @SpringBean

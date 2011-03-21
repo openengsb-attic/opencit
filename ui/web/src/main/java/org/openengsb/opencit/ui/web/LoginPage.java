@@ -30,7 +30,8 @@ public class LoginPage extends WebPage {
     private User user = new User();
 
     public LoginPage() {
-        @SuppressWarnings("serial") Form<User> loginForm = new Form<User>("form") {
+        @SuppressWarnings("serial")
+        Form<User> loginForm = new Form<User>("form") {
             @Override
             protected void onSubmit() {
                 AuthenticatedWebSession session = AuthenticatedWebSession.get();

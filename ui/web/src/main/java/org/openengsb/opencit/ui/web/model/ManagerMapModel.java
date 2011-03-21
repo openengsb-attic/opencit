@@ -27,6 +27,7 @@ import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.service.DomainService;
 
+@SuppressWarnings("serial")
 public class ManagerMapModel extends LoadableDetachableModel<Map<String, ServiceManager>> {
 
     private SpringBeanProvider<DomainService> domainServiceProvider;

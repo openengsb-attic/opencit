@@ -19,13 +19,14 @@ package org.openengsb.opencit.ui.web;
 
 import org.apache.wicket.markup.html.link.Link;
 
+@SuppressWarnings("serial")
 public final class WizardLink extends Link<Object> {
 
     private final Class<?> wizardClass;
 
     /**
      * Construct.
-     * 
+     *
      * @param id Component id
      * @param wizardClass Class of the wizard to instantiate
      */
@@ -34,6 +35,7 @@ public final class WizardLink extends Link<Object> {
         this.wizardClass = wizardClass;
     }
 
+    @Override
     public void onClick() {
         setResponsePage(new WizardPage(wizardClass));
     }

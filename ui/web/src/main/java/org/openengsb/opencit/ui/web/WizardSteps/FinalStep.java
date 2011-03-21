@@ -34,6 +34,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.openengsb.core.common.Domain;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
+@SuppressWarnings("serial")
 public class FinalStep extends DynamicWizardStep {
     public FinalStep(DynamicWizardStep prev, Project project) {
         super(prev, new ResourceModel("final.title"), new ResourceModel("final.summary"), new Model<Project>(project));
@@ -45,6 +46,7 @@ public class FinalStep extends DynamicWizardStep {
         list.addAll(keys);
 
         ListView<Class<? extends Domain>> listview = new ListView<Class<? extends Domain>>("service.list", list) {
+            @Override
             protected void populateItem(ListItem<Class<? extends Domain>> item) {
                 IModel<Class<? extends Domain>> domainModel = item.getModel();
                 Class<? extends Domain> domainClass = domainModel.getObject();

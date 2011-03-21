@@ -22,14 +22,14 @@ import org.apache.wicket.markup.html.WebPage;
 import org.openengsb.ui.common.wicket.OpenEngSBWicketApplication;
 
 public class WicketApplication extends OpenEngSBWicketApplication {
-	@Override
-	public Class<? extends Page> getHomePage() {
-		return Index.class;
-	}
+    @Override
+    public Class<? extends Page> getHomePage() {
+        return Index.class;
+    }
 
-	@Override
-	protected Class<? extends WebPage> getSignInPageClass() {
-		return LoginPage.class;
-	}
+    @Override
+    protected Class<? extends WebPage> getSignInPageClass() {
+        return LoginPage.class;
+    }
 
 }

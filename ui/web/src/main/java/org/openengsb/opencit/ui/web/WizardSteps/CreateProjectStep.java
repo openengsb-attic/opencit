@@ -24,6 +24,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
+@SuppressWarnings("serial")
 public class CreateProjectStep extends DynamicWizardStep {
     private Project project;
 

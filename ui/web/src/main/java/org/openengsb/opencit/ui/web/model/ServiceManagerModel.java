@@ -20,6 +20,7 @@ package org.openengsb.opencit.ui.web.model;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.openengsb.core.common.ServiceManager;
 
+@SuppressWarnings("serial")
 public class ServiceManagerModel extends LoadableDetachableModel<ServiceManager> {
 
     private ManagerMapModel managerMapModel;
