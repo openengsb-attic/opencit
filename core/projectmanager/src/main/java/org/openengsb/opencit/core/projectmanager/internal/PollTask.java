@@ -34,6 +34,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class PollTask implements Runnable {
 
+    private static final int TIMEOUT = 6 * 60 * 60 * 1000; // 6 hours
+
     private Log log = LogFactory.getLog(PollTask.class);
 
     private WorkflowService workflowService;
@@ -87,7 +89,13 @@ public class PollTask implements Runnable {
     private void runFlow() throws InterruptedException, WorkflowException {
         log.info("starting workflow \"CI\"");
         long pid = workflowService.startFlow("ci");
-        workflowService.waitForFlowToFinish(pid);
+        workflowService.waitForFlowToFinish(pid, TIMEOUT);
+        try {
+            workflowService.cancelFlow(pid);
+        } catch (IllegalArgumentException e) {
+            // TODO wait for OPENENGSB-1148 to be fixed
+            log.debug("could not terminate flow " + pid + ". maybe it terminated as expected");
+        }
     }
 
     public ProjectStateInfo getInfo() {
