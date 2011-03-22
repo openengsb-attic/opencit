@@ -46,13 +46,17 @@ public final class StateUtil {
     private static boolean isSuccessReport(Report report) {
         List<ReportPart> parts = report.getParts();
         for (ReportPart p : parts) {
-            if (p.getPartName().contains("FailEvent")) return false;
+            if (p.getPartName().contains("FailEvent")) {
+                return false;
+            }
         }
         return true;
     }
 
     public static String getImage(Report report) {
-        if (isSuccessReport(report)) return "images/traffic_light_green.png";
+        if (isSuccessReport(report)) {
+            return "images/traffic_light_green.png";
+        }
         return "images/traffic_light_red.png";
     }
 }

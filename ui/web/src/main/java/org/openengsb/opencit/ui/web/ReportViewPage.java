@@ -55,7 +55,8 @@ public class ReportViewPage extends BasePage implements SpringBeanProvider<Proje
         add(new Label("project.id", projectModel.getObject().getId()));
         add(new Label("report.name", reportModel.getObject().getName()));
 
-        ContextRelativeResource stateResource = new ContextRelativeResource(StateUtil.getImage(reportModel.getObject()));
+        ContextRelativeResource stateResource =
+            new ContextRelativeResource(StateUtil.getImage(reportModel.getObject()));
         stateResource.setCacheable(false);
         Image projectStateImage = new Image("report.state", stateResource);
         projectStateImage.setOutputMarkupId(true);
