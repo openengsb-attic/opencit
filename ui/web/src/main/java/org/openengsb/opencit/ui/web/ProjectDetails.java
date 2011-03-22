@@ -249,6 +249,14 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
             @Override
             protected void populateItem(ListItem<Report> item) {
                 Report report = item.getModelObject();
+
+                ContextRelativeResource stateResource = new ContextRelativeResource(StateUtil.getImage(report));
+                stateResource.setCacheable(false);
+                Image projectStateImage = new Image("report.state", stateResource);
+                projectStateImage.setOutputMarkupId(true);
+
+                item.add(projectStateImage);
+
                 item.add(new Label("report.name", report.getName()));
                 item.add(new Link<Report>("report.link", item.getModel()) {
                     @Override
