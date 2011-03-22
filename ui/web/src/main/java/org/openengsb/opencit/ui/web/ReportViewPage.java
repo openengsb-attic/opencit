@@ -22,12 +22,14 @@ import java.util.List;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.ReportPart;
@@ -35,6 +37,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ProjectModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
+import org.openengsb.opencit.ui.web.util.StateUtil;
 
 public class ReportViewPage extends BasePage implements SpringBeanProvider<ProjectManager> {
 
@@ -51,6 +54,14 @@ public class ReportViewPage extends BasePage implements SpringBeanProvider<Proje
         this.reportModel = reportModel;
         add(new Label("project.id", projectModel.getObject().getId()));
         add(new Label("report.name", reportModel.getObject().getName()));
+
+        ContextRelativeResource stateResource = new ContextRelativeResource(StateUtil.getImage(reportModel.getObject()));
+        stateResource.setCacheable(false);
+        Image projectStateImage = new Image("report.state", stateResource);
+        projectStateImage.setOutputMarkupId(true);
+
+        add(projectStateImage);
+
         createBackLink();
         initReportPartsPanel();
     }

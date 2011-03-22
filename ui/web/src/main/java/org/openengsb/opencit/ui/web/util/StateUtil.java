@@ -17,6 +17,10 @@
 
 package org.openengsb.opencit.ui.web.util;
 
+import java.util.List;
+
+import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.model.ReportPart;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public final class StateUtil {
@@ -37,5 +41,18 @@ public final class StateUtil {
             default:
                 return "images/traffic_light_none.png";
         }
+    }
+
+    private static boolean isSuccessReport(Report report) {
+        List<ReportPart> parts = report.getParts();
+        for (ReportPart p : parts) {
+            if (p.getPartName().contains("FailEvent")) return false;
+        }
+        return true;
+    }
+
+    public static String getImage(Report report) {
+        if (isSuccessReport(report)) return "images/traffic_light_green.png";
+        return "images/traffic_light_red.png";
     }
 }
