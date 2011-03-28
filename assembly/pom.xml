@@ -100,23 +100,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>unpack-unix</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.openengsb</groupId>
-                  <artifactId>openengsb</artifactId>
-                  <type>tar.gz</type>
-                  <outputDirectory>target/dependencies/unix</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-          <execution>
             <id>unpack-win</id>
             <phase>generate-resources</phase>
             <goals>
@@ -128,7 +111,7 @@
                   <groupId>org.openengsb</groupId>
                   <artifactId>openengsb</artifactId>
                   <type>zip</type>
-                  <outputDirectory>target/dependencies/win</outputDirectory>
+                  <outputDirectory>target/dependencies/</outputDirectory>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -204,58 +187,7 @@
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
-                <descriptor>${project.basedir}/src/main/descriptors/unix-bin.xml</descriptor>
-                <descriptor>${project.basedir}/src/main/descriptors/windows-bin.xml</descriptor>
-              </descriptors>
-            </configuration>
-            <executions>
-              <execution>
-                <id>assembly-opencit</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>nix</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>${project.basedir}/src/main/descriptors/unix-bin.xml</descriptor>
-              </descriptors>
-            </configuration>
-            <executions>
-              <execution>
-                <id>assembly-opencit</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>win</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>${project.basedir}/src/main/descriptors/windows-bin.xml</descriptor>
+                <descriptor>${project.basedir}/src/main/descriptors/bin.xml</descriptor>
               </descriptors>
             </configuration>
             <executions>
