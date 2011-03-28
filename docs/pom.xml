@@ -23,13 +23,13 @@
   <parent>
     <groupId>org.openengsb.opencit.build</groupId>
     <artifactId>shared-plugin-settings</artifactId>
-    <version>8-SNAPSHOT</version>
+    <version>8</version>
     <relativePath>../poms/</relativePath>
   </parent>
 
   <groupId>org.openengsb.opencit.docs</groupId>
   <artifactId>opencit-docs-parent</artifactId>
-  <version>8-SNAPSHOT</version>
+  <version>8</version>
   <packaging>pom</packaging>
   <name>OpenCIT :: Documentation :: Parent</name>
 
