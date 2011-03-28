@@ -1,3 +1,10 @@
+opencit-8
+  * upgrade OpenEngSB to 1.1.2.RELEASE
+  * remove confusing send-button in project-creation-wizard
+  * add indicator for build result to report list
+  * properly abort build when restarted
+  * merge windows and linux distribution again
+
 opencit-7
   * upgrade OpenEngSB to 1.1.1.RELEASE
   * introduce actual user-management
