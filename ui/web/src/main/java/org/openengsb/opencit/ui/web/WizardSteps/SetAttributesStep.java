@@ -17,7 +17,6 @@
 
 package org.openengsb.opencit.ui.web.WizardSteps;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +30,11 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.openengsb.core.common.Domain;
-import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.AttributeDefinition;
-import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ServiceManagerModel;
 import org.openengsb.ui.common.wicket.editor.ServiceEditorPanel;
-import org.openengsb.ui.web.model.WicketStringLocalizer;
 
 @SuppressWarnings("serial")
 public class SetAttributesStep extends DynamicWizardStep {
@@ -65,25 +61,13 @@ public class SetAttributesStep extends DynamicWizardStep {
         IModel<List<AttributeDefinition>> attributes = new LoadableDetachableModel<List<AttributeDefinition>>() {
             @Override
             protected List<AttributeDefinition> load() {
-                return buildAttributeList(serviceManager.getObject());
+                return serviceManager.getObject().getDescriptor().getAttributes();
             }
         };
         attributeValues = new HashMap<String, String>();
 
         editor = new ServiceEditorPanel("editor", attributes.getObject(), attributeValues);
         add(editor);
-    }
-
-    private List<AttributeDefinition> buildAttributeList(ServiceManager service) {
-        AttributeDefinition.Builder builder = AttributeDefinition
-                .builder(new WicketStringLocalizer(this));
-        AttributeDefinition id = builder.id("id").name("attribute.id.name")
-                .description("attribute.id.description").required().build();
-        ServiceDescriptor descriptor = service.getDescriptor();
-        List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
-        attributes.add(id);
-        attributes.addAll(descriptor.getAttributes());
-        return attributes;
     }
 
     @Override
