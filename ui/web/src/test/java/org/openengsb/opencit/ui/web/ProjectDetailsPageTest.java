@@ -37,7 +37,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.workflow.WorkflowException;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
@@ -120,11 +119,12 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     }
 
     @Test
-    public void testRunFlow_shouldWork() throws WorkflowException {
+    public void testRunFlow_shouldWork() throws Exception {
         WicketTester tester = getTester();
         tester.startPage(getProjectDetails());
         Button button = (Button) tester.getComponentFromLastRenderedPage("projectPanel:workflowForm:flowButton");
         button.onSubmit();
+        Thread.sleep(150);
         Mockito.verify(workflowService).startFlow("ci");
     }
 
