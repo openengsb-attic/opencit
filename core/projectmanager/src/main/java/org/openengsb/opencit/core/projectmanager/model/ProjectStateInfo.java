@@ -24,22 +24,22 @@ import java.util.Date;
 public class ProjectStateInfo implements Serializable {
 
     private Date lastpollDate;
-    private Project.State state;
+    private boolean building;
 
     public synchronized Date getLastpollDate() {
         return this.lastpollDate;
     }
 
-    public synchronized Project.State getState() {
-        return this.state;
-    }
-
-    public synchronized void setState(Project.State state) {
-        this.state = state;
-    }
-
     public synchronized void setLastpollDate(Date lastpollDate) {
         this.lastpollDate = lastpollDate;
+    }
+
+    public boolean isBuilding() {
+        return this.building;
+    }
+
+    public void setBuilding(boolean building) {
+        this.building = building;
     }
 
 }

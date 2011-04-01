@@ -26,6 +26,7 @@ import org.openengsb.core.common.workflow.WorkflowException;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.domain.scm.ScmDomain;
+import org.openengsb.opencit.core.projectmanager.CITTask;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,8 +34,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class PollTask implements Runnable {
-
-    private static final int TIMEOUT = 6 * 60 * 60 * 1000; // 6 hours
 
     private Log log = LogFactory.getLog(PollTask.class);
 
@@ -88,14 +87,10 @@ public class PollTask implements Runnable {
 
     private void runFlow() throws InterruptedException, WorkflowException {
         log.info("starting workflow \"CI\"");
-        long pid = workflowService.startFlow("ci");
-        workflowService.waitForFlowToFinish(pid, TIMEOUT);
-        try {
-            workflowService.cancelFlow(pid);
-        } catch (IllegalArgumentException e) {
-            // TODO wait for OPENENGSB-1148 to be fixed
-            log.debug("could not terminate flow " + pid + ". maybe it terminated as expected");
-        }
+        CITTask citTask = new CITTask(workflowService, project.getId(), info);
+        Thread thread = new Thread(citTask);
+        thread.start();
+        thread.join();
     }
 
     public ProjectStateInfo getInfo() {

@@ -112,7 +112,6 @@ public class ProjectManagerImpl implements ProjectManager {
             @Override
             public void run() {
                 SecurityContextHolder.clearContext();
-                sanitizeProjectState(project);
                 PollTask pollTask = new PollTask(workflowService, authenticationManager, scmDomain, project);
                 projectStates.put(project.getId(), pollTask.getInfo());
                 ScheduledFuture<?> poller =
@@ -249,14 +248,4 @@ public class ProjectManagerImpl implements ProjectManager {
         return projectStates.get(projectId);
     }
 
-    private void sanitizeProjectState(final Project project) {
-        if (Project.State.IN_PROGRESS.equals(project.getState())) {
-            project.setState(Project.State.FAILURE);
-            try {
-                updateProject(project);
-            } catch (NoSuchProjectException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-    }
 }

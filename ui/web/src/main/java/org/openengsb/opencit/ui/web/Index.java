@@ -92,7 +92,7 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
             protected void populateItem(ListItem<Project> item) {
                 Project project = item.getModelObject();
                 item.add(new Label("project.name", project.getId()));
-                String imageName = StateUtil.getImage(project);
+                String imageName = StateUtil.getImage(project, projectManager.getProjectState(project.getId()));
                 ContextRelativeResource imageResource = new ContextRelativeResource(imageName);
                 imageResource.setCacheable(false);
                 item.add(new Image("project.state", imageResource));

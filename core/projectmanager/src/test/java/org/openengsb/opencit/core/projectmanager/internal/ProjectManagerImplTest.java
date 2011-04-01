@@ -132,7 +132,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     public void updateProject_shouldWork() throws NoSuchProjectException, PersistenceException {
         addTestData();
         Project project = new Project("test");
-        project.setState(State.IN_PROGRESS);
+        project.setState(State.OK);
         projectManager.updateProject(project);
         List<Project> allProjects = projectManager.getAllProjects();
         assertThat(allProjects, hasItem(project));

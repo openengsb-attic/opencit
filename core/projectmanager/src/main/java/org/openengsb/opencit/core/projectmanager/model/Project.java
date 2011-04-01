@@ -32,7 +32,6 @@ public class Project implements Serializable {
 
     public enum State {
             OK,
-            IN_PROGRESS,
             FAILURE;
     }
 

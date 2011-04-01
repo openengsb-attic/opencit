@@ -44,14 +44,14 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.workflow.WorkflowException;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
+import org.openengsb.opencit.core.projectmanager.CITTask;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.openengsb.opencit.ui.web.model.ProjectModel;
 import org.openengsb.opencit.ui.web.model.ReportModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
@@ -124,7 +124,8 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                 }
             }
         }));
-        ContextRelativeResource stateResource = new ContextRelativeResource(StateUtil.getImage(project));
+        String image = StateUtil.getImage(project, projectManager.getProjectState(project.getId()));
+        ContextRelativeResource stateResource = new ContextRelativeResource(image);
         stateResource.setCacheable(false);
         projectStateImage = new Image("project.state", stateResource);
         projectStateImage.setOutputMarkupId(true);
@@ -160,28 +161,20 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
             @Override
             public void onSubmit() {
                 Project project = ProjectDetails.this.projectModel.getObject();
-                if (project.getState() == State.IN_PROGRESS) {
-                    error(new StringResourceModel("error", this, null).getString());
-                    return;
-                }
+                ProjectStateInfo state = projectManager.getProjectState(project.getId());
                 String contextId = project.getId();
                 log.info("CIT workflow for project '" + contextId + "' started manually through UI");
-                try {
-                    contextService.setThreadLocalContext(contextId);
-                    project.setState(State.IN_PROGRESS);
-                    projectManager.updateProject(project);
-                    workflowService.startFlow("ci");
-                    setResponsePage(ProjectDetails.class);
-                } catch (WorkflowException e) {
-                    log.error(e);
-                } catch (NoSuchProjectException e) {
-                    log.error(e);
-                }
+                contextService.setThreadLocalContext(contextId);
+
+                CITTask citTask = new CITTask(workflowService, project.getId(), state);
+                new Thread(citTask).start();
+                setResponsePage(ProjectDetails.class);
             }
 
         };
         flowButton.setOutputMarkupId(true);
-        flowButton.setEnabled(project.getState() != State.IN_PROGRESS);
+
+        flowButton.setEnabled(!projectManager.getProjectState(project.getId()).isBuilding());
         form.add(flowButton);
         projectPanel.add(form);
 

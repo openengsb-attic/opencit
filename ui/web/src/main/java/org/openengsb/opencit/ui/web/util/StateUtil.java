@@ -22,24 +22,25 @@ import java.util.List;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.ReportPart;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 
 public final class StateUtil {
     private StateUtil() {
     }
 
-    public static String getImage(Project project) {
-        if (project.getState() == null) {
-            return "images/traffic_light_none.png";
+    public static String getImage(Project project, ProjectStateInfo info) {
+        if (info.isBuilding()) {
+            return "images/traffic_light_yellow.png";
         }
-        switch (project.getState()) {
-            case OK:
-                return "images/traffic_light_green.png";
-            case IN_PROGRESS:
-                return "images/traffic_light_yellow.png";
-            case FAILURE:
-                return "images/traffic_light_red.png";
-            default:
-                return "images/traffic_light_none.png";
+
+        State state = project.getState();
+        if (state == State.OK) {
+            return "images/traffic_light_green.png";
+        } else if (state == State.FAILURE) {
+            return "images/traffic_light_red.png";
+        } else {
+            return "images/traffic_light_none.png";
         }
     }
 
