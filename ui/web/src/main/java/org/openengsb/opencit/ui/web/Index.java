@@ -35,6 +35,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ProjectModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
@@ -44,6 +45,9 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
 
     @SpringBean
     private ProjectManager projectManager;
+
+    @SpringBean
+    private SchedulingService scheduler;
 
     @SpringBean
     private ContextCurrentService contextService;
@@ -92,7 +96,7 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
             protected void populateItem(ListItem<Project> item) {
                 Project project = item.getModelObject();
                 item.add(new Label("project.name", project.getId()));
-                String imageName = StateUtil.getImage(project, projectManager.getProjectState(project.getId()));
+                String imageName = StateUtil.getImage(project, scheduler);
                 ContextRelativeResource imageResource = new ContextRelativeResource(imageName);
                 imageResource.setCacheable(false);
                 item.add(new Image("project.state", imageResource));

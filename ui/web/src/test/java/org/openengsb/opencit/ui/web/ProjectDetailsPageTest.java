@@ -20,6 +20,7 @@ package org.openengsb.opencit.ui.web;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,48 +37,55 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
-import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
-import org.openengsb.opencit.ui.web.model.ProjectModel;
 
 public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     private ReportDomain reportDomain;
-    private ProjectModel testProjectModel;
     private WorkflowService workflowService;
+    private ProjectManager projectManager;
 
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
         reportDomain = mock(ReportDomain.class);
         mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
-        ProjectManager projectManager = mock(ProjectManager.class);
-        when(projectManager.getProjectState(anyString())).thenReturn(new ProjectStateInfo());
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", reportDomain);
         workflowService = mock(WorkflowService.class);
         mockedBeansMap.put("workflowService", workflowService);
-
+        SchedulingService scheduler = mock(SchedulingService.class);
+        mockedBeansMap.put("scheduler", scheduler);
+        Answer<?> answer = new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                workflowService.startFlow("ci");
+                return null;
+            }
+        };
+        doAnswer(answer).when(scheduler).scheduleProjectForBuild(anyString());
         return mockedBeansMap;
     }
 
+    @Override
     @Before
-    @SuppressWarnings("serial")
-    public void setUp() {
-        testProjectModel = new ProjectModel("test") {
-            @Override
-            public Project getObject() {
-                Project testProject = new Project("test");
-                testProject.setState(State.OK);
-                return testProject;
-            }
-        };
+    public void setup() {
+        projectManager = mock(ProjectManager.class);
+        super.setup();
+        Project testProject = new Project("test");
+        testProject.setState(State.OK);
+        when(projectManager.getCurrentContextProject()).thenReturn(testProject);
+        when(projectManager.getProject("test")).thenReturn(testProject);
     }
 
     @Test
@@ -87,8 +95,8 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     }
 
     private ProjectDetails getProjectDetails() {
-        ProjectDetails pd = new ProjectDetails(testProjectModel);
-        return pd;
+        ContextHolder.get().setCurrentContextId("test");
+        return new ProjectDetails();
     }
 
     @Test
@@ -100,7 +108,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     @Test
     public void testProjectIdPresent_shouldWork() {
         getTester().startPage(getProjectDetails());
-        getTester().assertContains(testProjectModel.getObject().getId());
+        getTester().assertContains("test");
     }
 
     @Test
@@ -137,7 +145,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     @Test
     public void testReportPanel_shouldWork() {
         List<Report> reports = Arrays.asList(new Report[]{ new Report("rep1") });
-        when(reportDomain.getAllReports(testProjectModel.getObject().getId())).thenReturn(reports);
+        when(reportDomain.getAllReports("test")).thenReturn(reports);
         getTester().startPage(getProjectDetails());
         getTester().assertContains("rep1");
         String item = "reportsPanel:reportlist:0";

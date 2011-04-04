@@ -39,6 +39,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,6 +58,7 @@ public class LoginPageTest {
         mockAuthentication();
         contextMock.putBean(mock(ProjectManager.class));
         contextMock.putBean(mock(ContextCurrentService.class));
+        contextMock.putBean(mock(SchedulingService.class));
 
         WebApplication app = new WicketApplication() {
             @Override

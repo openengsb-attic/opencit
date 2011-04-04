@@ -21,22 +21,26 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
+import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
@@ -57,39 +61,54 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     private ProjectManagerImpl projectManager;
     private ContextCurrentService contextMock;
     private DummyPersistence persistence;
+    private SchedulingServiceImpl scheduler;
+    private WorkflowService workflowService;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        scheduler = new SchedulingServiceImpl();
         projectManager = new ProjectManagerImpl();
+        scheduler.setProjectManager(projectManager);
+        projectManager.setScheduler(scheduler);
         projectManager.setBundleContext(bundleContext);
 
-        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-        BundleAuthenticationToken bundleAuthenticationToken =
-            new BundleAuthenticationToken("", "", new ArrayList<GrantedAuthority>());
-        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(bundleAuthenticationToken);
-        projectManager.setAuthenticationManager(authenticationManager);
+        AuthenticationManager authenticationManager = makeAuthenticationManager();
+        scheduler.setAuthenticationManager(authenticationManager);
+        scheduler.setScmDomain(Mockito.mock(ScmDomain.class));
+
+        workflowService = mock(WorkflowService.class);
+        scheduler.setWorkflowService(workflowService);
 
         contextMock = Mockito.mock(ContextCurrentService.class);
 
         Mockito.when(contextMock.getThreadLocalContext()).thenReturn("test");
+        projectManager.setContextService(contextMock);
 
         PersistenceManager persistenceManagerMock = Mockito.mock(PersistenceManager.class);
         persistence = new DummyPersistence();
         Mockito.when(persistenceManagerMock.getPersistenceForBundle(Mockito.any(Bundle.class))).thenReturn(
             persistence);
         projectManager.setPersistenceManager(persistenceManagerMock);
-        projectManager.setContextService(contextMock);
-        projectManager.setScmDomain(Mockito.mock(ScmDomain.class));
         projectManager.setReportDomain(Mockito.mock(ReportDomain.class));
         projectManager.init();
+    }
+
+    private AuthenticationManager makeAuthenticationManager() {
+        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
+        BundleAuthenticationToken bundleAuthenticationToken =
+            new BundleAuthenticationToken("", "", new ArrayList<GrantedAuthority>());
+        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(bundleAuthenticationToken);
+        return authenticationManager;
     }
 
     private void addTestData() throws PersistenceException {
         Project project = new Project("test");
         project.setState(State.OK);
         persistence.create(project);
+        projectManager.init();
     }
 
     @Test
@@ -175,17 +194,42 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         project.setNotificationRecipient("test@test.com");
 
         ScmDomain scmMock = mockDomain(ScmDomain.class);
-        projectManager.setScmDomain(scmMock);
+        scheduler.setScmDomain(scmMock);
         when(scmMock.poll()).thenReturn(false);
         projectManager.createProject(project);
         Thread.sleep(200);
-        ScheduledFuture<?> scheduledFuture = projectManager.pollers.get("test2");
-        while (scheduledFuture.getDelay(TimeUnit.SECONDS) <= 0) {
-            /* sorry for the busy-waiting */
-            Thread.yield();
-        }
-        System.out.println(scheduledFuture.isDone());
+        assertThat(scheduler.isProjectBuilding("test2"), is(false));
+        assertThat(scheduler.isProjectPolling("test2"), is(true));
         verify(scmMock).poll();
+    }
+
+    @Test
+    public void testPollerShouldTriggerBuild() throws Exception {
+        Project project = new Project("test2");
+        project.setNotificationRecipient("test@test.com");
+        ScmDomain scmMock = mockDomain(ScmDomain.class);
+        scheduler.setScmDomain(scmMock);
+        when(scmMock.poll()).thenReturn(true);
+        when(workflowService.startFlow("ci")).thenReturn(1L);
+        Answer<?> answer = new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                synchronized (this) {
+                    this.notify();
+                }
+                Thread.sleep(200);
+                return null;
+            }
+        };
+        doAnswer(answer).when(workflowService).waitForFlowToFinish(eq(1L), anyLong());
+        projectManager.createProject(project);
+        synchronized (answer) {
+            answer.wait();
+        }
+        assertThat(scheduler.isProjectBuilding("test2"), is(true));
+        assertThat(scheduler.isProjectPolling("test2"), is(false));
+        verify(scmMock).poll();
+
     }
 
     private <T> T mockDomain(Class<T> domainClass) throws InvalidSyntaxException {

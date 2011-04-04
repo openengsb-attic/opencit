@@ -17,89 +17,66 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
-import java.util.Date;
+import java.util.concurrent.Callable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openengsb.core.common.context.ContextHolder;
+import org.openengsb.core.common.workflow.WorkflowException;
+import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
-import org.openengsb.domain.scm.ScmDomain;
-import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
-import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
-import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class PollTask implements Runnable {
+public class CITTask implements Callable<Boolean> {
 
-    private Log log = LogFactory.getLog(PollTask.class);
-
-    private AuthenticationManager authenticationManager;
-    private ScmDomain scm;
+    private static final long TIMEOUT = 3 * 60 * 60 * 1000; // 3 hours
+    private WorkflowService workflowService;
     private SchedulingService scheduler;
-    private ProjectManager projectManager;
-
+    private long pid;
     private String projectId;
+    private AuthenticationManager authenticationManager;
 
-    public PollTask(String projectId) {
+    public CITTask(String projectId) {
         this.projectId = projectId;
     }
 
-    public PollTask() {
-    }
-
     @Override
-    public void run() {
+    public Boolean call() throws WorkflowException, InterruptedException {
+        authenticate();
+
+        ContextHolder.get().setCurrentContextId(projectId);
         try {
-            authenticate();
-            doRun();
-        } catch (Exception e) {
-            e.printStackTrace();
+            pid = workflowService.startFlow("ci");
+            workflowService.waitForFlowToFinish(pid, TIMEOUT);
         } finally {
-            SecurityContextHolder.getContext().setAuthentication(null);
+            scheduler.resumeScmPoller(projectId);
         }
+        return true;
     }
 
     private void authenticate() {
+        SecurityContextHolder.clearContext();
         Authentication token =
             authenticationManager.authenticate(new BundleAuthenticationToken(
                 "opencit-core-projectmanager", ""));
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
-    private void doRun() {
-        log.info("running pollertask");
-        ContextHolder.get().setCurrentContextId(projectId);
-        log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
-        if (scm.poll()) {
-            scheduler.scheduleProjectForBuild(projectId);
-        }
-
-        try {
-            Project project = projectManager.getCurrentContextProject();
-            project.setLastScmPollDate(new Date());
-            projectManager.updateProject(project);
-        } catch (NoSuchProjectException e) {
-            throw new IllegalStateException("Project, this task is for does not exist", e);
-        }
+    public void cancel() throws WorkflowException {
+        workflowService.cancelFlow(pid);
     }
 
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-    public void setScm(ScmDomain scm) {
-        this.scm = scm;
+    public void setWorkflowService(WorkflowService workflowService) {
+        this.workflowService = workflowService;
     }
 
     public void setScheduler(SchedulingService scheduler) {
         this.scheduler = scheduler;
     }
 
-    public void setProjectManager(ProjectManager projectManager) {
-        this.projectManager = projectManager;
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 
 }

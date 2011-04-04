@@ -43,16 +43,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.workflow.WorkflowService;
+import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
-import org.openengsb.opencit.core.projectmanager.CITTask;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
-import org.openengsb.opencit.ui.web.model.ProjectModel;
 import org.openengsb.opencit.ui.web.model.ReportModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
@@ -61,16 +58,11 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
 
     private static Log log = LogFactory.getLog(BasePage.class);
 
-    private ProjectModel projectModel;
-
-    @SpringBean
-    private ContextCurrentService contextService;
-
-    @SpringBean
-    private WorkflowService workflowService;
-
     @SpringBean
     private ProjectManager projectManager;
+
+    @SpringBean
+    private SchedulingService scheduler;
 
     @SpringBean
     private ReportDomain reportDomain;
@@ -82,26 +74,18 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
     private WebMarkupContainer projectPanel;
 
     public ProjectDetails() {
-        String projectId = contextService.getThreadLocalContext();
-        this.projectModel = new ProjectModel(projectId);
-        init();
-    }
-
-    public ProjectDetails(ProjectModel projectModel) {
-        this.projectModel = projectModel;
         init();
     }
 
     @SuppressWarnings("serial")
     private void init() {
-        this.projectModel.setProjectManagerProvider(this);
 
         projectPanel = new WebMarkupContainer("projectPanel");
         projectPanel.setOutputMarkupId(true);
         add(projectPanel);
 
-        Project project = projectModel.getObject();
-        projectPanel.add(new Label("project.id", project.getId()));
+        String projectId = ContextHolder.get().getCurrentContextId();
+        projectPanel.add(new Label("project.id", projectId));
         projectPanel.add(new AjaxEditableLabel<String>("project.notification", new IModel<String>() {
             @Override
             public void detach() {
@@ -110,12 +94,12 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
 
             @Override
             public String getObject() {
-                return ProjectDetails.this.projectModel.getObject().getNotificationRecipient();
+                return projectManager.getCurrentContextProject().getNotificationRecipient();
             }
 
             @Override
             public void setObject(String recipient) {
-                Project p = ProjectDetails.this.projectModel.getObject();
+                Project p = projectManager.getCurrentContextProject();
                 p.setNotificationRecipient(recipient);
                 try {
                     projectManager.updateProject(p);
@@ -124,7 +108,8 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                 }
             }
         }));
-        String image = StateUtil.getImage(project, projectManager.getProjectState(project.getId()));
+        Project project = projectManager.getCurrentContextProject();
+        String image = StateUtil.getImage(project, scheduler);
         ContextRelativeResource stateResource = new ContextRelativeResource(image);
         stateResource.setCacheable(false);
         projectStateImage = new Image("project.state", stateResource);
@@ -132,8 +117,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
 
         projectPanel.add(projectStateImage);
 
-        Date lastpollDate = projectManager.getProjectState(project.getId())
-            .getLastpollDate();
+        Date lastpollDate = project.getLastScmPollDate();
         String dateString;
         if (lastpollDate == null) {
             dateString = "-";
@@ -152,29 +136,22 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
             }
         });
 
-        Form<Project> form = new Form<Project>("workflowForm");
-        form.setModel(projectModel);
+        Form<String> form = new Form<String>("workflowForm");
+        form.setModel(new Model<String>(projectId));
         form.setOutputMarkupId(true);
 
         flowButton = new Button("flowButton") {
 
             @Override
             public void onSubmit() {
-                Project project = ProjectDetails.this.projectModel.getObject();
-                ProjectStateInfo state = projectManager.getProjectState(project.getId());
-                String contextId = project.getId();
-                log.info("CIT workflow for project '" + contextId + "' started manually through UI");
-                contextService.setThreadLocalContext(contextId);
-
-                CITTask citTask = new CITTask(workflowService, project.getId(), state);
-                new Thread(citTask).start();
+                scheduler.scheduleProjectForBuild(ContextHolder.get().getCurrentContextId());
                 setResponsePage(ProjectDetails.class);
             }
 
         };
         flowButton.setOutputMarkupId(true);
 
-        flowButton.setEnabled(!projectManager.getProjectState(project.getId()).isBuilding());
+        flowButton.setEnabled(!scheduler.isProjectBuilding(projectId));
         form.add(flowButton);
         projectPanel.add(form);
 
@@ -210,8 +187,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         return new LoadableDetachableModel<List<Report>>() {
             @Override
             protected List<Report> load() {
-                String projectId = projectModel.getObject().getId();
-                contextService.setThreadLocalContext(projectId);
+                String projectId = ContextHolder.get().getCurrentContextId();
                 List<Report> reports = new ArrayList<Report>(reportDomain.getAllReports(projectId));
                 Comparator<Report> comparator = Collections.reverseOrder(new Comparator<Report>() {
                     @Override
@@ -254,8 +230,8 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                 item.add(new Link<Report>("report.link", item.getModel()) {
                     @Override
                     public void onClick() {
-                        ReportModel reportModel = new ReportModel(projectModel.getObject()
-                            .getId(), getModelObject());
+                        ReportModel reportModel =
+                            new ReportModel(ContextHolder.get().getCurrentContextId(), getModelObject());
                         reportModel.setReportDomainProvider(new SpringBeanProvider<ReportDomain>() {
 
                             @Override
@@ -263,13 +239,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                                 return reportDomain;
                             }
                         });
-                        reportModel.setContextServiceProvider(new SpringBeanProvider<ContextCurrentService>() {
-                            @Override
-                            public ContextCurrentService getSpringBean() {
-                                return contextService;
-                            }
-                        });
-                        setResponsePage(new ReportViewPage(projectModel, reportModel));
+                        setResponsePage(new ReportViewPage(reportModel));
                     }
                 });
             }

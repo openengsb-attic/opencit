@@ -29,16 +29,30 @@
       <entry key="openengsb.workflow.globalid" value="projectManager" />
       <entry key="openengsb.service.type" value="workflow-service" />
     </service-properties>
-    <bean class="org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl" init-method="init">
-      <property name="persistenceManager" ref="persistenceManager" />
-      <property name="contextService" ref="contextService" />
-      <property name="scmDomain" ref="scmDomain" />
-      <property name="workflowService" ref="workflowService" />
-      <property name="reportDomain" ref="reportDomain" />
-      <property name="authenticationManager" ref="authenticationManager" />
-      <property name="timeout" value="30000" />
-      <property name="bundleContext" ref="blueprintBundleContext" />
-    </bean>
+    <ref component-id="projectManager" />
+  </service>
+
+  <bean id="projectManager" class="org.openengsb.opencit.core.projectmanager.internal.ProjectManagerImpl"
+    init-method="init">
+    <property name="persistenceManager" ref="persistenceManager" />
+    <property name="contextService" ref="contextService" />
+    <property name="reportDomain" ref="reportDomain" />
+    <property name="bundleContext" ref="blueprintBundleContext" />
+    <property name="scheduler" ref="scheduler" />
+  </bean>
+
+  <bean id="scheduler" class="org.openengsb.opencit.core.projectmanager.internal.SchedulingServiceImpl">
+    <property name="workflowService" ref="workflowService" />
+    <property name="authenticationManager" ref="authenticationManager" />
+    <property name="scmDomain" ref="scmDomain" />
+    <property name="projectManager" ref="projectManager" />
+  </bean>
+
+  <service>
+    <interfaces>
+      <value>org.openengsb.opencit.core.projectmanager.SchedulingService</value>
+    </interfaces>
+    <ref component-id="scheduler" />
   </service>
 
   <reference id="persistenceManager" interface="org.openengsb.core.common.persistence.PersistenceManager" />

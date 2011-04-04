@@ -19,7 +19,6 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,14 +31,15 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.SimpleReportPart;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.openengsb.opencit.ui.web.model.ProjectModel;
 
 public class ReportViewPageTest extends AbstractCitPageTest {
@@ -52,6 +52,8 @@ public class ReportViewPageTest extends AbstractCitPageTest {
 
     private ContextCurrentService contextService;
 
+    private Project testProject;
+
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
@@ -59,19 +61,20 @@ public class ReportViewPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("contextCurrentService", contextService);
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
         projectManager = mock(ProjectManager.class);
-        when(projectManager.getProjectState(anyString())).thenReturn(new ProjectStateInfo());
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
+        SchedulingService scheduler = mock(SchedulingService.class);
+        mockedBeansMap.put("scheduler", scheduler);
         return mockedBeansMap;
     }
 
     @Before
     @SuppressWarnings("serial")
     public void setUp() throws NoSuchProjectException {
+        testProject = new Project("bar");
         testProjectModel = new ProjectModel("bar") {
             @Override
             public Project getObject() {
-                Project testProject = new Project("bar");
                 return testProject;
             }
         };
@@ -81,31 +84,33 @@ public class ReportViewPageTest extends AbstractCitPageTest {
                 return new Report("foo");
             }
         };
-        when(projectManager.getProject("bar")).thenReturn(new Project("bar"));
+        when(projectManager.getProject("bar")).thenReturn(testProject);
         when(contextService.getThreadLocalContext()).thenReturn("bar");
+        ContextHolder.get().setCurrentContextId("bar");
+        when(projectManager.getCurrentContextProject()).thenReturn(testProject);
     }
 
     @Test
     public void testReportViewHeaderPresent_shouldWork() {
-        Page reportView = getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
+        Page reportView = getTester().startPage(new ReportViewPage(testReportModel));
         getTester().assertContains(reportView.getString("reportView.title"));
     }
 
     @Test
     public void testProjectIdPresent_shouldWork() {
-        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
+        getTester().startPage(new ReportViewPage(testReportModel));
         getTester().assertContains(testProjectModel.getObject().getId());
     }
 
     @Test
     public void testReportNamePresent_shouldWork() {
-        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
+        getTester().startPage(new ReportViewPage(testReportModel));
         getTester().assertContains(testReportModel.getObject().getName());
     }
 
     @Test
     public void testBackLink_shouldWork() {
-        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
+        getTester().startPage(new ReportViewPage(testReportModel));
         getTester().clickLink("back");
         String expectedPage = ProjectDetails.class.getName();
         assertThat(getTester().getLastRenderedPage().getClass().getName(), is(expectedPage));
@@ -115,7 +120,7 @@ public class ReportViewPageTest extends AbstractCitPageTest {
     public void testPartsPanel_shouldWork() {
         SimpleReportPart reportPart = new SimpleReportPart("part1", "text/plain", "content1".getBytes());
         testReportModel.getObject().addPart(reportPart);
-        getTester().startPage(new ReportViewPage(testProjectModel, testReportModel));
+        getTester().startPage(new ReportViewPage(testReportModel));
         getTester().assertContains("part1");
         getTester().assertContains("content1");
     }

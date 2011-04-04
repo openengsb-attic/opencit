@@ -15,31 +15,24 @@
  * limitations under the License.
  */
 
-package org.openengsb.opencit.core.projectmanager.model;
+package org.openengsb.opencit.core.projectmanager;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.openengsb.opencit.core.projectmanager.model.Project;
 
-@SuppressWarnings("serial")
-public class ProjectStateInfo implements Serializable {
+public interface SchedulingService {
 
-    private Date lastpollDate;
-    private boolean building;
+    void setupAndStartScmPoller(Project project);
 
-    public synchronized Date getLastpollDate() {
-        return this.lastpollDate;
-    }
+    void suspendScmPoller(String projectId);
 
-    public synchronized void setLastpollDate(Date lastpollDate) {
-        this.lastpollDate = lastpollDate;
-    }
+    void resumeScmPoller(String projectId);
 
-    public boolean isBuilding() {
-        return this.building;
-    }
+    boolean isProjectPolling(String projectid);
 
-    public void setBuilding(boolean building) {
-        this.building = building;
-    }
+    void scheduleProjectForBuild(String projectId);
+
+    void cancelProjectBuild(String projectId);
+
+    boolean isProjectBuilding(String projectId);
 
 }

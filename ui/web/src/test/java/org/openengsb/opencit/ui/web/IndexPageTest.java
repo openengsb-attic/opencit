@@ -19,7 +19,6 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,32 +34,38 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
+import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
 public class IndexPageTest extends AbstractCitPageTest {
 
     private ProjectManager projectManager;
     private WicketTester wicketTester;
     private ContextCurrentService contextService;
+    private Project testProject;
 
     @Before
     public void setUp() throws NoSuchProjectException {
         wicketTester = getTester();
-        when(projectManager.getProject("test")).thenReturn(new Project("test"));
-        when(projectManager.getProjectState(anyString())).thenReturn(new ProjectStateInfo());
+        testProject = new Project("test");
+        Project testProject = new Project("test");
+        testProject.setState(State.OK);
+        when(projectManager.getProject("test")).thenReturn(testProject);
+        ContextHolder.get().setCurrentContextId("test");
+        ContextHolder.get().setCurrentContextId("test");
         when(contextService.getThreadLocalContext()).thenReturn("test");
     }
 
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
-
         projectManager = Mockito.mock(ProjectManager.class);
 
         contextService = mock(ContextCurrentService.class);
@@ -69,7 +74,8 @@ public class IndexPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         mockedBeansMap.put("domainService", mock(DomainService.class));
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
-
+        SchedulingService scheduler = mock(SchedulingService.class);
+        mockedBeansMap.put("scheduler", scheduler);
         return mockedBeansMap;
     }
 
@@ -87,8 +93,9 @@ public class IndexPageTest extends AbstractCitPageTest {
 
     @Test
     public void testProjectsAvailable_shouldShowProjectId() throws NoSuchProjectException {
-        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ new Project("test") }));
-        when(projectManager.getProject("test")).thenReturn(new Project("test"));
+        when(projectManager.getAllProjects()).thenReturn(Arrays.asList(new Project[]{ testProject }));
+        when(projectManager.getProject("test")).thenReturn(testProject);
+        when(projectManager.getCurrentContextProject()).thenReturn(testProject);
         getTester().startPage(new Index());
         getTester().assertContains("test");
         String item = "projectlistPanel:projectlist:0";

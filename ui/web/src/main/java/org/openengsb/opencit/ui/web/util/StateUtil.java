@@ -21,16 +21,16 @@ import java.util.List;
 
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.ReportPart;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
-import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 
 public final class StateUtil {
     private StateUtil() {
     }
 
-    public static String getImage(Project project, ProjectStateInfo info) {
-        if (info.isBuilding()) {
+    public static String getImage(Project project, SchedulingService service) {
+        if (service.isProjectBuilding(project.getId())) {
             return "images/traffic_light_yellow.png";
         }
 
@@ -39,6 +39,8 @@ public final class StateUtil {
             return "images/traffic_light_green.png";
         } else if (state == State.FAILURE) {
             return "images/traffic_light_red.png";
+        } else if (service.isProjectPolling(project.getId())) {
+            return "images/traffic_light_yellow.png";
         } else {
             return "images/traffic_light_none.png";
         }

@@ -18,6 +18,7 @@
 package org.openengsb.opencit.core.projectmanager.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,6 +39,7 @@ public class Project implements Serializable {
     private State state;
     private String id;
     private String notificationRecipient;
+    private Date lastScmPollDate;
 
     public Project() {
 
@@ -65,6 +67,14 @@ public class Project implements Serializable {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public Date getLastScmPollDate() {
+        return this.lastScmPollDate;
+    }
+
+    public void setLastScmPollDate(Date lastScmPollDate) {
+        this.lastScmPollDate = lastScmPollDate;
     }
 
     /**

@@ -31,28 +31,24 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.report.model.ReportPart;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
-import org.openengsb.opencit.ui.web.model.ProjectModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
 
 public class ReportViewPage extends BasePage implements SpringBeanProvider<ProjectManager> {
-
-    private ProjectModel projectModel;
 
     private IModel<Report> reportModel;
 
     @SpringBean
     private ProjectManager projectManager;
 
-    public ReportViewPage(ProjectModel projectModel, IModel<Report> reportModel) {
-        this.projectModel = projectModel;
-        this.projectModel.setProjectManagerProvider(this);
+    public ReportViewPage(IModel<Report> reportModel) {
         this.reportModel = reportModel;
-        add(new Label("project.id", projectModel.getObject().getId()));
+        add(new Label("project.id", ContextHolder.get().getCurrentContextId()));
         add(new Label("report.name", reportModel.getObject().getName()));
 
         ContextRelativeResource stateResource =

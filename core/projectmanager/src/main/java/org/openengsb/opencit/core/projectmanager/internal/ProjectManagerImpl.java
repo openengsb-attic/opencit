@@ -17,32 +17,24 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.context.ContextHolder;
 import org.openengsb.core.common.persistence.PersistenceException;
 import org.openengsb.core.common.persistence.PersistenceManager;
 import org.openengsb.core.common.persistence.PersistenceService;
-import org.openengsb.core.common.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
-import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
-import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 import org.osgi.framework.BundleContext;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 public class ProjectManagerImpl implements ProjectManager {
 
@@ -52,37 +44,17 @@ public class ProjectManagerImpl implements ProjectManager {
 
     private ContextCurrentService contextService;
 
+    private SchedulingService scheduler;
+
     private BundleContext bundleContext;
-
-    private ScmDomain scmDomain;
-
-    private WorkflowService workflowService;
-
-    protected Map<String, ScheduledFuture<?>> pollers = new HashMap<String, ScheduledFuture<?>>();
-
-    private Map<String, ProjectStateInfo> projectStates = new HashMap<String, ProjectStateInfo>();
-
-    private long timeout = 600000L;
 
     private ReportDomain reportDomain;
 
-    private AuthenticationManager authenticationManager;
-
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
-        startPollingForPresentProjects();
-    }
-
-    private void startPollingForPresentProjects() {
         List<Project> projects = getAllProjects();
         for (Project project : projects) {
-            setupAndStartScmPoller(project);
+            scheduler.setupAndStartScmPoller(project);
         }
     }
 
@@ -98,34 +70,9 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     private void setupProject(Project project) {
-        String oldCurrent = contextService.getThreadLocalContext();
         createAndSetContext(project);
         setDefaultConnectors(project);
-        if (oldCurrent != null) {
-            contextService.setThreadLocalContext(oldCurrent);
-        }
-        setupAndStartScmPoller(project);
-    }
-
-    private void setupAndStartScmPoller(final Project project) {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                SecurityContextHolder.clearContext();
-                PollTask pollTask = new PollTask(workflowService, authenticationManager, scmDomain, project);
-                projectStates.put(project.getId(), pollTask.getInfo());
-                ScheduledFuture<?> poller =
-                    scheduler.scheduleWithFixedDelay(pollTask, 0, timeout, TimeUnit.MILLISECONDS);
-                pollers.put(project.getId(), poller);
-
-            }
-        };
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        scheduler.setupAndStartScmPoller(project);
     }
 
     private void createAndSetContext(Project project) {
@@ -134,7 +81,7 @@ public class ProjectManagerImpl implements ProjectManager {
         } catch (IllegalArgumentException iae) {
             // ignore - means that context already exists
         }
-        contextService.setThreadLocalContext(project.getId());
+        ContextHolder.get().setCurrentContextId(project.getId());
     }
 
     private void setDefaultConnectors(Project project) {
@@ -195,21 +142,17 @@ public class ProjectManagerImpl implements ProjectManager {
 
     @Override
     public Project getCurrentContextProject() throws NoSuchProjectException {
-        String projectId = contextService.getThreadLocalContext();
+        String projectId = ContextHolder.get().getCurrentContextId();
         return getProject(projectId);
     }
 
     @Override
     public void deleteProject(String projectId) throws NoSuchProjectException {
         Project project = getProject(projectId);
+        scheduler.suspendScmPoller(projectId);
+        reportDomain.removeCategory(projectId);
         try {
-            ScheduledFuture<?> scmStatePoller = pollers.get(projectId);
-            if (scmStatePoller != null) {
-                scmStatePoller.cancel(true);
-                pollers.remove(projectId);
-            }
             persistence.delete(project);
-            reportDomain.removeCategory(projectId);
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not delete project " + projectId, e);
         }
@@ -231,21 +174,8 @@ public class ProjectManagerImpl implements ProjectManager {
         this.contextService = contextService;
     }
 
-    public void setWorkflowService(WorkflowService workflowService) {
-        this.workflowService = workflowService;
-    }
-
-    public void setScmDomain(ScmDomain scmDomain) {
-        this.scmDomain = scmDomain;
-    }
-
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
-    }
-
-    @Override
-    public ProjectStateInfo getProjectState(String projectId) {
-        return projectStates.get(projectId);
+    public void setScheduler(SchedulingService scheduler) {
+        this.scheduler = scheduler;
     }
 
 }

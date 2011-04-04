@@ -57,6 +57,7 @@ import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.ui.web.ServiceEditor;
 
@@ -84,6 +85,8 @@ public class ProjectWizardTest extends AbstractCitPageTest {
         mockedBeansMap.put("domainService", domainService);
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
+        SchedulingService scheduler = mock(SchedulingService.class);
+        mockedBeansMap.put("scheduler", scheduler);
         return mockedBeansMap;
     }
 

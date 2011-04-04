@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
-import org.openengsb.opencit.core.projectmanager.model.ProjectStateInfo;
 
 public interface ProjectManager {
 
@@ -38,7 +37,5 @@ public interface ProjectManager {
     Project getCurrentContextProject() throws NoSuchProjectException;
 
     void deleteProject(String projectId) throws NoSuchProjectException;
-
-    ProjectStateInfo getProjectState(String projectId);
 
 }

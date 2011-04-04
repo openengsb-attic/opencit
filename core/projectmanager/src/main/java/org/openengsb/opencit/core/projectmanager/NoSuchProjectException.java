@@ -18,7 +18,7 @@
 package org.openengsb.opencit.core.projectmanager;
 
 @SuppressWarnings("serial")
-public class NoSuchProjectException extends Exception {
+public class NoSuchProjectException extends RuntimeException {
 
     public NoSuchProjectException() {
         super();
