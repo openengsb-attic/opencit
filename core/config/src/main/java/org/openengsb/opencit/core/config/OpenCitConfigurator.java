@@ -23,10 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -66,15 +64,15 @@ public class OpenCitConfigurator {
 
     private RuleManager ruleManager;
 
-    public static Set<Class<? extends Domain>> getRequiredServices() {
-        Set<Class<? extends Domain>> serviceSet = new HashSet<Class<? extends Domain>>();
-        serviceSet.add(ScmDomain.class);
-        serviceSet.add(NotificationDomain.class);
-        serviceSet.add(BuildDomain.class);
-        serviceSet.add(TestDomain.class);
-        serviceSet.add(DeployDomain.class);
-        serviceSet.add(ReportDomain.class);
-        return serviceSet;
+    public static List<Class<? extends Domain>> getRequiredServices() {
+        List<Class<? extends Domain>> services = new ArrayList<Class<? extends Domain>>();
+        services.add(ScmDomain.class);
+        services.add(BuildDomain.class);
+        services.add(TestDomain.class);
+        services.add(DeployDomain.class);
+        services.add(NotificationDomain.class);
+        services.add(ReportDomain.class);
+        return services;
     }
 
     public void init() {
