@@ -131,6 +131,6 @@ public class IndexPageTest extends AbstractCitPageTest {
         wicketTester.assertContains(indexPage.getString("newProject.title"));
         wicketTester.debugComponentTrees();
         wicketTester.clickLink("newProject", true);
-        wicketTester.assertContains(indexPage.getString("newProject.summary"));
+        wicketTester.assertContains(new ProjectWizard("newProject").getString("newProject.title"));
     }
 }
