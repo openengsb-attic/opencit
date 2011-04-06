@@ -56,12 +56,12 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
     private WebMarkupContainer projectListPanel;
     private ListView<Project> projectListView;
 
+    @SuppressWarnings("serial")
     public Index() {
         projectListPanel = new WebMarkupContainer("projectlistPanel");
         projectListPanel.setOutputMarkupId(true);
         add(projectListPanel);
 
-        @SuppressWarnings("serial")
         IModel<List<Project>> projectsModel = new LoadableDetachableModel<List<Project>>() {
             @Override
             protected List<Project> load() {
@@ -79,7 +79,12 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
         projectListView.setOutputMarkupId(true);
         projectListPanel.add(projectListView);
 
-        this.add(new WizardLink("newProject", ProjectWizard.class));
+        this.add(new Link<Project>("newProject") {
+            @Override
+            public void onClick() {
+                setResponsePage(CreateProject.class);
+            }
+        });
     }
 
     @Override
