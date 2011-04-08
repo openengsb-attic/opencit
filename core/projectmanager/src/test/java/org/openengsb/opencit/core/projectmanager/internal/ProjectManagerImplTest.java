@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +64,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     private DummyPersistence persistence;
     private SchedulingServiceImpl scheduler;
     private WorkflowService workflowService;
+    private ScmDomain scmMock;
 
     @Override
     @Before
@@ -83,6 +85,8 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         scheduler.setWorkflowService(workflowService);
 
         contextMock = Mockito.mock(ContextCurrentService.class);
+        scmMock = mockDomain(ScmDomain.class);
+        scheduler.setScmDomain(scmMock);
 
         Mockito.when(contextMock.getThreadLocalContext()).thenReturn("test");
         projectManager.setContextService(contextMock);
@@ -188,14 +192,12 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         projectManager.updateCurrentContextProjectState(State.FAILURE);
     }
 
-    @Test(timeout = 10000)
+    @Test
     public void createProjectShouldStartPoller() throws Exception {
+        when(scmMock.poll()).thenReturn(false);
         Project project = new Project("test2");
         project.setNotificationRecipient("test@test.com");
 
-        ScmDomain scmMock = mockDomain(ScmDomain.class);
-        scheduler.setScmDomain(scmMock);
-        when(scmMock.poll()).thenReturn(false);
         projectManager.createProject(project);
         Thread.sleep(200);
         assertThat(scheduler.isProjectBuilding("test2"), is(false));
@@ -207,8 +209,6 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     public void testPollerShouldTriggerBuild() throws Exception {
         Project project = new Project("test2");
         project.setNotificationRecipient("test@test.com");
-        ScmDomain scmMock = mockDomain(ScmDomain.class);
-        scheduler.setScmDomain(scmMock);
         when(scmMock.poll()).thenReturn(true);
         when(workflowService.startFlow("ci")).thenReturn(1L);
         Answer<?> answer = new Answer<Void>() {
@@ -239,5 +239,67 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
         when(contextMock.getValue("/domain/" + domainClass.getSimpleName() + "/defaultConnector/id")).thenReturn(id);
         return mock;
+    }
+
+    @Test
+    public void build_shouldSuspendPoller() throws Exception {
+        final Semaphore eventSync = new Semaphore(0);
+        when(workflowService.startFlow("ci")).thenReturn(1L);
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                eventSync.acquire();
+                return null;
+            }
+        }).when(workflowService).waitForFlowToFinish(eq(1L), anyLong());
+        when(scmMock.poll()).thenReturn(true, false);
+
+        scheduler.setPollInterval(100L);
+
+        Project project = new Project("test");
+        project.setState(State.OK);
+        projectManager.createProject(project);
+        Thread.sleep(200);
+        assertThat(scheduler.isProjectBuilding("test"), is(true));
+        Thread.sleep(200);
+
+        verify(scmMock).poll();
+
+        eventSync.release();
+
+        Thread.sleep(200);
+
+        assertThat(scheduler.isProjectBuilding("test"), is(false));
+        assertThat(scheduler.isProjectPolling("test"), is(true));
+    }
+
+    @Test
+    public void buildManually_shouldSuspendPoller() throws Exception {
+        final Semaphore eventSync = new Semaphore(0);
+        when(workflowService.startFlow("ci")).thenReturn(1L);
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                eventSync.acquire();
+                return null;
+            }
+        }).when(workflowService).waitForFlowToFinish(eq(1L), anyLong());
+        when(scmMock.poll()).thenReturn(false);
+
+        Project project = new Project("test");
+        project.setState(State.OK);
+        projectManager.createProject(project);
+        Thread.sleep(200);
+        scheduler.scheduleProjectForBuild("test");
+        assertThat(scheduler.isProjectBuilding("test"), is(true));
+        assertThat(scheduler.isProjectPolling("test"), is(false));
+        Thread.sleep(200);
+        verify(scmMock).poll();
+
+        eventSync.release();
+        Thread.sleep(200);
+
+        assertThat(scheduler.isProjectBuilding("test"), is(false));
+        assertThat(scheduler.isProjectPolling("test"), is(true));
     }
 }
