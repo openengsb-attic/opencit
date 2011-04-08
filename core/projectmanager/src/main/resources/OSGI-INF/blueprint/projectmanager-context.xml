@@ -46,6 +46,7 @@
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="scmDomain" ref="scmDomain" />
     <property name="projectManager" ref="projectManager" />
+    <property name="pollInterval" value="600000" />
   </bean>
 
   <service>
