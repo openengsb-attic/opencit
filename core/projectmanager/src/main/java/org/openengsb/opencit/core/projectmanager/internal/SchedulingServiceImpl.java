@@ -142,4 +142,8 @@ public class SchedulingServiceImpl implements SchedulingService {
         this.projectManager = projectManager;
     }
 
+    public void setPollInterval(long pollInterval) {
+        this.pollInterval = pollInterval;
+    }
+
 }
