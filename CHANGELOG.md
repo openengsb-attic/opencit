@@ -1,3 +1,11 @@
+opencit-9
+  * upgrade OpenEngSB to 1.1.3.RELEASE
+  * Replaced the project-creation wizard by an easier to use UI
+  * The report-list now includes indicators for every build, if it was successful
+  * Project no longer get stuck in state "in progress" when opencit is terminated during the build
+  * Builds are automatically aborted, if they do not complete after 6 hours
+  * improved stability and robustness of SCM-poller and Thread-management
+
 opencit-8
   * upgrade OpenEngSB to 1.1.2.RELEASE
   * remove confusing send-button in project-creation-wizard
