@@ -55,11 +55,6 @@
       <artifactId>openengsb</artifactId>
       <type>zip</type>
     </dependency>
-    <dependency>
-      <groupId>org.openengsb</groupId>
-      <artifactId>openengsb</artifactId>
-      <type>tar.gz</type>
-    </dependency>
   </dependencies>
 
   <build>
