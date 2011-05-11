@@ -19,9 +19,9 @@ package org.openengsb.opencit.core.projectmanager.internal;
 
 import java.util.concurrent.Callable;
 
-import org.openengsb.core.common.context.ContextHolder;
-import org.openengsb.core.common.workflow.WorkflowException;
-import org.openengsb.core.common.workflow.WorkflowService;
+import org.openengsb.core.api.context.ContextHolder;
+import org.openengsb.core.api.workflow.WorkflowException;
+import org.openengsb.core.api.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.springframework.security.authentication.AuthenticationManager;

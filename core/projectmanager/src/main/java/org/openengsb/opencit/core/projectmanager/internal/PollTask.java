@@ -21,7 +21,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openengsb.core.common.context.ContextHolder;
+import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -73,7 +73,7 @@ public class PollTask implements Runnable {
         log.info("running pollertask");
         ContextHolder.get().setCurrentContextId(projectId);
         log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
-        if (scm.poll()) {
+        if (scm.update() != null) {
             scheduler.scheduleProjectForBuild(projectId);
         }
 

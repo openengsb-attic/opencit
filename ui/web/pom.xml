@@ -142,24 +142,17 @@
 
     <dependency>
       <groupId>org.openengsb.ui</groupId>
-      <artifactId>openengsb-ui-web</artifactId>
-      <version>${openengsb.ui.web.version}</version>
+      <artifactId>openengsb-ui-admin</artifactId>
+      <version>${openengsb.ui.admin.version}</version>
       <type>war</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openengsb.ui.common</groupId>
-      <artifactId>openengsb-ui-common-wicket</artifactId>
-      <version>${openengsb.ui.common.wicket.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.openengsb.ui</groupId>
-      <artifactId>openengsb-ui-web</artifactId>
-      <version>${openengsb.ui.web.version}</version>
-      <type>jar</type>
-      <classifier>classes</classifier>
+      <artifactId>openengsb-ui-common</artifactId>
+      <version>${openengsb.ui.common.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

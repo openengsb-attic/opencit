@@ -43,7 +43,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.core.common.context.ContextHolder;
+import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;

@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jnlp.ServiceManager;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -20,11 +22,9 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.core.common.Domain;
-import org.openengsb.core.common.ServiceManager;
-import org.openengsb.core.common.descriptor.AttributeDefinition;
-import org.openengsb.core.common.descriptor.ServiceDescriptor;
-import org.openengsb.core.common.service.DomainService;
+import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.descriptor.AttributeDefinition;
+import org.openengsb.core.api.descriptor.ServiceDescriptor;
 import org.openengsb.domain.build.BuildDomain;
 import org.openengsb.domain.deploy.DeployDomain;
 import org.openengsb.domain.notification.NotificationDomain;
@@ -36,7 +36,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ProjectProperties;
-import org.openengsb.ui.common.wicket.editor.ServiceEditorPanel;
+import org.openengsb.ui.common.editor.ServiceEditorPanel;
 
 public class CreateProject extends BasePage {
 

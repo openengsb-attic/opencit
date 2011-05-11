@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openengsb.core.common.Domain;
-import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.context.ContextHolder;
-import org.openengsb.core.common.persistence.PersistenceException;
-import org.openengsb.core.common.persistence.PersistenceManager;
-import org.openengsb.core.common.persistence.PersistenceService;
+import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.context.ContextCurrentService;
+import org.openengsb.core.api.context.ContextHolder;
+import org.openengsb.core.api.persistence.PersistenceException;
+import org.openengsb.core.api.persistence.PersistenceManager;
+import org.openengsb.core.api.persistence.PersistenceService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;

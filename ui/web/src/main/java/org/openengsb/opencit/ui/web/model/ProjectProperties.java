@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openengsb.core.common.Domain;
+import org.openengsb.core.api.Domain;
 
 @SuppressWarnings("serial")
 public class ProjectProperties implements Serializable {

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.openengsb.core.common.Domain;
+import org.openengsb.core.api.Domain;
 
 @SuppressWarnings("serial")
 public class Project implements Serializable {

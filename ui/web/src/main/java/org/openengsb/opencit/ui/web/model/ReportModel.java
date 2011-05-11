@@ -20,7 +20,7 @@ package org.openengsb.opencit.ui.web.model;
 import java.util.List;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.openengsb.core.common.context.ContextHolder;
+import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 

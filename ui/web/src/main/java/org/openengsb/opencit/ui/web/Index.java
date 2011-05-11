@@ -32,7 +32,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;

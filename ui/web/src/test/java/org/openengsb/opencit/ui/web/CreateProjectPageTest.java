@@ -9,23 +9,22 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.jnlp.ServiceManager;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openengsb.core.common.ServiceManager;
-import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.descriptor.AttributeDefinition;
-import org.openengsb.core.common.descriptor.ServiceDescriptor;
-import org.openengsb.core.common.l10n.LocalizableString;
-import org.openengsb.core.common.service.DomainService;
+import org.openengsb.core.api.context.ContextCurrentService;
+import org.openengsb.core.api.descriptor.AttributeDefinition;
+import org.openengsb.core.api.descriptor.ServiceDescriptor;
+import org.openengsb.core.api.l10n.LocalizableString;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
-import org.openengsb.ui.web.model.WicketStringLocalizer;
 
 public class CreateProjectPageTest extends AbstractCitPageTest {
 

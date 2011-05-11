@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -37,15 +38,16 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.core.common.Domain;
-import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.core.common.persistence.PersistenceException;
-import org.openengsb.core.common.persistence.PersistenceManager;
-import org.openengsb.core.common.workflow.WorkflowService;
+import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.context.ContextCurrentService;
+import org.openengsb.core.api.persistence.PersistenceException;
+import org.openengsb.core.api.persistence.PersistenceManager;
+import org.openengsb.core.api.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.scm.CommitRef;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
@@ -194,7 +196,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
     @Test
     public void createProjectShouldStartPoller() throws Exception {
-        when(scmMock.poll()).thenReturn(false);
+        when(scmMock.update()).thenReturn(null);
         Project project = new Project("test2");
         project.setNotificationRecipient("test@test.com");
 
@@ -202,14 +204,16 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         Thread.sleep(200);
         assertThat(scheduler.isProjectBuilding("test2"), is(false));
         assertThat(scheduler.isProjectPolling("test2"), is(true));
-        verify(scmMock).poll();
+        verify(scmMock).update();
     }
 
     @Test
     public void testPollerShouldTriggerBuild() throws Exception {
+        List<CommitRef> fakeCommits = new LinkedList<CommitRef>();
+
         Project project = new Project("test2");
         project.setNotificationRecipient("test@test.com");
-        when(scmMock.poll()).thenReturn(true);
+        when(scmMock.update()).thenReturn(fakeCommits);
         when(workflowService.startFlow("ci")).thenReturn(1L);
         Answer<?> answer = new Answer<Void>() {
             @Override
@@ -228,7 +232,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         }
         assertThat(scheduler.isProjectBuilding("test2"), is(true));
         assertThat(scheduler.isProjectPolling("test2"), is(false));
-        verify(scmMock).poll();
+        verify(scmMock).update();
 
     }
 
@@ -243,6 +247,8 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
     @Test
     public void build_shouldSuspendPoller() throws Exception {
+        List<CommitRef> fakeCommits = new LinkedList<CommitRef>();
+
         final Semaphore eventSync = new Semaphore(0);
         when(workflowService.startFlow("ci")).thenReturn(1L);
         doAnswer(new Answer<Void>() {
@@ -252,7 +258,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
                 return null;
             }
         }).when(workflowService).waitForFlowToFinish(eq(1L), anyLong());
-        when(scmMock.poll()).thenReturn(true, false);
+        when(scmMock.update()).thenReturn(fakeCommits, null);
 
         scheduler.setPollInterval(100L);
 
@@ -263,7 +269,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         assertThat(scheduler.isProjectBuilding("test"), is(true));
         Thread.sleep(200);
 
-        verify(scmMock).poll();
+        verify(scmMock).update();
 
         eventSync.release();
 
@@ -284,7 +290,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
                 return null;
             }
         }).when(workflowService).waitForFlowToFinish(eq(1L), anyLong());
-        when(scmMock.poll()).thenReturn(false);
+        when(scmMock.update()).thenReturn(null);
 
         Project project = new Project("test");
         project.setState(State.OK);
@@ -294,7 +300,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         assertThat(scheduler.isProjectBuilding("test"), is(true));
         assertThat(scheduler.isProjectPolling("test"), is(false));
         Thread.sleep(200);
-        verify(scmMock).poll();
+        verify(scmMock).update();
 
         eventSync.release();
         Thread.sleep(200);

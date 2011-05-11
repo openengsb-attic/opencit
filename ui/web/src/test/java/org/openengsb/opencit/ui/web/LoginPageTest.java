@@ -37,7 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.springframework.security.authentication.AuthenticationManager;

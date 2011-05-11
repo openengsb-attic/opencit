@@ -29,8 +29,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openengsb.core.common.Domain;
-import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.core.workflow.internal.WorkflowServiceImpl;
 import org.openengsb.core.workflow.internal.persistence.PersistenceRuleManager;
@@ -78,7 +78,7 @@ public class FlowExecutionTest {
 
         ContextCurrentService contextService = mock(ContextCurrentService.class);
         when(contextService.getThreadLocalContext()).thenReturn("foo");
-        service.setCurrentContextService(contextService);
+        // service.setCurrentContextService(contextService); FIXME!!!
 
         bundleContext = mock(BundleContext.class);
         service.setBundleContext(bundleContext);
