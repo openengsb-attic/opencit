@@ -1,3 +1,7 @@
+opencit-10
+  * upgrade to OpenEngSB 1.1.5.RELEASE
+  * make email-connector working again
+
 opencit-9
   * upgrade OpenEngSB to 1.1.3.RELEASE
   * Replaced the project-creation wizard by an easier to use UI
