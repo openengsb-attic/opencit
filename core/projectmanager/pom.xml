@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.openengsb.opencit.core</groupId>
     <artifactId>opencit-core-parent</artifactId>
-    <version>10-SNAPSHOT</version>
+    <version>10</version>
   </parent>
 
   <properties>
@@ -32,7 +32,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openengsb.opencit.core</groupId>
   <artifactId>opencit-core-projectmanager</artifactId>
-  <version>10-SNAPSHOT</version>
+  <version>10</version>
 
   <name>OpenCIT :: Core :: Project Manager</name>
 
