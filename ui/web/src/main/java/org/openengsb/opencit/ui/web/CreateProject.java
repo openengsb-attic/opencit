@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.jnlp.ServiceManager;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -22,15 +20,14 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.ConnectorManager;
+import org.openengsb.core.api.ConnectorProvider;
+import org.openengsb.core.api.ConnectorValidationFailedException;
+import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
 import org.openengsb.core.api.descriptor.ServiceDescriptor;
-import org.openengsb.domain.build.BuildDomain;
-import org.openengsb.domain.deploy.DeployDomain;
-import org.openengsb.domain.notification.NotificationDomain;
-import org.openengsb.domain.report.ReportDomain;
-import org.openengsb.domain.scm.ScmDomain;
-import org.openengsb.domain.test.TestDomain;
+import org.openengsb.core.api.model.ConnectorDescription;
+import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -41,9 +38,11 @@ import org.openengsb.ui.common.editor.ServiceEditorPanel;
 public class CreateProject extends BasePage {
 
     @SpringBean
-    private DomainService domainService;
+    private OsgiUtilsService osgiUtilsService;
     @SpringBean
     private ProjectManager projectManager;
+    @SpringBean
+    private ConnectorManager connectorManager;
 
     ProjectProperties project = new ProjectProperties();
     private static Log log = LogFactory.getLog(CreateProject.class);
@@ -58,26 +57,26 @@ public class CreateProject extends BasePage {
             super(event);
         }
 
-        public Class<? extends Domain> domain;
+        public String domain;
         ServiceEditorPanel panel;
     }
 
     @SuppressWarnings("serial")
-    class ConnectorModel implements IModel<String> {
+    class ConnectorModel implements IModel<ConnectorProvider> {
 
-        private Class<? extends Domain> domain;
+        private String domain;
 
-        public ConnectorModel(Class<? extends Domain> d) {
+        public ConnectorModel(String d) {
             domain = d;
         }
 
         @Override
-        public String getObject() {
+        public ConnectorProvider getObject() {
             return project.getDomainConnector(domain);
         }
 
         @Override
-        public void setObject(String arg0) {
+        public void setObject(ConnectorProvider arg0) {
             project.setDomainConnector(domain, arg0);
         }
 
@@ -96,15 +95,15 @@ public class CreateProject extends BasePage {
         projectForm.add(new RequiredTextField<String>("id"));
         projectForm.add(new RequiredTextField<String>("notificationRecipient"));
 
-        ListView<Class<? extends Domain>> list;
-        list = new ListView<Class<? extends Domain>>("domainList", OpenCitConfigurator.getRequiredServices()) {
+        ListView<String> list;
+        list = new ListView<String>("domainList", OpenCitConfigurator.getRequiredServices()) {
 
             @Override
-            protected void populateItem(ListItem<Class<? extends Domain>> arg0) {
-                Class<? extends Domain> domain = arg0.getModelObject();
+            protected void populateItem(ListItem<String> arg0) {
+                String domain = arg0.getModelObject();
 
                 arg0.add(new Label("domainName", getDomainName(domain)));
-                DropDownChoice<String> dropdown = addConnectorDropdown(domain, "connector");
+                DropDownChoice<ConnectorProvider> dropdown = addConnectorDropdown(domain, "connector");
                 arg0.add(dropdown);
                 ServiceEditorPanel panel;
                 panel = addDomainSelection(domain, "editor", project.getDomainConnector(domain),
@@ -120,7 +119,8 @@ public class CreateProject extends BasePage {
                         panel = panel2;
                     }
                 };
-                update.domain = domain;
+                
+        update.domain = domain;
                 update.panel = panel;
                 dropdown.add(update);
             }
@@ -149,16 +149,14 @@ public class CreateProject extends BasePage {
         setResponsePage(getApplication().getHomePage());
     }
 
-    private void createConnector(Project p, Class<? extends Domain> domain, String connector,
-            Map<String, String> attributeValues) {
-        String domainName = domain.getCanonicalName();
-        ServiceManager serviceManager = findConnectorsForDomain(domain).get(connector);
+    private void createConnector(Project p, String domain, ConnectorProvider connector,
+            Map<String, String> attributeValues) throws ConnectorValidationFailedException {
 
-        String serviceId = p.getId() + "-" + domainName;
-        attributeValues.put("id", serviceId);
-
-        serviceManager.update(serviceId, attributeValues);
-        p.addService(domain, serviceId);
+        ConnectorId id = ConnectorId.generate(domain, connector.getId());
+        ConnectorDescription desc = new ConnectorDescription();
+        desc.setAttributes(attributeValues);
+        connectorManager.create(id, desc);
+        p.addService(domain, id);
     }
 
     private void onSubmit() {
@@ -167,8 +165,15 @@ public class CreateProject extends BasePage {
         Project p = new Project(project.getId());
         p.setNotificationRecipient(project.getNotificationRecipient());
 
-        for (Class<? extends Domain >c : OpenCitConfigurator.getRequiredServices()) {
-            createConnector(p, c, project.getDomainConnector(c), project.getDomainConfig(c));
+        for (String c : OpenCitConfigurator.getRequiredServices()) {
+            try {
+                createConnector(p, c, project.getDomainConnector(c), project.getDomainConfig(c));
+            } catch (ConnectorValidationFailedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                log.error("Connector creation failed!");
+                /* TODO: Clean up old connectors and tell the user he f***ed up */
+            }
         }
 
         try {
@@ -180,16 +185,15 @@ public class CreateProject extends BasePage {
         }
     }
 
-    private List<AttributeDefinition> buildAttributeList(ServiceManager service) {
+    private List<AttributeDefinition> buildAttributeList(ConnectorProvider service) {
         ServiceDescriptor descriptor = service.getDescriptor();
         List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
         attributes.addAll(descriptor.getAttributes());
         return attributes;
     }
 
-    private DropDownChoice<String> addConnectorDropdown(Class<? extends Domain> domain, String dropdown) {
-        Map<String, ServiceManager> connectors = findConnectorsForDomain(domain);
-        List<String> names = new ArrayList<String>(connectors.keySet());
+    private DropDownChoice<ConnectorProvider> addConnectorDropdown(String domain, String dropdown) {
+        List<ConnectorProvider> names = findConnectorsForDomain(domain);
 
         /* The unit tests do not have mocked connectors for all domains, so be prepared
          * for an empty list
@@ -198,52 +202,43 @@ public class CreateProject extends BasePage {
             project.setDomainConnector(domain, names.get(0));
         }
         ConnectorModel model = new ConnectorModel(domain);
-        DropDownChoice<String> ret = new DropDownChoice<String>(dropdown, model, names);
+        DropDownChoice<ConnectorProvider> ret = new DropDownChoice<ConnectorProvider>(dropdown, model, names);
         return ret;
     }
 
-    private ServiceEditorPanel addDomainSelection(Class<? extends Domain> domain, String proped,
-            String curValue, Map<String, String> valueStore) {
+    private ServiceEditorPanel addDomainSelection(String domain, String proped,
+            ConnectorProvider curValue, Map<String, String> valueStore) {
         List<AttributeDefinition> attribs;
-        Map<String, ServiceManager> connectors = findConnectorsForDomain(domain);
         if (curValue == null) {
             attribs = new LinkedList<AttributeDefinition>();
         } else {
-            attribs = buildAttributeList(connectors.get(curValue));
+            attribs = buildAttributeList(curValue);
         }
-        ServiceEditorPanel panel = new ServiceEditorPanel(proped, attribs, valueStore);
+        /* FIXME!!! */
+        ServiceEditorPanel panel = new ServiceEditorPanel(proped, attribs, valueStore, null, null);
         panel.setOutputMarkupId(true);
         return panel;
     }
 
-    private Map<String, ServiceManager> findConnectorsForDomain(Class<? extends Domain> domain) {
-        Map<String, ServiceManager> ret = new HashMap<String, ServiceManager>();
-
-        List<ServiceManager> serviceManagers =
-            domainService.serviceManagersForDomain(domain);
-
-        for (ServiceManager sm : serviceManagers) {
-            ret.put(sm.getDescriptor().getName().getString(getLocale()), sm);
-        }
-
-        return ret;
+    private List<ConnectorProvider> findConnectorsForDomain(String domain) {
+        return osgiUtilsService.listServices(ConnectorProvider.class, "(domain=" + domain + ")");
     }
 
-    private static Map<Class<? extends Domain>, String> nameMap = new HashMap<Class<? extends Domain>, String>();
+    private static Map<String, String> nameMap = new HashMap<String, String>();
     static {
-        nameMap.put(ScmDomain.class, "SCM Domain");
-        nameMap.put(NotificationDomain.class, "Notification Domain");
-        nameMap.put(BuildDomain.class, "Build Domain");
-        nameMap.put(TestDomain.class, "Test Domain");
-        nameMap.put(DeployDomain.class, "Deploy Domain");
-        nameMap.put(ReportDomain.class, "Report Domain");
+        nameMap.put("scm", "SCM Domain");
+        nameMap.put("notification", "Notification Domain");
+        nameMap.put("build", "Build Domain");
+        nameMap.put("test", "Test Domain");
+        nameMap.put("deploy", "Deploy Domain");
+        nameMap.put("report", "Report Domain");
     }
 
-    private String getDomainName(Class<? extends Domain> clazz) {
-        if (nameMap.containsKey(clazz)) {
-            return nameMap.get(clazz);
+    private String getDomainName(String domain) {
+        if (nameMap.containsKey(domain)) {
+            return nameMap.get(domain);
         } else {
-            return clazz.getCanonicalName();
+            return domain;
         }
     }
 

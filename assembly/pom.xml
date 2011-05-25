@@ -55,7 +55,51 @@
       <artifactId>openengsb</artifactId>
       <type>zip</type>
     </dependency>
-  </dependencies>
+
+    <!-- Connectors??? -->
+    <dependency>
+      <groupId>org.openengsb</groupId>
+      <artifactId>openengsb</artifactId>
+      <type>zip</type>
+    </dependency>
+
+    <!-- OpenEngSB Feature Definition -->
+    <dependency>
+      <groupId>org.openengsb</groupId>
+      <artifactId>openengsb</artifactId>
+      <version>${openengsb.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <!-- Karaf Feature Definition -->
+    <dependency>
+      <groupId>org.apache.karaf</groupId>
+      <artifactId>apache-karaf</artifactId>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf</groupId>
+      <artifactId>apache-karaf</artifactId>
+      <type>tar.gz</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.assemblies.features</groupId>
+      <artifactId>standard</artifactId>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-karaf</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.assemblies.features</groupId>
+      <artifactId>enterprise</artifactId>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>  </dependencies>
 
   <build>
     <resources>

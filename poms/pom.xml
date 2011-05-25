@@ -35,7 +35,6 @@
 
   <properties>
     <!-- Plugin Versions -->
-    <plugin.bundle.version>2.1.0</plugin.bundle.version>
     <plugin.eclipse.version>2.8</plugin.eclipse.version>
     <docbkx.version>2.0.10</docbkx.version>
     <docbkx.xml.version>5.0-all</docbkx.xml.version>
@@ -45,18 +44,17 @@
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
     <!--  OpenEngSB component versions -->
-    <openengsb.domain.report.version>1.2.0</openengsb.domain.report.version>
-    <openengsb.domain.notification.version>1.2.0</openengsb.domain.notification.version>
-    <openengsb.domain.scm.version>1.2.0</openengsb.domain.scm.version>
-    <openengsb.domain.build.version>1.2.0</openengsb.domain.build.version>
-    <openengsb.domain.test.version>1.2.0</openengsb.domain.test.version>
-    <openengsb.domain.deploy.version>1.2.0</openengsb.domain.deploy.version>
+    <openengsb.domain.report.version>1.2.1</openengsb.domain.report.version>
+    <openengsb.domain.notification.version>1.2.1</openengsb.domain.notification.version>
+    <openengsb.domain.scm.version>1.2.1</openengsb.domain.scm.version>
+    <openengsb.domain.build.version>1.2.1</openengsb.domain.build.version>
+    <openengsb.domain.test.version>1.2.1</openengsb.domain.test.version>
+    <openengsb.domain.deploy.version>1.2.1</openengsb.domain.deploy.version>
     <openengsb.domain.example.version>${openengsb.version}</openengsb.domain.example.version>
-    <openengsb.connector.example.version>${openengsb.version}</openengsb.connector.example.version>
-    <openengsb.connector.email.version>${openengsb.version}</openengsb.connector.email.version>
-    <openengsb.connector.plaintextreport.version>${openengsb.version}</openengsb.connector.plaintextreport.version>
-    <openengsb.connector.git.version>${openengsb.version}</openengsb.connector.git.version>
-    <openengsb.connector.maven.version>${openengsb.version}</openengsb.connector.maven.version>
+    <openengsb.connector.plaintextreport.version>1.2.1</openengsb.connector.plaintextreport.version>
+    <openengsb.connector.git.version>1.2.2</openengsb.connector.git.version>
+    <openengsb.connector.maven.version>1.2.2</openengsb.connector.maven.version>
+    <openengsb.connector.email.version>1.2.1</openengsb.connector.email.version>
     <openengsb.ui.common.version>${openengsb.version}</openengsb.ui.common.version>
     <openengsb.ui.admin.version>${openengsb.version}</openengsb.ui.admin.version>
     <openengsb.wrapped.wicket.version>1.4.13.w1</openengsb.wrapped.wicket.version>

@@ -17,6 +17,7 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
 import org.openengsb.core.api.descriptor.ServiceDescriptor;
@@ -31,7 +32,7 @@ public class CreateProjectPageTest extends AbstractCitPageTest {
     private WicketTester tester;
     private ProjectManager projectManager;
     private ContextCurrentService contextSerice;
-    private DomainService domainService;
+    private OsgiUtilsService osgiUtilsService;
 
     @Before
     public void setUp() {
@@ -44,10 +45,10 @@ public class CreateProjectPageTest extends AbstractCitPageTest {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
         contextSerice = mock(ContextCurrentService.class);
         projectManager = mock(ProjectManager.class);
-        domainService = mock(DomainService.class);
+        osgiUtilsService = mock(OsgiUtilsService.class);
         projectManager = Mockito.mock(ProjectManager.class);
         mockedBeansMap.put("contextCurrentService", contextSerice);
-        mockedBeansMap.put("domainService", domainService);
+        mockedBeansMap.put("osgiUtilsService", osgiUtilsService);
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         SchedulingService scheduler = mock(SchedulingService.class);

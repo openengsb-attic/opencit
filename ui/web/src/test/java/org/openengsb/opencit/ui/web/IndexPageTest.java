@@ -33,6 +33,7 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
@@ -71,7 +72,7 @@ public class IndexPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("contextCurrentService", contextService);
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
-        mockedBeansMap.put("domainService", mock(DomainService.class));
+        mockedBeansMap.put("osgiUtilsService", mock(OsgiUtilsService.class));
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
         SchedulingService scheduler = mock(SchedulingService.class);
         mockedBeansMap.put("scheduler", scheduler);

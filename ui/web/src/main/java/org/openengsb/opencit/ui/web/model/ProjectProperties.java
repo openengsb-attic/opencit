@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.ConnectorProvider;
 
 @SuppressWarnings("serial")
 public class ProjectProperties implements Serializable {
     private String id;
     private String notificationRecipient;
 
-    private Map<Class<? extends Domain>, Map<String, String>> cfgs =
-        new HashMap<Class<? extends Domain>, Map<String, String>>();
-    private Map<Class<? extends Domain>, String> connectors =
-        new HashMap<Class<? extends Domain>, String>();
+    private Map<String, Map<String, String>> cfgs =
+        new HashMap<String, Map<String, String>>();
+    private Map<String, ConnectorProvider> connectors =
+        new HashMap<String, ConnectorProvider>();
 
     public void setId(String id) {
         this.id = id;
@@ -24,19 +24,19 @@ public class ProjectProperties implements Serializable {
         return id;
     }
 
-    public void setDomainConnector(Class<? extends Domain> domain, String con) {
+    public void setDomainConnector(String domain, ConnectorProvider con) {
         connectors.put(domain, con);
     }
 
-    public String getDomainConnector(Class<? extends Domain> domain) {
+    public ConnectorProvider getDomainConnector(String domain) {
         return connectors.get(domain);
     }
 
-    public void setDomainConfig(Class<? extends Domain> domain, Map<String, String> cfg) {
+    public void setDomainConfig(String domain, Map<String, String> cfg) {
         cfgs.put(domain, cfg);
     }
 
-    public Map<String, String> getDomainConfig(Class<? extends Domain> domain) {
+    public Map<String, String> getDomainConfig(String domain) {
         Map<String, String> ret = cfgs.get(domain);
         if (ret == null) {
             ret = new HashMap<String, String>();

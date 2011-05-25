@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -39,10 +40,13 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
 import org.openengsb.core.api.workflow.WorkflowService;
+import org.openengsb.core.common.OpenEngSBCoreServices;
+import org.openengsb.core.common.util.DefaultOsgiUtilsService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
@@ -54,6 +58,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -67,11 +72,10 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     private SchedulingServiceImpl scheduler;
     private WorkflowService workflowService;
     private ScmDomain scmMock;
+    private BundleContext bundleContext;
 
-    @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
 
         scheduler = new SchedulingServiceImpl();
         projectManager = new ProjectManagerImpl();
@@ -307,5 +311,13 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
         assertThat(scheduler.isProjectBuilding("test"), is(false));
         assertThat(scheduler.isProjectPolling("test"), is(true));
+    }
+
+    @Override
+    protected void setBundleContext(BundleContext bundleContext) {
+        DefaultOsgiUtilsService serviceUtils = new DefaultOsgiUtilsService();
+        serviceUtils.setBundleContext(bundleContext);
+        OpenEngSBCoreServices.setOsgiServiceUtils(serviceUtils);
+        registerService(serviceUtils, new Hashtable<String, Object>(), OsgiUtilsService.class);
     }
 }

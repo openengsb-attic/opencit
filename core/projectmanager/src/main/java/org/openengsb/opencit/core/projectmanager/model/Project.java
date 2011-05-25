@@ -21,15 +21,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.model.ConnectorId;
 
 @SuppressWarnings("serial")
 public class Project implements Serializable {
 
-    private Map<String, String> services;
+    private Map<String, ConnectorId> services;
 
     public enum State {
             OK,
@@ -81,31 +80,15 @@ public class Project implements Serializable {
      *
      * the created services, key is the type, and value the id of the service
      */
-    public Map<Class<? extends Domain>, String> getServices() {
-        if (services == null) {
-            return null;
-        }
-        Map<Class<? extends Domain>, String> map = new HashMap<Class<? extends Domain>, String>(services.size());
-        for (Entry<String, String> entry : services.entrySet()) {
-            map.put(getDomainClass(entry.getKey()), entry.getValue());
-        }
-        return map;
+    public Map<String, ConnectorId> getServices() {
+        return services;
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<? extends Domain> getDomainClass(String key) {
-        try {
-            return (Class<? extends Domain>) getClass().getClassLoader().loadClass(key);
-        } catch (ClassNotFoundException cnfe) {
-            throw new RuntimeException(cnfe);
-        }
-    }
-
-    public void addService(Class<? extends Domain> type, String id) {
+    public void addService(String type, ConnectorId id) {
         if (services == null) {
-            services = new HashMap<String, String>();
+            services = new HashMap<String, ConnectorId>();
         }
-        services.put(type.getName(), id);
+        services.put(type, id);
     }
 
     @Override

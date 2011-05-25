@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openengsb.core.api.Domain;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
+import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
 import org.openengsb.core.api.persistence.PersistenceService;
@@ -85,13 +85,13 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     private void setDefaultConnectors(Project project) {
-        Map<Class<? extends Domain>, String> services = project.getServices();
+        Map<String, ConnectorId> services = project.getServices();
         if (services == null) {
             return;
         }
-        for (Entry<Class<? extends Domain>, String> entry : services.entrySet()) {
-            String domain = entry.getKey().getSimpleName();
-            String id = entry.getValue();
+        for (Entry<String, ConnectorId> entry : services.entrySet()) {
+            String domain = entry.getKey();
+            String id = entry.getValue().getInstanceId();
             contextService.putValue("domain/" + domain + "/defaultConnector/id", id);
         }
         contextService.putValue("domain/AuditingDomain/defaultConnector/id", "auditing");

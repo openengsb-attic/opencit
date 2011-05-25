@@ -25,10 +25,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openengsb.core.api.Domain;
+import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.domain.notification.NotificationDomain;
-import org.openengsb.domain.report.ReportDomain;
-import org.openengsb.domain.scm.ScmDomain;
 
 public class ProjectModelTest {
 
@@ -41,31 +39,42 @@ public class ProjectModelTest {
 
     @Test
     public void addService_shouldWork() {
-        p.addService(ScmDomain.class, "Scm1234");
-        p.addService(ReportDomain.class, "Report9876");
+        ConnectorId scmId = new ConnectorId();
+        scmId.setInstanceId("Scm1234");
+        ConnectorId reportId = new ConnectorId();
+        reportId.setInstanceId("Report9876");
 
-        Map<Class<? extends Domain>, String> services = p.getServices();
+        p.addService("scm", scmId);
+        p.addService("report", reportId);
+
+        Map<String, ConnectorId> services = p.getServices();
         assertEquals(2, services.size());
-        assertTrue(services.containsKey(ScmDomain.class));
-        assertEquals(services.get(ScmDomain.class), "Scm1234");
-        assertTrue(services.containsKey(ReportDomain.class));
-        assertEquals(services.get(ReportDomain.class), "Report9876");
+        assertTrue(services.containsKey("scm"));
+        assertEquals(services.get("scm").getInstanceId(), "Scm1234");
+        assertTrue(services.containsKey("report"));
+        assertEquals(services.get("report").getInstanceId(), "Report9876");
         assertFalse(services.containsKey(NotificationDomain.class));
     }
 
     @Test
     public void getServices_shouldWork() {
-        Map<Class<? extends Domain>, String> services = p.getServices();
+        Map<String, ConnectorId> services = p.getServices();
         assertEquals(null, services);
     }
 
     @Test
     public void addService_overwrite_shouldWork() {
-        p.addService(ScmDomain.class, "Scm1234");
-        p.addService(ScmDomain.class, "Scm0000");
-        Map<Class<? extends Domain>, String> services = p.getServices();
+        ConnectorId scmId1 = new ConnectorId();
+        scmId1.setInstanceId("Scm1234");
+        ConnectorId scmId2 = new ConnectorId();
+        scmId2.setInstanceId("Scm0000");
+
+        p.addService("scm", scmId1);
+        p.addService("scm", scmId2);
+
+        Map<String, ConnectorId> services = p.getServices();
         assertEquals(1, services.size());
-        assertTrue(services.containsKey(ScmDomain.class));
-        assertEquals(services.get(ScmDomain.class), "Scm0000");
+        assertTrue(services.containsKey("scm"));
+        assertEquals(services.get("scm").getInstanceId(), "Scm0000");
     }
 }

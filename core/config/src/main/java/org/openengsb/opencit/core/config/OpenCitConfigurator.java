@@ -30,7 +30,6 @@ import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.drools.runtime.process.WorkflowProcessInstance;
-import org.openengsb.core.api.Domain;
 import org.openengsb.core.api.Event;
 import org.openengsb.core.api.workflow.RuleBaseException;
 import org.openengsb.core.api.workflow.RuleManager;
@@ -64,14 +63,14 @@ public class OpenCitConfigurator {
 
     private RuleManager ruleManager;
 
-    public static List<Class<? extends Domain>> getRequiredServices() {
-        List<Class<? extends Domain>> services = new ArrayList<Class<? extends Domain>>();
-        services.add(ScmDomain.class);
-        services.add(BuildDomain.class);
-        services.add(TestDomain.class);
-        services.add(DeployDomain.class);
-        services.add(NotificationDomain.class);
-        services.add(ReportDomain.class);
+    public static List<String> getRequiredServices() {
+        List<String> services = new ArrayList<String>();
+        services.add("scm");
+        services.add("build");
+        services.add("test");
+        services.add("deploy");
+        services.add("notification");
+        services.add("report");
         return services;
     }
 
