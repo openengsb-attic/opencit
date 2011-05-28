@@ -56,10 +56,10 @@
     <ref component-id="scheduler" />
   </service>
 
-  <reference id="persistenceManager" interface="org.openengsb.core.common.persistence.PersistenceManager" />
-  <reference id="contextService" interface="org.openengsb.core.common.context.ContextCurrentService" />
-  <reference id="workflowService" interface="org.openengsb.core.common.workflow.WorkflowService" />
-  <reference id="scmDomain" interface="org.openengsb.domain.scm.ScmDomain" filter="(openengsb.service.type=domain)" />
-  <reference id="reportDomain" interface="org.openengsb.domain.report.ReportDomain" filter="(openengsb.service.type=domain)" />
+  <reference id="persistenceManager" interface="org.openengsb.core.api.persistence.PersistenceManager" />
+  <reference id="contextService" interface="org.openengsb.core.api.context.ContextCurrentService" />
+  <reference id="workflowService" interface="org.openengsb.core.api.workflow.WorkflowService" />
+  <reference id="scmDomain" interface="org.openengsb.domain.scm.ScmDomain" />
+  <reference id="reportDomain" interface="org.openengsb.domain.report.ReportDomain"/>
   <reference id="authenticationManager" interface="org.springframework.security.authentication.AuthenticationManager" />
 </blueprint>

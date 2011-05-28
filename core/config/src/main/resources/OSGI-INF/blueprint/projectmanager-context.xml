@@ -25,5 +25,5 @@
     <property name="ruleManager" ref="ruleManager" />
   </bean>
 
-  <reference id="ruleManager" interface="org.openengsb.core.common.workflow.RuleManager" />
+  <reference id="ruleManager" interface="org.openengsb.core.api.workflow.RuleManager" />
 </blueprint>
