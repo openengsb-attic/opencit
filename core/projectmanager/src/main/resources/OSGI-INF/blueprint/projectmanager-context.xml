@@ -36,7 +36,6 @@
     init-method="init">
     <property name="persistenceManager" ref="persistenceManager" />
     <property name="contextService" ref="contextService" />
-    <property name="reportDomain" ref="reportDomain" />
     <property name="bundleContext" ref="blueprintBundleContext" />
     <property name="scheduler" ref="scheduler" />
   </bean>
@@ -44,7 +43,6 @@
   <bean id="scheduler" class="org.openengsb.opencit.core.projectmanager.internal.SchedulingServiceImpl">
     <property name="workflowService" ref="workflowService" />
     <property name="authenticationManager" ref="authenticationManager" />
-    <property name="scmDomain" ref="scmDomain" />
     <property name="projectManager" ref="projectManager" />
     <property name="pollInterval" value="600000" />
   </bean>
@@ -59,7 +57,5 @@
   <reference id="persistenceManager" interface="org.openengsb.core.api.persistence.PersistenceManager" />
   <reference id="contextService" interface="org.openengsb.core.api.context.ContextCurrentService" />
   <reference id="workflowService" interface="org.openengsb.core.api.workflow.WorkflowService" />
-  <reference id="scmDomain" interface="org.openengsb.domain.scm.ScmDomain" />
-  <reference id="reportDomain" interface="org.openengsb.domain.report.ReportDomain"/>
   <reference id="authenticationManager" interface="org.springframework.security.authentication.AuthenticationManager" />
 </blueprint>

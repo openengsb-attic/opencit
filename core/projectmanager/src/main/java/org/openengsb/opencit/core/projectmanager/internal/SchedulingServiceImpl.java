@@ -27,6 +27,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.openengsb.core.api.workflow.WorkflowService;
+import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
@@ -38,7 +39,6 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     private WorkflowService workflowService;
     private AuthenticationManager authenticationManager;
-    private ScmDomain scmDomain;
     private ProjectManager projectManager;
 
     private ScheduledExecutorService scmScheduler = Executors.newScheduledThreadPool(1);
@@ -122,7 +122,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         pollTask.setAuthenticationManager(authenticationManager);
         pollTask.setScheduler(this);
         pollTask.setProjectManager(projectManager);
-        pollTask.setScm(scmDomain);
+        pollTask.setScm(OpenEngSBCoreServices.getWiringService().getDomainEndpoint(ScmDomain.class, "domain/scm/default"));
         return pollTask;
     }
 
@@ -132,10 +132,6 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-    }
-
-    public void setScmDomain(ScmDomain scmDomain) {
-        this.scmDomain = scmDomain;
     }
 
     public void setProjectManager(ProjectManager projectManager) {

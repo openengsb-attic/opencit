@@ -21,7 +21,9 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.context.ContextHolder;
+import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -37,9 +39,9 @@ public class PollTask implements Runnable {
     private Log log = LogFactory.getLog(PollTask.class);
 
     private AuthenticationManager authenticationManager;
-    private ScmDomain scm;
     private SchedulingService scheduler;
     private ProjectManager projectManager;
+    private ScmDomain scm;
 
     private String projectId;
 

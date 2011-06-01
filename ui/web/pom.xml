@@ -142,7 +142,7 @@
     <dependency>
       <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-admin</artifactId>
-      <version>${openengsb.ui.admin.version}</version>
+      <version>${openengsb.version}</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
@@ -150,7 +150,7 @@
     <dependency>
       <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-common</artifactId>
-      <version>${openengsb.ui.common.version}</version>
+      <version>${openengsb.version}</version>
       <scope>provided</scope>
     </dependency>
 
