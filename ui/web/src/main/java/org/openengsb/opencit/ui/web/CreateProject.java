@@ -1,7 +1,9 @@
 package org.openengsb.opencit.ui.web;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,7 @@ public class CreateProject extends BasePage {
 
     ProjectProperties project = new ProjectProperties();
     private static Log log = LogFactory.getLog(CreateProject.class);
+    private Form<ProjectProperties> projectForm;
 
     public CreateProject() {
         init();
@@ -62,7 +65,7 @@ public class CreateProject extends BasePage {
     }
 
     @SuppressWarnings("serial")
-    class ConnectorModel implements IModel<ConnectorProvider> {
+    class ConnectorModel implements IModel<String> {
 
         private String domain;
 
@@ -71,12 +74,12 @@ public class CreateProject extends BasePage {
         }
 
         @Override
-        public ConnectorProvider getObject() {
+        public String getObject() {
             return project.getDomainConnector(domain);
         }
 
         @Override
-        public void setObject(ConnectorProvider arg0) {
+        public void setObject(String arg0) {
             project.setDomainConnector(domain, arg0);
         }
 
@@ -89,7 +92,7 @@ public class CreateProject extends BasePage {
 
     @SuppressWarnings("serial")
     private void init() {
-        Form<ProjectProperties> projectForm = new Form<ProjectProperties>("form");
+        projectForm = new Form<ProjectProperties>("form");
 
         projectForm.setModel(new CompoundPropertyModel<ProjectProperties>(project));
         projectForm.add(new RequiredTextField<String>("id"));
@@ -103,7 +106,7 @@ public class CreateProject extends BasePage {
                 String domain = arg0.getModelObject();
 
                 arg0.add(new Label("domainName", getDomainName(domain)));
-                DropDownChoice<ConnectorProvider> dropdown = addConnectorDropdown(domain, "connector");
+                DropDownChoice<String> dropdown = addConnectorDropdown(domain, "connector");
                 arg0.add(dropdown);
                 ServiceEditorPanel panel;
                 panel = addDomainSelection(domain, "editor", project.getDomainConnector(domain),
@@ -154,11 +157,26 @@ public class CreateProject extends BasePage {
 
         ConnectorId id = ConnectorId.generate(domain, connector.getId());
         ConnectorDescription desc = new ConnectorDescription();
+        Dictionary<String, Object> props = new Hashtable<String, Object>();
+
+        props.put("location." + p.getId(), domain);
         desc.setAttributes(attributeValues);
+        desc.setProperties(props);
         connectorManager.create(id, desc);
         p.addService(domain, id);
     }
 
+    ConnectorProvider getConnectorProvider(String domain, String id) {
+        List<ConnectorProvider> connectors = findConnectorsForDomain(domain);
+
+        for(ConnectorProvider c : connectors) {
+            if(c.getId().equals(id)) return c;
+        }
+        
+        log.error("Cannot find ConnectorProvider with id " + id);
+        return null;
+    }
+    
     private void onSubmit() {
         log.info("OK was pressed!");
 
@@ -167,7 +185,8 @@ public class CreateProject extends BasePage {
 
         for (String c : OpenCitConfigurator.getRequiredServices()) {
             try {
-                createConnector(p, c, project.getDomainConnector(c), project.getDomainConfig(c));
+                ConnectorProvider connector = getConnectorProvider(c, project.getDomainConnector(c));
+                createConnector(p, c, connector, project.getDomainConfig(c));
             } catch (ConnectorValidationFailedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -192,9 +211,14 @@ public class CreateProject extends BasePage {
         return attributes;
     }
 
-    private DropDownChoice<ConnectorProvider> addConnectorDropdown(String domain, String dropdown) {
-        List<ConnectorProvider> names = findConnectorsForDomain(domain);
+    private DropDownChoice<String> addConnectorDropdown(String domain, String dropdown) {
+        List<ConnectorProvider> connectors = findConnectorsForDomain(domain);
+        List<String> names = new LinkedList<String>();
 
+        for(ConnectorProvider c : connectors) {
+            names.add(c.getId());
+        }
+        
         /* The unit tests do not have mocked connectors for all domains, so be prepared
          * for an empty list
          */
@@ -202,20 +226,24 @@ public class CreateProject extends BasePage {
             project.setDomainConnector(domain, names.get(0));
         }
         ConnectorModel model = new ConnectorModel(domain);
-        DropDownChoice<ConnectorProvider> ret = new DropDownChoice<ConnectorProvider>(dropdown, model, names);
+        DropDownChoice<String> ret = new DropDownChoice<String>(dropdown, model, names);
         return ret;
     }
 
     private ServiceEditorPanel addDomainSelection(String domain, String proped,
-            ConnectorProvider curValue, Map<String, String> valueStore) {
+            String curValue, Map<String, String> valueStore) {
         List<AttributeDefinition> attribs;
+        Dictionary<String, Object> properties;
         if (curValue == null) {
             attribs = new LinkedList<AttributeDefinition>();
+            properties = new Hashtable<String, Object>(); 
         } else {
-            attribs = buildAttributeList(curValue);
+            attribs = buildAttributeList(getConnectorProvider(domain, curValue));
+            properties = new Hashtable<String, Object>();
         }
-        /* FIXME!!! */
-        ServiceEditorPanel panel = new ServiceEditorPanel(proped, attribs, valueStore, null, null);
+
+        ServiceEditorPanel panel = new ServiceEditorPanel(proped, attribs, valueStore,
+            properties, projectForm);
         panel.setOutputMarkupId(true);
         return panel;
     }

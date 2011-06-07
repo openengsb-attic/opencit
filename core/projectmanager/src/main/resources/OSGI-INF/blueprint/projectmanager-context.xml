@@ -26,8 +26,7 @@
       <value>org.openengsb.opencit.core.projectmanager.ProjectManager</value>
     </interfaces>
     <service-properties>
-      <entry key="openengsb.workflow.globalid" value="projectManager" />
-      <entry key="openengsb.service.type" value="workflow-service" />
+      <entry key="location.root" value="projectManager" />
     </service-properties>
     <ref component-id="projectManager" />
   </service>

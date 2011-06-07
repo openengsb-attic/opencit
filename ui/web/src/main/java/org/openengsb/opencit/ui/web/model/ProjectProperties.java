@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openengsb.core.api.ConnectorProvider;
-
 @SuppressWarnings("serial")
 public class ProjectProperties implements Serializable {
     private String id;
@@ -13,8 +11,8 @@ public class ProjectProperties implements Serializable {
 
     private Map<String, Map<String, String>> cfgs =
         new HashMap<String, Map<String, String>>();
-    private Map<String, ConnectorProvider> connectors =
-        new HashMap<String, ConnectorProvider>();
+    private Map<String, String> connectors =
+        new HashMap<String, String>();
 
     public void setId(String id) {
         this.id = id;
@@ -24,11 +22,11 @@ public class ProjectProperties implements Serializable {
         return id;
     }
 
-    public void setDomainConnector(String domain, ConnectorProvider con) {
+    public void setDomainConnector(String domain, String con) {
         connectors.put(domain, con);
     }
 
-    public ConnectorProvider getDomainConnector(String domain) {
+    public String getDomainConnector(String domain) {
         return connectors.get(domain);
     }
 

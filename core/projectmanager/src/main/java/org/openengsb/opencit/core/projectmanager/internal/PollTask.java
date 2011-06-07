@@ -18,13 +18,13 @@
 package org.openengsb.opencit.core.projectmanager.internal;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.context.ContextHolder;
-import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.core.security.BundleAuthenticationToken;
+import org.openengsb.domain.scm.CommitRef;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -75,7 +75,8 @@ public class PollTask implements Runnable {
         log.info("running pollertask");
         ContextHolder.get().setCurrentContextId(projectId);
         log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
-        if (scm.update() != null) {
+        List<CommitRef> updates = scm.update();
+        if (updates != null && !updates.isEmpty()) {
             scheduler.scheduleProjectForBuild(projectId);
         }
 

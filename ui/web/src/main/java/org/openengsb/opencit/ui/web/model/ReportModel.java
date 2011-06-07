@@ -21,13 +21,12 @@ import java.util.List;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.openengsb.core.api.context.ContextHolder;
+import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 
 @SuppressWarnings("serial")
 public class ReportModel extends LoadableDetachableModel<Report> {
-    private SpringBeanProvider<ReportDomain> reportDomainProvider;
-
     private String reportName;
 
     private String projectId;
@@ -45,17 +44,16 @@ public class ReportModel extends LoadableDetachableModel<Report> {
 
     @Override
     protected Report load() {
+        ReportDomain reportDomain;
+        reportDomain = OpenEngSBCoreServices.getWiringService().getDomainEndpoint(ReportDomain.class, "report");
+
         ContextHolder.get().setCurrentContextId(projectId);
-        List<Report> reports = reportDomainProvider.getSpringBean().getAllReports(projectId);
+        List<Report> reports = reportDomain.getAllReports(projectId);
         for (Report report : reports) {
             if (report.getName().equals(reportName)) {
                 return report;
             }
         }
         throw new RuntimeException("No report with name '" + reportName + "' in project '" + projectId + "' found.");
-    }
-
-    public void setReportDomainProvider(SpringBeanProvider<ReportDomain> reportDomainProvider) {
-        this.reportDomainProvider = reportDomainProvider;
     }
 }

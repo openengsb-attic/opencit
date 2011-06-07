@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.workflow.WorkflowService;
 import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.scm.ScmDomain;
@@ -118,11 +119,14 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     private PollTask createPollTask(Project project) {
+        WiringService ws = OpenEngSBCoreServices.getWiringService();
+        ScmDomain scm = ws.getDomainEndpoint(ScmDomain.class, "scm", project.getId());
         PollTask pollTask = new PollTask(project.getId());
+
         pollTask.setAuthenticationManager(authenticationManager);
         pollTask.setScheduler(this);
         pollTask.setProjectManager(projectManager);
-        pollTask.setScm(OpenEngSBCoreServices.getWiringService().getDomainEndpoint(ScmDomain.class, "domain/scm/default"));
+        pollTask.setScm(scm);
         return pollTask;
     }
 

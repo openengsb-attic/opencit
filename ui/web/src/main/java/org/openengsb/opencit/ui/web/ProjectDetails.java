@@ -44,6 +44,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.api.context.ContextHolder;
+import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -63,9 +64,6 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
 
     @SpringBean
     private SchedulingService scheduler;
-
-    @SpringBean
-    private ReportDomain reportDomain;
 
     private Image projectStateImage;
 
@@ -188,6 +186,9 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
             @Override
             protected List<Report> load() {
                 String projectId = ContextHolder.get().getCurrentContextId();
+                ReportDomain reportDomain;
+                reportDomain = OpenEngSBCoreServices.getWiringService().getDomainEndpoint(ReportDomain.class, "report");
+
                 List<Report> reports = new ArrayList<Report>(reportDomain.getAllReports(projectId));
                 Comparator<Report> comparator = Collections.reverseOrder(new Comparator<Report>() {
                     @Override
@@ -232,13 +233,6 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                     public void onClick() {
                         ReportModel reportModel =
                             new ReportModel(ContextHolder.get().getCurrentContextId(), getModelObject());
-                        reportModel.setReportDomainProvider(new SpringBeanProvider<ReportDomain>() {
-
-                            @Override
-                            public ReportDomain getSpringBean() {
-                                return reportDomain;
-                            }
-                        });
                         setResponsePage(new ReportViewPage(reportModel));
                     }
                 });

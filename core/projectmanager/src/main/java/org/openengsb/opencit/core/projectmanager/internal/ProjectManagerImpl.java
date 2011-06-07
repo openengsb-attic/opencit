@@ -27,6 +27,7 @@ import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
 import org.openengsb.core.api.persistence.PersistenceService;
+import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
@@ -47,8 +48,6 @@ public class ProjectManagerImpl implements ProjectManager {
     private SchedulingService scheduler;
 
     private BundleContext bundleContext;
-
-    private ReportDomain reportDomain;
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
@@ -149,6 +148,9 @@ public class ProjectManagerImpl implements ProjectManager {
     @Override
     public void deleteProject(String projectId) throws NoSuchProjectException {
         Project project = getProject(projectId);
+        ReportDomain reportDomain;
+
+        reportDomain = OpenEngSBCoreServices.getWiringService().getDomainEndpoint(ReportDomain.class, "report");
         scheduler.suspendScmPoller(projectId);
         reportDomain.removeCategory(projectId);
         try {
@@ -160,10 +162,6 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void setPersistenceManager(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
-    }
-
-    public void setReportDomain(ReportDomain reportDomain) {
-        this.reportDomain = reportDomain;
     }
 
     public void setBundleContext(BundleContext bundleContext) {

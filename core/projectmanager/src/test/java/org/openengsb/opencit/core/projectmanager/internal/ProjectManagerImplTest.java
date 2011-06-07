@@ -50,7 +50,6 @@ import org.openengsb.core.common.util.DefaultOsgiUtilsService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
-import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.CommitRef;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -100,7 +99,6 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         Mockito.when(persistenceManagerMock.getPersistenceForBundle(Mockito.any(Bundle.class))).thenReturn(
             persistence);
         projectManager.setPersistenceManager(persistenceManagerMock);
-        projectManager.setReportDomain(Mockito.mock(ReportDomain.class));
         projectManager.init();
     }
 
@@ -260,7 +258,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
                 return null;
             }
         }).when(workflowService).waitForFlowToFinish(eq(1L), anyLong());
-        when(scmMock.update()).thenReturn(fakeCommits, null);
+        when(scmMock.update()).thenReturn(fakeCommits, (List<CommitRef>[])null);
 
         scheduler.setPollInterval(100L);
 
