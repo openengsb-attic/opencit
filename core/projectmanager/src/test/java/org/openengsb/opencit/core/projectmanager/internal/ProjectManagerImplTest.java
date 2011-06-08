@@ -27,6 +27,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -39,8 +40,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openengsb.core.api.Domain;
 import org.openengsb.core.api.OsgiUtilsService;
+import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
@@ -50,6 +51,7 @@ import org.openengsb.core.common.util.DefaultOsgiUtilsService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
+import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.CommitRef;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -58,7 +60,6 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -72,6 +73,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     private WorkflowService workflowService;
     private ScmDomain scmMock;
     private BundleContext bundleContext;
+    private ReportDomain reportMock;
 
     @Before
     public void setUp() throws Exception {
@@ -89,10 +91,19 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         scheduler.setWorkflowService(workflowService);
 
         contextMock = Mockito.mock(ContextCurrentService.class);
-        scmMock = mockDomain(ScmDomain.class);
 
         Mockito.when(contextMock.getThreadLocalContext()).thenReturn("test");
         projectManager.setContextService(contextMock);
+
+        WiringService wiringService = Mockito.mock(WiringService.class);
+
+        reportMock = Mockito.mock(ReportDomain.class);
+        when(wiringService.getDomainEndpoint(ReportDomain.class, "report")).thenReturn(reportMock);
+
+        scmMock = Mockito.mock(ScmDomain.class);
+        when(wiringService.getDomainEndpoint(eq(ScmDomain.class), eq("scm"), anyString())).thenReturn(scmMock);
+
+        registerServiceViaId(wiringService, "wiring", WiringService.class);
 
         PersistenceManager persistenceManagerMock = Mockito.mock(PersistenceManager.class);
         persistence = new DummyPersistence();
@@ -210,6 +221,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     @Test
     public void testPollerShouldTriggerBuild() throws Exception {
         List<CommitRef> fakeCommits = new LinkedList<CommitRef>();
+        fakeCommits.add(Mockito.mock(CommitRef.class));
 
         Project project = new Project("test2");
         project.setNotificationRecipient("test@test.com");
@@ -236,18 +248,10 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
     }
 
-    private <T> T mockDomain(Class<T> domainClass) throws InvalidSyntaxException {
-        T mock = mock(domainClass);
-        String id = "my" + domainClass.getSimpleName();
-        registerService(mock, id, Domain.class, domainClass);
-
-        when(contextMock.getValue("/domain/" + domainClass.getSimpleName() + "/defaultConnector/id")).thenReturn(id);
-        return mock;
-    }
-
     @Test
     public void build_shouldSuspendPoller() throws Exception {
         List<CommitRef> fakeCommits = new LinkedList<CommitRef>();
+        fakeCommits.add(Mockito.mock(CommitRef.class));
 
         final Semaphore eventSync = new Semaphore(0);
         when(workflowService.startFlow("ci")).thenReturn(1L);
@@ -315,5 +319,6 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         serviceUtils.setBundleContext(bundleContext);
         OpenEngSBCoreServices.setOsgiServiceUtils(serviceUtils);
         registerService(serviceUtils, new Hashtable<String, Object>(), OsgiUtilsService.class);
+        this.bundleContext = bundleContext;
     }
 }
