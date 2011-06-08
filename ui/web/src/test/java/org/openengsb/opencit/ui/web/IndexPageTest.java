@@ -33,10 +33,12 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openengsb.core.api.OsgiUtilsService;
+import org.openengsb.core.api.ConnectorManager;
+import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
+import org.openengsb.core.services.internal.ConnectorManagerImpl;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -50,6 +52,8 @@ public class IndexPageTest extends AbstractCitPageTest {
     private WicketTester wicketTester;
     private ContextCurrentService contextService;
     private Project testProject;
+    private ReportDomain reportMock = mock(ReportDomain.class);
+    private ConnectorManager connectorManager;
 
     @Before
     public void setUp() throws NoSuchProjectException {
@@ -61,6 +65,10 @@ public class IndexPageTest extends AbstractCitPageTest {
         ContextHolder.get().setCurrentContextId("test");
         ContextHolder.get().setCurrentContextId("test");
         when(contextService.getThreadLocalContext()).thenReturn("test");
+
+        WiringService wiringService = Mockito.mock(WiringService.class);
+        when(wiringService.getDomainEndpoint(ReportDomain.class, "report")).thenReturn(reportMock);
+        registerServiceViaId(wiringService, "wiring", WiringService.class);
     }
 
     @Override
@@ -71,11 +79,12 @@ public class IndexPageTest extends AbstractCitPageTest {
         contextService = mock(ContextCurrentService.class);
         mockedBeansMap.put("contextCurrentService", contextService);
         mockedBeansMap.put("projectManager", projectManager);
-        mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
-        mockedBeansMap.put("osgiUtilsService", mock(OsgiUtilsService.class));
+        mockedBeansMap.put("reportDomain", reportMock);
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
         SchedulingService scheduler = mock(SchedulingService.class);
         mockedBeansMap.put("scheduler", scheduler);
+        connectorManager = new ConnectorManagerImpl();
+        mockedBeansMap.put("connectorManager", connectorManager);
         return mockedBeansMap;
     }
 

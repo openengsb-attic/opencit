@@ -141,14 +141,6 @@
 
     <dependency>
       <groupId>org.openengsb.ui</groupId>
-      <artifactId>openengsb-ui-admin</artifactId>
-      <version>${openengsb.version}</version>
-      <type>war</type>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openengsb.ui</groupId>
       <artifactId>openengsb-ui-common</artifactId>
       <version>${openengsb.version}</version>
       <scope>provided</scope>
@@ -236,6 +228,18 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.core</groupId>
+      <artifactId>openengsb-core-test</artifactId>
+      <version>${openengsb.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.core</groupId>
+      <artifactId>openengsb-core-services</artifactId>
+      <version>${openengsb.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

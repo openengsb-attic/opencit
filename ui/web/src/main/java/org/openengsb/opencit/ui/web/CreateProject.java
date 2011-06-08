@@ -249,7 +249,9 @@ public class CreateProject extends BasePage {
     }
 
     private List<ConnectorProvider> findConnectorsForDomain(String domain) {
-        return osgiUtilsService.listServices(ConnectorProvider.class, "(domain=" + domain + ")");
+        List<ConnectorProvider> ret;
+        ret = osgiUtilsService.listServices(ConnectorProvider.class, "(domain=" + domain + ")");
+        return ret;
     }
 
     private static Map<String, String> nameMap = new HashMap<String, String>();

@@ -9,30 +9,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.jnlp.ServiceManager;
-
 import org.apache.wicket.Page;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openengsb.core.api.OsgiUtilsService;
+import org.openengsb.core.api.ConnectorManager;
+import org.openengsb.core.api.ConnectorProvider;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
 import org.openengsb.core.api.descriptor.ServiceDescriptor;
-import org.openengsb.core.api.l10n.LocalizableString;
+import org.openengsb.core.api.l10n.PassThroughStringLocalizer;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.core.services.internal.ConnectorManagerImpl;
 
 public class CreateProjectPageTest extends AbstractCitPageTest {
 
     private WicketTester tester;
     private ProjectManager projectManager;
     private ContextCurrentService contextSerice;
-    private OsgiUtilsService osgiUtilsService;
+    private ConnectorManager connectorManager;
 
     @Before
     public void setUp() {
@@ -45,51 +45,37 @@ public class CreateProjectPageTest extends AbstractCitPageTest {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
         contextSerice = mock(ContextCurrentService.class);
         projectManager = mock(ProjectManager.class);
-        osgiUtilsService = mock(OsgiUtilsService.class);
         projectManager = Mockito.mock(ProjectManager.class);
         mockedBeansMap.put("contextCurrentService", contextSerice);
-        mockedBeansMap.put("osgiUtilsService", osgiUtilsService);
         mockedBeansMap.put("projectManager", projectManager);
         mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
         SchedulingService scheduler = mock(SchedulingService.class);
         mockedBeansMap.put("scheduler", scheduler);
+        connectorManager = new ConnectorManagerImpl();
+        mockedBeansMap.put("connectorManager", connectorManager);
         return mockedBeansMap;
     }
 
-    private List<ServiceManager> mockScmDomain(Page page) {
-        List<ServiceManager> scmManagers = new LinkedList<ServiceManager>();
-        ServiceManager mockScm1 = mock(ServiceManager.class);
-        scmManagers.add(mockScm1);
-        ServiceDescriptor d = mock(ServiceDescriptor.class);
-        when(mockScm1.getDescriptor()).thenReturn(d);
-        LocalizableString l = mock(LocalizableString.class);
-        when(d.getName()).thenReturn(l);
-        when(l.getString(new Locale("en"))).thenReturn("Funny Mock SCM");
+    private void mockScmDomain(Page page) {
+        createDomainProviderMock(ScmDomain.class, "scm");
 
-        AttributeDefinition.Builder builder = AttributeDefinition
-                .builder(new WicketStringLocalizer(page));
-        AttributeDefinition fooAttrib = builder.id("Foo").name("attribute.foo.name")
-                .description("attribute.foo.description").required().build();
-        List<AttributeDefinition> attribList = new LinkedList<AttributeDefinition>();
-        attribList.add(0, fooAttrib);
-        when(d.getAttributes()).thenReturn(attribList);
+        ConnectorProvider scm1 = createConnectorProviderMock("foo", "scm");
+        ServiceDescriptor desc1 = scm1.getDescriptor();
+        List<AttributeDefinition> attribs1 = new LinkedList<AttributeDefinition>();
+        AttributeDefinition fooAttrib =
+            AttributeDefinition.builder(new PassThroughStringLocalizer()).id("foo").defaultValue("foo_default")
+            .name("foo_name").build();
+        attribs1.add(fooAttrib);
+        when(desc1.getAttributes()).thenReturn(attribs1);
 
-        ServiceManager mockScm2 = mock(ServiceManager.class);
-        scmManagers.add(mockScm2);
-        d = mock(ServiceDescriptor.class);
-        when(mockScm2.getDescriptor()).thenReturn(d);
-        l = mock(LocalizableString.class);
-        when(d.getName()).thenReturn(l);
-        when(l.getString(new Locale("en"))).thenReturn("A crappy SCM");
-
-        builder = AttributeDefinition.builder(new WicketStringLocalizer(page));
-        AttributeDefinition barAttrib = builder.id("Bar").name("attribute.bar.name")
-                .description("attribute.bar.description").required().build();
-        attribList = new LinkedList<AttributeDefinition>();
-        attribList.add(barAttrib);
-        when(d.getAttributes()).thenReturn(attribList);
-
-        return scmManagers;
+        ConnectorProvider scm2 = createConnectorProviderMock("bar", "scm");
+        ServiceDescriptor desc2 = scm2.getDescriptor();
+        List<AttributeDefinition> attribs2 = new LinkedList<AttributeDefinition>();
+        AttributeDefinition barAttrib =
+            AttributeDefinition.builder(new PassThroughStringLocalizer()).id("bar").defaultValue("bar_default")
+            .name("bar_name").build();
+        attribs2.add(barAttrib);
+        when(desc2.getAttributes()).thenReturn(attribs2);
     }
 
     @Test
@@ -108,16 +94,15 @@ public class CreateProjectPageTest extends AbstractCitPageTest {
     @Test
     public void test_Ajax() {
         Page createProject = new CreateProject();
-        List<ServiceManager> m = mockScmDomain(createProject);
-        when(domainService.serviceManagersForDomain(ScmDomain.class)).thenReturn(m);
+        mockScmDomain(createProject);
 
         tester.startPage(new CreateProject());
-        tester.assertContains(createProject.getString("attribute.bar.name"));
-
+        tester.assertContains("bar");
+        
         FormTester newFormTester = tester.newFormTester("form");
         newFormTester.select("domainList:0:connector", 1);
         tester.executeAjaxEvent("form:domainList:0:connector", "onchange");
 
-        tester.assertContains(createProject.getString("attribute.foo.name"));
+        tester.assertContains("foo");
     }
 }

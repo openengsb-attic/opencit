@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.wicket.Page;
@@ -36,7 +37,12 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openengsb.core.api.OsgiUtilsService;
+import org.openengsb.core.common.OpenEngSBCoreServices;
+import org.openengsb.core.common.util.DefaultOsgiUtilsService;
+import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.ui.common.OpenEngSBWebSession;
+import org.osgi.framework.BundleContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,16 +50,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
-public abstract class AbstractCitPageTest {
+public abstract class AbstractCitPageTest extends AbstractOsgiMockServiceTest {
     private WicketTester tester;
-    public ApplicationContextMock appContext;
+    protected ApplicationContextMock appContext = new ApplicationContextMock();
 
     protected abstract Map<String, Object> getBeansForAppContextAsMap();
+    protected BundleContext bundleContext;
 
     @Before
     public void setup() {
-        appContext = new ApplicationContextMock();
-
         Map<String, Object> mockedBeans = getBeansForAppContextAsMap();
         for (String key : mockedBeans.keySet()) {
             appContext.putBean(key, mockedBeans.get(key));
@@ -100,6 +105,16 @@ public abstract class AbstractCitPageTest {
 
     public WicketTester getTester() {
         return tester;
+    }
+
+    @Override
+    protected void setBundleContext(BundleContext bundleContext) {
+        DefaultOsgiUtilsService serviceUtils = new DefaultOsgiUtilsService();
+        serviceUtils.setBundleContext(bundleContext);
+        OpenEngSBCoreServices.setOsgiServiceUtils(serviceUtils);
+        registerService(serviceUtils, new Hashtable<String, Object>(), OsgiUtilsService.class);
+        this.bundleContext = bundleContext;
+        appContext.putBean(serviceUtils);
     }
 
 }

@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
@@ -51,17 +52,17 @@ import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
 public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
-    private ReportDomain reportDomain;
     private WorkflowService workflowService;
     private ProjectManager projectManager;
+    private ReportDomain reportMock;
 
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
         Map<String, Object> mockedBeansMap = new HashMap<String, Object>();
-        reportDomain = mock(ReportDomain.class);
+        reportMock = mock(ReportDomain.class);
         mockedBeansMap.put("contextCurrentService", mock(ContextCurrentService.class));
         mockedBeansMap.put("projectManager", projectManager);
-        mockedBeansMap.put("reportDomain", reportDomain);
+        mockedBeansMap.put("reportDomain", reportMock);
         workflowService = mock(WorkflowService.class);
         mockedBeansMap.put("workflowService", workflowService);
         SchedulingService scheduler = mock(SchedulingService.class);
@@ -86,7 +87,11 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
         testProject.setState(State.OK);
         when(projectManager.getCurrentContextProject()).thenReturn(testProject);
         when(projectManager.getProject("test")).thenReturn(testProject);
-    }
+
+        WiringService wiringService = Mockito.mock(WiringService.class);
+        when(wiringService.getDomainEndpoint(ReportDomain.class, "report")).thenReturn(reportMock);
+        registerServiceViaId(wiringService, "wiring", WiringService.class);
+}
 
     @Test
     public void testProjectDetailsHeaderPresent_shouldWork() {
@@ -145,7 +150,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
     @Test
     public void testReportPanel_shouldWork() {
         List<Report> reports = Arrays.asList(new Report[]{ new Report("rep1") });
-        when(reportDomain.getAllReports("test")).thenReturn(reports);
+        when(reportMock.getAllReports("test")).thenReturn(reports);
         getTester().startPage(getProjectDetails());
         getTester().assertContains("rep1");
         String item = "reportsPanel:reportlist:0";

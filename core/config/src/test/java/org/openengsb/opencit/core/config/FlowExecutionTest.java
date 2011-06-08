@@ -19,18 +19,28 @@ package org.openengsb.opencit.core.config;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.Hashtable;
+
+import javax.jnlp.ServiceManager;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openengsb.core.api.Domain;
-import org.openengsb.core.api.context.ContextCurrentService;
+import org.openengsb.core.api.OsgiUtilsService;
+import org.openengsb.core.api.WiringService;
+import org.openengsb.core.api.context.ContextHolder;
+import org.openengsb.core.common.OpenEngSBCoreServices;
+import org.openengsb.core.common.util.DefaultOsgiUtilsService;
+import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.core.workflow.internal.WorkflowServiceImpl;
 import org.openengsb.core.workflow.internal.persistence.PersistenceRuleManager;
@@ -52,7 +62,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
-public class FlowExecutionTest {
+public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
 
     @Before
     public void setUp() throws Exception {
@@ -67,6 +77,7 @@ public class FlowExecutionTest {
     private BundleContext bundleContext;
     private ReportDomain reportDomain;
     private NotificationDomain notificationDomain;
+    private ReportDomain reportMock = mock(ReportDomain.class);
 
     @Test
     public void testExecuteWorkflow() throws Exception {
@@ -76,11 +87,8 @@ public class FlowExecutionTest {
         WorkflowServiceImpl service = new WorkflowServiceImpl();
         service.setRulemanager(directoryRuleSource);
 
-        ContextCurrentService contextService = mock(ContextCurrentService.class);
-        when(contextService.getThreadLocalContext()).thenReturn("foo");
-        // service.setCurrentContextService(contextService); FIXME!!!
+        ContextHolder.get().setCurrentContextId("foo");
 
-        bundleContext = mock(BundleContext.class);
         service.setBundleContext(bundleContext);
 
         mockDomain(TestDomain.class, "test");
@@ -131,5 +139,14 @@ public class FlowExecutionTest {
         T domainMock = mock(resultClass);
         when(bundleContext.getService(serviceRefMock)).thenReturn(domainMock);
         return domainMock;
+    }
+
+    @Override
+    protected void setBundleContext(BundleContext bundleContext) {
+        DefaultOsgiUtilsService serviceUtils = new DefaultOsgiUtilsService();
+        serviceUtils.setBundleContext(bundleContext);
+        OpenEngSBCoreServices.setOsgiServiceUtils(serviceUtils);
+        registerService(serviceUtils, new Hashtable<String, Object>(), OsgiUtilsService.class);
+        this.bundleContext = bundleContext;
     }
 }

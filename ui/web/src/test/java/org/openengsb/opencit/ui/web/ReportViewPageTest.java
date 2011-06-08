@@ -30,6 +30,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
@@ -53,6 +55,8 @@ public class ReportViewPageTest extends AbstractCitPageTest {
     private ContextCurrentService contextService;
 
     private Project testProject;
+    
+    private ReportDomain reportMock = mock(ReportDomain.class);
 
     @Override
     protected Map<String, Object> getBeansForAppContextAsMap() {
@@ -62,7 +66,7 @@ public class ReportViewPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("workflowService", mock(WorkflowService.class));
         projectManager = mock(ProjectManager.class);
         mockedBeansMap.put("projectManager", projectManager);
-        mockedBeansMap.put("reportDomain", mock(ReportDomain.class));
+        mockedBeansMap.put("reportDomain", reportMock);
         SchedulingService scheduler = mock(SchedulingService.class);
         mockedBeansMap.put("scheduler", scheduler);
         return mockedBeansMap;
@@ -88,6 +92,10 @@ public class ReportViewPageTest extends AbstractCitPageTest {
         when(contextService.getThreadLocalContext()).thenReturn("bar");
         ContextHolder.get().setCurrentContextId("bar");
         when(projectManager.getCurrentContextProject()).thenReturn(testProject);
+
+        WiringService wiringService = Mockito.mock(WiringService.class);
+        when(wiringService.getDomainEndpoint(ReportDomain.class, "report")).thenReturn(reportMock);
+        registerServiceViaId(wiringService, "wiring", WiringService.class);
     }
 
     @Test
