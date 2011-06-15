@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.Dictionary;
 import java.util.Hashtable;
 
 import javax.jnlp.ServiceManager;
@@ -62,6 +63,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
+import com.google.common.collect.ImmutableMap;
+
 public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
 
     @Before
@@ -75,9 +78,13 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
     }
 
     private BundleContext bundleContext;
-    private ReportDomain reportDomain;
-    private NotificationDomain notificationDomain;
+    private ScmDomain scmMock = mock(ScmDomain.class);
+    private BuildDomain buildMock = mock(BuildDomain.class);
+    private TestDomain testMock = mock(TestDomain.class);
+    private DeployDomain deployMock = mock(DeployDomain.class);
+    private NotificationDomain notificationMock = mock(NotificationDomain.class);
     private ReportDomain reportMock = mock(ReportDomain.class);
+    private ProjectManager projectManagerMock = mock(ProjectManager.class);
 
     @Test
     public void testExecuteWorkflow() throws Exception {
@@ -91,17 +98,33 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
 
         service.setBundleContext(bundleContext);
 
-        mockDomain(TestDomain.class, "test");
+        
+        Dictionary<String, Object> scmProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "scm"));
+        registerService(scmMock, scmProps, ScmDomain.class);
+        Dictionary<String, Object> buildProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "build"));
+        registerService(buildMock, buildProps, BuildDomain.class);
+        Dictionary<String, Object> testProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "test"));
+        registerService(testMock, testProps, TestDomain.class);
+        Dictionary<String, Object> deployProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "deploy"));
+        registerService(deployMock, deployProps, DeployDomain.class);
+        Dictionary<String, Object> notificationProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "notification"));
+        registerService(notificationMock, notificationProps, NotificationDomain.class);
+
+        Dictionary<String, Object> reportProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "report"));
+        registerService(reportMock, reportProps, ReportDomain.class);
+        when(reportMock.generateReport(anyString(), anyString(), anyString())).thenReturn(new Report("testreport"));
+
+        /*mockDomain(TestDomain.class, "test");
         reportDomain = mockDomain(ReportDomain.class, "report");
-        when(reportDomain.generateReport(anyString(), anyString(), anyString())).thenReturn(new Report("testreport"));
         notificationDomain = mockDomain(NotificationDomain.class, "notification");
         mockDomain(DeployDomain.class, "deploy");
         mockDomain(BuildDomain.class, "build");
-        mockDomain(ScmDomain.class, "scm");
-        ProjectManager projectManager = mockOsgiService(ProjectManager.class,
-            "(&(openengsb.service.type=workflow-service)(openengsb.workflow.globalid=projectManager))");
+        mockDomain(ScmDomain.class, "scm");*/
+        
+        Dictionary<String, Object> managerProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "projectManager"));
+        registerService(projectManagerMock, managerProps, ProjectManager.class);
         Project projectMock = mock(Project.class);
-        when(projectManager.getCurrentContextProject()).thenReturn(projectMock);
+        when(projectManagerMock.getCurrentContextProject()).thenReturn(projectMock);
 
         OpenCitConfigurator configurator = new OpenCitConfigurator();
         configurator.setRuleManager(directoryRuleSource);
@@ -115,30 +138,7 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         service.processEvent(new DeployFailEvent(pid, "deployoutput"));
 
         service.waitForFlowToFinish(pid);
-        verify(notificationDomain).notify(any(Notification.class));
-    }
-
-    private <T> T mockDomain(Class<T> domainInterface, String name) throws InvalidSyntaxException {
-        String filter = String.format("(&(openengsb.service.type=domain)(id=domain.%s))", name);
-        return mockOsgiService(domainInterface, filter, Domain.class);
-    }
-
-    private <T> T mockOsgiService(Class<T> resultClass, String filter, Class<?>... queryInterfaces)
-        throws InvalidSyntaxException {
-
-        ServiceReference serviceRefMock = mock(ServiceReference.class);
-        if (queryInterfaces.length == 0) {
-            when(bundleContext.getAllServiceReferences(resultClass.getName(), filter)).thenReturn(
-                new ServiceReference[]{ serviceRefMock, });
-        }
-        for (Class<?> c : queryInterfaces) {
-            when(bundleContext.getAllServiceReferences(c.getName(), filter)).thenReturn(
-                    new ServiceReference[]{ serviceRefMock, });
-        }
-
-        T domainMock = mock(resultClass);
-        when(bundleContext.getService(serviceRefMock)).thenReturn(domainMock);
-        return domainMock;
+        verify(notificationMock).notify(any(Notification.class));
     }
 
     @Override
