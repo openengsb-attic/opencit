@@ -1,6 +1,7 @@
 package org.openengsb.opencit.ui.web;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -226,6 +227,7 @@ public class CreateProject extends BasePage {
             project.setDomainConnector(domain, names.get(0));
         }
         ConnectorModel model = new ConnectorModel(domain);
+        Collections.sort(names);
         DropDownChoice<String> ret = new DropDownChoice<String>(dropdown, model, names);
         return ret;
     }
