@@ -2,9 +2,7 @@ package org.openengsb.opencit.ui.web;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +156,7 @@ public class CreateProject extends BasePage {
 
         ConnectorId id = ConnectorId.generate(domain, connector.getId());
         ConnectorDescription desc = new ConnectorDescription();
-        Dictionary<String, Object> props = new Hashtable<String, Object>();
+        Map<String, Object> props = new HashMap<String, Object>();
 
         props.put("location." + p.getId(), domain);
         desc.setAttributes(attributeValues);
@@ -235,13 +233,13 @@ public class CreateProject extends BasePage {
     private ServiceEditorPanel addDomainSelection(String domain, String proped,
             String curValue, Map<String, String> valueStore) {
         List<AttributeDefinition> attribs;
-        Dictionary<String, Object> properties;
+        Map<String, Object> properties;
         if (curValue == null) {
             attribs = new LinkedList<AttributeDefinition>();
-            properties = new Hashtable<String, Object>(); 
+            properties = new HashMap<String, Object>(); 
         } else {
             attribs = buildAttributeList(getConnectorProvider(domain, curValue));
-            properties = new Hashtable<String, Object>();
+            properties = new HashMap<String, Object>();
         }
 
         ServiceEditorPanel panel = new ServiceEditorPanel(proped, attribs, valueStore,
