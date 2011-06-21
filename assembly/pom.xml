@@ -206,8 +206,14 @@
         <configuration>
           <provisionArchivePathUnix>${project.basedir}/target/opencit-${project.version}.tar.gz</provisionArchivePathUnix>
           <provisionExecutionPathUnix>bin/opencit</provisionExecutionPathUnix>
+          <additionalRequiredExecutionPathUnix>
+            <param>bin/karaf</param>
+          </additionalRequiredExecutionPathUnix>
           <provisionArchivePathWindows>${project.basedir}/target/opencit-${project.version}.zip</provisionArchivePathWindows>
           <provisionExecutionPathWindows>bin/opencit.bat</provisionExecutionPathWindows>
+          <additionalRequiredExecutionPathWindows>
+            <param>bin/karaf.bat</param>
+          </additionalRequiredExecutionPathWindows>
         </configuration>
       </plugin>
     </plugins>
