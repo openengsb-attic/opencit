@@ -19,7 +19,6 @@ package org.openengsb.opencit.core.config;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,16 +27,11 @@ import java.io.File;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import javax.jnlp.ServiceManager;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openengsb.core.api.Domain;
 import org.openengsb.core.api.OsgiUtilsService;
-import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.core.common.util.DefaultOsgiUtilsService;
@@ -60,8 +54,6 @@ import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
 import com.google.common.collect.ImmutableMap;
 
