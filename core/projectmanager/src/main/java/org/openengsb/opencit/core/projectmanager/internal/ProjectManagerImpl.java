@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.openengsb.core.api.context.Context;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.model.ConnectorId;
@@ -88,12 +89,13 @@ public class ProjectManagerImpl implements ProjectManager {
         if (services == null) {
             return;
         }
+        Context context = contextService.getContext();
         for (Entry<String, ConnectorId> entry : services.entrySet()) {
             String domain = entry.getKey();
             String id = entry.getValue().getInstanceId();
-            contextService.putValue("domain/" + domain + "/defaultConnector/id", id);
+            context.put(domain, id);
         }
-        contextService.putValue("domain/AuditingDomain/defaultConnector/id", "auditing");
+        context.put("AuditingDomain", "auditing");
     }
 
     private void checkId(String id) throws ProjectAlreadyExistsException {
