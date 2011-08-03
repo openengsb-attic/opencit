@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.openengsb.opencit.build</groupId>
     <artifactId>compiled-bundle-settings</artifactId>
-    <version>11</version>
+    <version>12-SNAPSHOT</version>
     <relativePath>../poms/compiled/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.openengsb.opencit.core</groupId>
   <artifactId>opencit-core-parent</artifactId>
-  <version>11</version>
+  <version>12-SNAPSHOT</version>
 
   <name>OpenCIT :: Core :: Parent</name>
 
