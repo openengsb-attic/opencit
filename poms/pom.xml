@@ -52,7 +52,7 @@
     <openengsb.domain.deploy.version>1.2.1</openengsb.domain.deploy.version>
     <openengsb.domain.example.version>${openengsb.version}</openengsb.domain.example.version>
     <openengsb.connector.plaintextreport.version>1.2.1</openengsb.connector.plaintextreport.version>
-    <openengsb.connector.git.version>1.2.2</openengsb.connector.git.version>
+    <openengsb.connector.git.version>1.2.3</openengsb.connector.git.version>
     <openengsb.connector.maven.version>1.2.3</openengsb.connector.maven.version>
     <openengsb.connector.email.version>1.2.1</openengsb.connector.email.version>
     <openengsb.connector.notificationsample.version>1.2.0</openengsb.connector.notificationsample.version>
