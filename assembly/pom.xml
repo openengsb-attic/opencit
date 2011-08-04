@@ -56,13 +56,6 @@
       <type>zip</type>
     </dependency>
 
-    <!-- Connectors??? -->
-    <dependency>
-      <groupId>org.openengsb</groupId>
-      <artifactId>openengsb</artifactId>
-      <type>zip</type>
-    </dependency>
-
     <!-- OpenEngSB Feature Definition -->
     <dependency>
       <groupId>org.openengsb</groupId>
