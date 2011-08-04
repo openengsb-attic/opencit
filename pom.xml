@@ -62,10 +62,8 @@
       <email>michael.handler [at] fullstop.at</email>
       <timezone>+1</timezone>
       <roles>
-        <role>Project Lead</role>
+        <role>PMC</role>
         <role>Developer</role>
-        <role>Release Manager</role>
-        <role>Administrator</role>
       </roles>
     </developer>
     <developer>
@@ -74,9 +72,8 @@
       <email>andreas.pieber [at] ifs.tuwien.ac.at</email>
       <timezone>+1</timezone>
       <roles>
+        <role>PMC</role>
         <role>Developer</role>
-        <role>Release Manager</role>
-        <role>Administrator</role>
       </roles>
     </developer>
     <developer>
@@ -85,6 +82,7 @@
       <email>e0525747 [at] student.tuwien.ac.at</email>
       <timezone>+1</timezone>
       <roles>
+        <role>PMC</role>
         <role>Developer</role>
       </roles>
     </developer>
@@ -92,6 +90,15 @@
       <id>pho</id>
       <name>Philipp Hoenisch</name>
       <email>philipp.hoenisch [at] gmail.com</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>sdo</id>
+      <name>Stefan Doesinger</name>
+      <email>stefandoesinger [at] gmail.com</email>
       <timezone>+1</timezone>
       <roles>
         <role>Developer</role>
