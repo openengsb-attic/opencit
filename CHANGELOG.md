@@ -1,3 +1,13 @@
+opencit-12
+  * upgrade to OpenEngSB 1.2.1.RELEASE
+  * upgrade maven connector
+  * upgrade git connector
+  * Include a notification example
+
+opencit-11
+  * upgrade to OpenEngSB 1.1.7.RELEASE
+  * make git connector work again
+
 opencit-10
   * upgrade to OpenEngSB 1.1.5.RELEASE
   * make email-connector working again
