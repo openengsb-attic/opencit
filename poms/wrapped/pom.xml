@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.openengsb.opencit.build</groupId>
     <artifactId>shared-plugin-settings</artifactId>
-    <version>12</version>
+    <version>13-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
