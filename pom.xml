@@ -12,7 +12,7 @@
 
   <properties>
     <openengsb.version>1.2.1.RELEASE</openengsb.version>
-    <openengsb.maven.plugin.version>1.3.3</openengsb.maven.plugin.version>
+    <openengsb.maven.plugin.version>1.5.1</openengsb.maven.plugin.version>
     <plugin.assembly.version>2.2-beta-5</plugin.assembly.version>
     <jdk.version>1.6</jdk.version>
     <plugin.pax.version>1.4</plugin.pax.version>
