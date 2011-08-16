@@ -182,8 +182,37 @@
             <configuration>
               <descriptors>
                 <descriptor>file:${basedir}/target/classes/features.xml</descriptor>
+                <descriptor>mvn:org.apache.karaf.assemblies.features/standard/${karaf.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb/openengsb/${openengsb.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/openengsb-domain-scm/${openengsb.domain.scm.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/openengsb-domain-test/${openengsb.domain.test.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/openengsb-domain-build/${openengsb.domain.build.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/openengsb-domain-deploy/${openengsb.domain.deploy.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/openengsb-domain-notification/${openengsb.domain.notification.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/openengsb-domain-report/${openengsb.domain.report.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.connector/openengsb-connector-git/${openengsb.connector.git.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.connector/openengsb-connector-email/${openengsb.connector.email.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.connector/openengsb-connector-notificationsample/${openengsb.connector.notificationsample.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.connector/openengsb-connector-maven/${openengsb.connector.maven.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.connector/openengsb-connector-plaintextreport/${openengsb.connector.plaintextreport.version}/xml/features</descriptor>
               </descriptors>
               <features>
+                <feature>config</feature>
+                <feature>ssh</feature>
+                <feature>management</feature>
+                <feature>wrapper</feature>
+                <feature>openengsb-core</feature>
+                <feature>openengsb-connector-maven</feature>
+                <feature>openengsb-connector-git</feature>
+                <feature>openengsb-connector-email</feature>
+                <feature>openengsb-connector-notificationsample</feature>
+                <feature>openengsb-connector-plaintextreport</feature>
+                <feature>openengsb-ui-core</feature>
+                <feature>openengsb-domain-report</feature>
+                <feature>openengsb-domain-scm</feature>
+                <feature>openengsb-connector-memoryauditing</feature>
+                <feature>openengsb-ui-admin</feature>
                 <feature>opencit-core</feature>
               </features>
               <repository>target/features-repo</repository>
