@@ -19,10 +19,16 @@
 -->
 
 <features name="opencit-${project.version}">
-  <feature name="opencit-core" version="${project.version}" >
+
+  <feature name="opencit-core" version="${project.version}" description="Core Bundles for the OpenCIT">
+    <details>
+      The bundles provided by this feature are required to run the Continuous Integration and
+      Test Server developed as a proof of concept by the OpenEngSB Team based on the OpenEngSB.
+    </details>
     <bundle>mvn:org.openengsb.opencit.core/opencit-core-config/${project.version}</bundle>
     <bundle>mvn:org.openengsb.opencit.core/opencit-core-projectmanager/${project.version}</bundle>
     <bundle>mvn:org.openengsb.opencit.ui/opencit-ui-web/${project.version}/war</bundle>
   </feature>
 
-</features> 
+</features>
+
