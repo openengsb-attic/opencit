@@ -195,7 +195,6 @@
       <plugin>
         <groupId>org.openengsb</groupId>
         <artifactId>openengsb-maven-plugin</artifactId>
-        <version>${openengsb.maven.plugin.version}</version>
         <configuration>
           <provisionArchivePathUnix>${project.basedir}/target/opencit-${project.version}.tar.gz</provisionArchivePathUnix>
           <provisionExecutionPathUnix>bin/opencit</provisionExecutionPathUnix>
