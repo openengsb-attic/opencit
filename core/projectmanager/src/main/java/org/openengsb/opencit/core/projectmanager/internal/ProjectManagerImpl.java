@@ -89,13 +89,18 @@ public class ProjectManagerImpl implements ProjectManager {
         if (services == null) {
             return;
         }
-        Context context = contextService.getContext(project.getId());
+        String oldCtx = ContextHolder.get().getCurrentContextId();
+        ContextHolder.get().setCurrentContextId(project.getId());
+        Context context = contextService.getContext();
+
         for (Entry<String, ConnectorId> entry : services.entrySet()) {
             String domain = entry.getKey();
             String id = entry.getValue().getInstanceId();
             context.put(domain, id);
         }
         context.put("AuditingDomain", "auditing");
+
+        ContextHolder.get().setCurrentContextId(oldCtx);
     }
 
     private void checkId(String id) throws ProjectAlreadyExistsException {
