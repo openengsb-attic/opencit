@@ -32,7 +32,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.core.api.context.ContextCurrentService;
+import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
@@ -48,9 +48,6 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
 
     @SpringBean
     private SchedulingService scheduler;
-
-    @SpringBean
-    private ContextCurrentService contextService;
 
     private Label noProjects;
     private WebMarkupContainer projectListPanel;
@@ -110,7 +107,7 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
                     public void onClick() {
                         ProjectModel projectModel = new ProjectModel(getModelObject());
                         projectModel.setProjectManagerProvider(Index.this);
-                        contextService.setThreadLocalContext(getModelObject().getId());
+                        ContextHolder.get().setCurrentContextId(getModelObject().getId());
                         setResponsePage(ProjectDetails.class);
                     }
                 });
