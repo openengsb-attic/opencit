@@ -1,12 +1,11 @@
 ====
-    Licensed to the Austrian Association for Software Tool Integration (AASTI)
-    under one or more contributor license agreements. See the NOTICE file
-    distributed with this work for additional information regarding copyright
-    ownership. The AASTI licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file except in compliance
-    with the License. You may obtain a copy of the License at
+    Copyright 2011 OpenEngSB Division, Vienna University of Technology
 
-        http://www.apache.org/licenses/LICENSE-2.0
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,29 +14,33 @@
     limitations under the License.
 ====
 
-== LICENSE ==
+LICENSE
+==========================
 
-The OpenEngSB is developed and released under the Apache 2 license. The license 
-file is packaged with this distribution (LICENSE), but also available at [1]. The 
-included NOTICE file lists all external libraries and there specific licenses.
+The OpenCIT is developed and released under the Apache 2 license. The license 
+file is packaged with this distribution (LICENSE), but also available 
+[here](http://www.apache.org/licenses/LICENSE-2.0.html). The included
+NOTICE file lists all external libraries and there specific licenses.
 
-== QUICKSTART ==
+OpenCIT
+-------
+The Open Continuous Integration and Test (OpenCIT) server can be used to automatically build, test and deploy projects. It makes it easier for developers to integrate changes and easier for users to obtain fresh builds of a project.
 
-For a quick entry and exploration of the OpenEngSB it is recommended to start 
-at [2] and [3].
+The OpenCIT tries to provide additional benefits compared to other CI & T solutions by building upon the open and highly customizable OpenEngSB platform. Furthermore the OpenCIT itself is also a FOSS project, which provides its users with the possibility to adapt all aspects of the CI & T process.
 
-== IDEAS, QUESTIONS & BUGS ==
+The domain and connector concept of the OpenEngSB make it possible to define the OpenCIT workflow completely independent of specific tools. Therefore any build, test and deploy tool can be used together with the OpenCIT.
 
-The OpenEngSB project provides an issue tracker at [4] and mailing lists [5]
-for discussions and reporting of problems. Please feel free to use either or both!
+Using OpenCIT
+-------------
+For an extensive manual see http://opencit.openengsb.org/manual/html-multi/opencit-manual.html
 
-== Contributions ==
+For a quickstart: Start OpenCIT with bin/opencit (or bin/opencit.bat if you are using Microsoft Windows) and use any web browser to open http://localhost:8090/opencit.
 
-We're always happy to get contributions in code, testing, documentation, or simply
-discussion and your thoughts on some topics. See [6] for further information.
+OpenEngSB
+---------
 
-== FOLLOW US ==
-
-If you're interested in the latest and greatest about the OpenEngSB follow us on 
-Twitter [7], Facebook [8] or YouTube [9].
-
+The OpenCIT is developed based upon the OpenEngSB. Currently the project is
+maintained by the same developers working on the OpenEngSB. So if you need help
+or further information about the OpenCIT feel free to contact the OpenEngSB
+developer team. Further information about the OpenEngSB can be found at 
+http://openengsb.org/.

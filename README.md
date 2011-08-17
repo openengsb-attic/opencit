@@ -1,5 +1,5 @@
 ====
-    Copyright 2010 OpenEngSB Division, Vienna University of Technology
+    Copyright 2011 OpenEngSB Division, Vienna University of Technology
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -24,7 +24,17 @@ NOTICE file lists all external libraries and there specific licenses.
 
 OpenCIT
 -------
-The OpenCIT is a continuous integration and test automation tool.
+The Open Continuous Integration and Test (OpenCIT) server can be used to automatically build, test and deploy projects. It makes it easier for developers to integrate changes and easier for users to obtain fresh builds of a project.
+
+The OpenCIT tries to provide additional benefits compared to other CI & T solutions by building upon the open and highly customizable OpenEngSB platform. Furthermore the OpenCIT itself is also a FOSS project, which provides its users with the possibility to adapt all aspects of the CI & T process.
+
+The domain and connector concept of the OpenEngSB make it possible to define the OpenCIT workflow completely independent of specific tools. Therefore any build, test and deploy tool can be used together with the OpenCIT.
+
+Using OpenCIT
+-------------
+For an extensive manual see http://opencit.openengsb.org/manual/html-multi/opencit-manual.html
+
+For a quickstart: Start OpenCIT with bin/opencit (or bin/opencit.bat if you are using Microsoft Windows) and use any web browser to open http://localhost:8090/opencit.
 
 OpenEngSB
 ---------
@@ -34,5 +44,3 @@ maintained by the same developers working on the OpenEngSB. So if you need help
 or further information about the OpenCIT feel free to contact the OpenEngSB
 developer team. Further information about the OpenEngSB can be found at 
 [http://openengsb.org/](http://openengsb.org/).
-
-
