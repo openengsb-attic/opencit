@@ -63,6 +63,7 @@ import org.osgi.framework.BundleContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.openengsb.core.api.context.Context;
 
 public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
@@ -92,7 +93,9 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
         contextMock = Mockito.mock(ContextCurrentService.class);
 
-        Mockito.when(contextMock.getThreadLocalContext()).thenReturn("test");
+        Context mockContext = Mockito.mock(Context.class);
+        when(mockContext.getId()).thenReturn("test");
+        Mockito.when(contextMock.getContext()).thenReturn(mockContext);
         projectManager.setContextService(contextMock);
 
         WiringService wiringService = Mockito.mock(WiringService.class);

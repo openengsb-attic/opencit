@@ -132,7 +132,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
     @Override
     public void updateCurrentContextProjectState(State state) throws NoSuchProjectException {
-        String projectId = contextService.getThreadLocalContext();
+        String projectId = contextService.getContext().getId();
         Project project = getProject(projectId);
         project.setState(state);
         updateProject(project);
