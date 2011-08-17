@@ -89,7 +89,7 @@ public class ProjectManagerImpl implements ProjectManager {
         if (services == null) {
             return;
         }
-        Context context = contextService.getContext();
+        Context context = contextService.getContext(project.getId());
         for (Entry<String, ConnectorId> entry : services.entrySet()) {
             String domain = entry.getKey();
             String id = entry.getValue().getInstanceId();
@@ -124,10 +124,7 @@ public class ProjectManagerImpl implements ProjectManager {
         Project old = getProject(project.getId());
         try {
             persistence.update(old, project);
-            String oldContext = contextService.getThreadLocalContext();
-            contextService.setThreadLocalContext(project.getId());
             setDefaultConnectors(project);
-            contextService.setThreadLocalContext(oldContext);
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not update project", e);
         }
