@@ -89,7 +89,6 @@ public class ReportViewPageTest extends AbstractCitPageTest {
             }
         };
         when(projectManager.getProject("bar")).thenReturn(testProject);
-        when(contextService.getThreadLocalContext()).thenReturn("bar");
         ContextHolder.get().setCurrentContextId("bar");
         when(projectManager.getCurrentContextProject()).thenReturn(testProject);
 
