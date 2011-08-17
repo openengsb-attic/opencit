@@ -21,7 +21,6 @@
     <openengsb.version>1.2.2-SNAPSHOT</openengsb.version>
     <karaf.version>2.2.2</karaf.version>
     <plugin.pax.version>1.4</plugin.pax.version>
-    <maven.plugin.compiler.version>2.3.1</maven.plugin.compiler.version>
     <maven.plugin.war.version>2.1.1</maven.plugin.war.version>
   </properties>
 
