@@ -63,8 +63,6 @@ public class IndexPageTest extends AbstractCitPageTest {
         testProject.setState(State.OK);
         when(projectManager.getProject("test")).thenReturn(testProject);
         ContextHolder.get().setCurrentContextId("test");
-        ContextHolder.get().setCurrentContextId("test");
-        when(contextService.getThreadLocalContext()).thenReturn("test");
 
         WiringService wiringService = Mockito.mock(WiringService.class);
         when(wiringService.getDomainEndpoint(ReportDomain.class, "report")).thenReturn(reportMock);
