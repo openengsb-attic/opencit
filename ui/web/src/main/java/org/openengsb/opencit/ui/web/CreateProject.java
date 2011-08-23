@@ -16,7 +16,6 @@
  */
 package org.openengsb.opencit.ui.web;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,9 +41,6 @@ import org.openengsb.core.api.ConnectorProvider;
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
-import org.openengsb.core.api.descriptor.ServiceDescriptor;
-import org.openengsb.core.api.model.ConnectorDescription;
-import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -65,7 +61,7 @@ public class CreateProject extends BasePage {
     ProjectProperties project = new ProjectProperties();
     private static Log log = LogFactory.getLog(CreateProject.class);
     private Form<ProjectProperties> projectForm;
-    private ConnectorUtil utils = new ConnectorUtil(osgiUtilsService);
+    private ConnectorUtil utils = new ConnectorUtil(osgiUtilsService, connectorManager);
 
     public CreateProject() {
         init();
@@ -169,31 +165,6 @@ public class CreateProject extends BasePage {
         setResponsePage(getApplication().getHomePage());
     }
 
-    private void createConnector(Project p, String domain, ConnectorProvider connector,
-            Map<String, String> attributeValues) throws ConnectorValidationFailedException {
-
-        ConnectorId id = ConnectorId.generate(domain, connector.getId());
-        ConnectorDescription desc = new ConnectorDescription();
-        Map<String, Object> props = new HashMap<String, Object>();
-
-        props.put("location." + p.getId(), domain);
-        desc.setAttributes(attributeValues);
-        desc.setProperties(props);
-        connectorManager.create(id, desc);
-        p.addService(domain, id);
-    }
-
-    ConnectorProvider getConnectorProvider(String domain, String id) {
-        List<ConnectorProvider> connectors = utils.findConnectorsForDomain(domain);
-
-        for(ConnectorProvider c : connectors) {
-            if(c.getId().equals(id)) return c;
-        }
-        
-        log.error("Cannot find ConnectorProvider with id " + id);
-        return null;
-    }
-    
     private void onSubmit() {
         log.info("OK was pressed!");
 
@@ -202,8 +173,8 @@ public class CreateProject extends BasePage {
 
         for (String c : OpenCitConfigurator.getRequiredServices()) {
             try {
-                ConnectorProvider connector = getConnectorProvider(c, project.getDomainConnector(c));
-                createConnector(p, c, connector, project.getDomainConfig(c));
+                String connector = project.getDomainConnector(c);
+                utils.createConnector(p, c, connector, project.getDomainConfig(c));
             } catch (ConnectorValidationFailedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -219,13 +190,6 @@ public class CreateProject extends BasePage {
             // FIXME
             log.error("This project already exists");
         }
-    }
-
-    private List<AttributeDefinition> buildAttributeList(ConnectorProvider service) {
-        ServiceDescriptor descriptor = service.getDescriptor();
-        List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
-        attributes.addAll(descriptor.getAttributes());
-        return attributes;
     }
 
     private DropDownChoice<String> addConnectorDropdown(String domain, String dropdown) {
@@ -256,7 +220,7 @@ public class CreateProject extends BasePage {
             attribs = new LinkedList<AttributeDefinition>();
             properties = new HashMap<String, Object>(); 
         } else {
-            attribs = buildAttributeList(getConnectorProvider(domain, curValue));
+            attribs = utils.buildAttributeList(domain, curValue);
             properties = new HashMap<String, Object>();
         }
 
