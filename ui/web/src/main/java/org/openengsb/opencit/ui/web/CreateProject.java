@@ -49,6 +49,7 @@ import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.openengsb.opencit.ui.web.model.ProjectProperties;
 import org.openengsb.ui.common.editor.ServiceEditorPanel;
 
@@ -64,6 +65,7 @@ public class CreateProject extends BasePage {
     ProjectProperties project = new ProjectProperties();
     private static Log log = LogFactory.getLog(CreateProject.class);
     private Form<ProjectProperties> projectForm;
+    private ConnectorUtil utils = new ConnectorUtil(osgiUtilsService);
 
     public CreateProject() {
         init();
@@ -182,7 +184,7 @@ public class CreateProject extends BasePage {
     }
 
     ConnectorProvider getConnectorProvider(String domain, String id) {
-        List<ConnectorProvider> connectors = findConnectorsForDomain(domain);
+        List<ConnectorProvider> connectors = utils.findConnectorsForDomain(domain);
 
         for(ConnectorProvider c : connectors) {
             if(c.getId().equals(id)) return c;
@@ -227,7 +229,7 @@ public class CreateProject extends BasePage {
     }
 
     private DropDownChoice<String> addConnectorDropdown(String domain, String dropdown) {
-        List<ConnectorProvider> connectors = findConnectorsForDomain(domain);
+        List<ConnectorProvider> connectors = utils.findConnectorsForDomain(domain);
         List<String> names = new LinkedList<String>();
 
         for(ConnectorProvider c : connectors) {
@@ -262,12 +264,6 @@ public class CreateProject extends BasePage {
             properties, projectForm);
         panel.setOutputMarkupId(true);
         return panel;
-    }
-
-    private List<ConnectorProvider> findConnectorsForDomain(String domain) {
-        List<ConnectorProvider> ret;
-        ret = osgiUtilsService.listServices(ConnectorProvider.class, "(domain=" + domain + ")");
-        return ret;
     }
 
     private static Map<String, String> nameMap = new HashMap<String, String>();
