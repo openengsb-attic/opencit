@@ -41,6 +41,7 @@ import org.openengsb.core.api.ConnectorProvider;
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
+import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
@@ -174,7 +175,8 @@ public class CreateProject extends BasePage {
         for (String c : OpenCitConfigurator.getRequiredServices()) {
             try {
                 String connector = project.getDomainConnector(c);
-                utils.createConnector(p, c, connector, project.getDomainConfig(c));
+                ConnectorId id = utils.createConnector(p, c, connector, project.getDomainConfig(c));
+                p.addService(c, id);
             } catch (ConnectorValidationFailedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

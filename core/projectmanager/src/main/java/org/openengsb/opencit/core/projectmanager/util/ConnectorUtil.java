@@ -62,7 +62,7 @@ public class ConnectorUtil {
         return null;
     }
 
-    public void createConnector(Project p, String domain, String connectorId,
+    public ConnectorId createConnector(Project p, String domain, String connectorId,
             Map<String, String> attributeValues) throws ConnectorValidationFailedException {
 
         ConnectorProvider connector = getConnectorProvider(domain, connectorId);
@@ -74,7 +74,7 @@ public class ConnectorUtil {
         desc.setAttributes(attributeValues);
         desc.setProperties(props);
         connectorManager.create(id, desc);
-        p.addService(domain, id);
+        return id;
     }
 
     public List<AttributeDefinition> buildAttributeList(String domain, String id) {
