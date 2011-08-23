@@ -122,7 +122,7 @@ public class CreateProject extends BasePage {
             protected void populateItem(ListItem<String> arg0) {
                 String domain = arg0.getModelObject();
 
-                arg0.add(new Label("domainName", getDomainName(domain)));
+                arg0.add(new Label("domainName", utils.getDomainName(domain)));
                 DropDownChoice<String> dropdown = addConnectorDropdown(domain, "connector");
                 arg0.add(dropdown);
                 ServiceEditorPanel panel;
@@ -265,23 +265,4 @@ public class CreateProject extends BasePage {
         panel.setOutputMarkupId(true);
         return panel;
     }
-
-    private static Map<String, String> nameMap = new HashMap<String, String>();
-    static {
-        nameMap.put("scm", "SCM Domain");
-        nameMap.put("notification", "Notification Domain");
-        nameMap.put("build", "Build Domain");
-        nameMap.put("test", "Test Domain");
-        nameMap.put("deploy", "Deploy Domain");
-        nameMap.put("report", "Report Domain");
-    }
-
-    private String getDomainName(String domain) {
-        if (nameMap.containsKey(domain)) {
-            return nameMap.get(domain);
-        } else {
-            return domain;
-        }
-    }
-
 }
