@@ -22,11 +22,6 @@ public class ConnectorUtil {
     private ConnectorManager connectorManager;
     private static Log log = LogFactory.getLog(ConnectorUtil.class);
 
-    public ConnectorUtil(OsgiUtilsService utils, ConnectorManager cm) {
-        osgiUtilsService = utils;
-        connectorManager = cm;
-    }
-    
     public List<ConnectorProvider> findConnectorsForDomain(String domain) {
         List<ConnectorProvider> ret;
         ret = osgiUtilsService.listServices(ConnectorProvider.class, "(domain=" + domain + ")");
@@ -83,6 +78,22 @@ public class ConnectorUtil {
         List<AttributeDefinition> attributes = new ArrayList<AttributeDefinition>();
         attributes.addAll(descriptor.getAttributes());
         return attributes;
+    }
+
+    public void setOsgiUtilsService(OsgiUtilsService osgiUtilsService) {
+        this.osgiUtilsService = osgiUtilsService;
+    }
+
+    public OsgiUtilsService getOsgiUtilsService() {
+        return osgiUtilsService;
+    }
+
+    public void setConnectorManager(ConnectorManager connectorManager) {
+        this.connectorManager = connectorManager;
+    }
+
+    public ConnectorManager getConnectorManager() {
+        return connectorManager;
     }
 
 }

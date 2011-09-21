@@ -36,10 +36,8 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.openengsb.core.api.ConnectorManager;
 import org.openengsb.core.api.ConnectorProvider;
 import org.openengsb.core.api.ConnectorValidationFailedException;
-import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
 import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
@@ -53,16 +51,13 @@ import org.openengsb.ui.common.editor.ServiceEditorPanel;
 public class CreateProject extends BasePage {
 
     @SpringBean
-    private OsgiUtilsService osgiUtilsService;
-    @SpringBean
     private ProjectManager projectManager;
     @SpringBean
-    private ConnectorManager connectorManager;
+    private ConnectorUtil connectorUtil;
 
     ProjectProperties project = new ProjectProperties();
     private static Log log = LogFactory.getLog(CreateProject.class);
     private Form<ProjectProperties> projectForm;
-    private ConnectorUtil utils = new ConnectorUtil(osgiUtilsService, connectorManager);
 
     public CreateProject() {
         init();
@@ -119,7 +114,7 @@ public class CreateProject extends BasePage {
             protected void populateItem(ListItem<String> arg0) {
                 String domain = arg0.getModelObject();
 
-                arg0.add(new Label("domainName", utils.getDomainName(domain)));
+                arg0.add(new Label("domainName", connectorUtil.getDomainName(domain)));
                 DropDownChoice<String> dropdown = addConnectorDropdown(domain, "connector");
                 arg0.add(dropdown);
                 ServiceEditorPanel panel;
@@ -175,7 +170,7 @@ public class CreateProject extends BasePage {
         for (String c : OpenCitConfigurator.getRequiredServices()) {
             try {
                 String connector = project.getDomainConnector(c);
-                ConnectorId id = utils.createConnector(p, c, connector, project.getDomainConfig(c));
+                ConnectorId id = connectorUtil.createConnector(p, c, connector, project.getDomainConfig(c));
                 p.addService(c, id);
             } catch (ConnectorValidationFailedException e) {
                 // TODO Auto-generated catch block
@@ -195,7 +190,7 @@ public class CreateProject extends BasePage {
     }
 
     private DropDownChoice<String> addConnectorDropdown(String domain, String dropdown) {
-        List<ConnectorProvider> connectors = utils.findConnectorsForDomain(domain);
+        List<ConnectorProvider> connectors = connectorUtil.findConnectorsForDomain(domain);
         List<String> names = new LinkedList<String>();
 
         for(ConnectorProvider c : connectors) {
@@ -222,7 +217,7 @@ public class CreateProject extends BasePage {
             attribs = new LinkedList<AttributeDefinition>();
             properties = new HashMap<String, Object>(); 
         } else {
-            attribs = utils.buildAttributeList(domain, curValue);
+            attribs = connectorUtil.buildAttributeList(domain, curValue);
             properties = new HashMap<String, Object>();
         }
 

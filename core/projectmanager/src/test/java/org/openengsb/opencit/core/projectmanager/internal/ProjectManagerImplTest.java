@@ -58,6 +58,7 @@ import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -113,6 +114,8 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         Mockito.when(persistenceManagerMock.getPersistenceForBundle(Mockito.any(Bundle.class))).thenReturn(
             persistence);
         projectManager.setPersistenceManager(persistenceManagerMock);
+        ConnectorUtil connectorUtilMock = Mockito.mock(ConnectorUtil.class);
+        projectManager.setConnectorUtil(connectorUtilMock);
         projectManager.init();
     }
 

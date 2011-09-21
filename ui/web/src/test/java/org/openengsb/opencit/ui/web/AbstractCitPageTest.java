@@ -56,6 +56,7 @@ public abstract class AbstractCitPageTest extends AbstractOsgiMockServiceTest {
 
     protected abstract Map<String, Object> getBeansForAppContextAsMap();
     protected BundleContext bundleContext;
+    protected DefaultOsgiUtilsService serviceUtils;
 
     @Before
     public void setup() {
@@ -109,7 +110,7 @@ public abstract class AbstractCitPageTest extends AbstractOsgiMockServiceTest {
 
     @Override
     protected void setBundleContext(BundleContext bundleContext) {
-        DefaultOsgiUtilsService serviceUtils = new DefaultOsgiUtilsService();
+        serviceUtils = new DefaultOsgiUtilsService();
         serviceUtils.setBundleContext(bundleContext);
         OpenEngSBCoreServices.setOsgiServiceUtils(serviceUtils);
         registerService(serviceUtils, new Hashtable<String, Object>(), OsgiUtilsService.class);

@@ -45,6 +45,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 
 public class IndexPageTest extends AbstractCitPageTest {
 
@@ -54,6 +55,7 @@ public class IndexPageTest extends AbstractCitPageTest {
     private Project testProject;
     private ReportDomain reportMock = mock(ReportDomain.class);
     private ConnectorManager connectorManager;
+    private ConnectorUtil connectorUtil;
 
     @Before
     public void setUp() throws NoSuchProjectException {
@@ -83,6 +85,8 @@ public class IndexPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("scheduler", scheduler);
         connectorManager = new ConnectorManagerImpl();
         mockedBeansMap.put("connectorManager", connectorManager);
+        connectorUtil = mock(ConnectorUtil.class);
+        mockedBeansMap.put("connectorUtil", connectorUtil);
         return mockedBeansMap;
     }
 

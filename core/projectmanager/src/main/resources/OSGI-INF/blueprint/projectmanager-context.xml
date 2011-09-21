@@ -37,7 +37,20 @@
     <property name="contextService" ref="contextService" />
     <property name="bundleContext" ref="blueprintBundleContext" />
     <property name="scheduler" ref="scheduler" />
+    <property name="connectorUtil" ref="connectorUtil" />
   </bean>
+
+  <bean id="connectorUtil" class="org.openengsb.opencit.core.projectmanager.util.ConnectorUtil">
+    <property name="osgiUtilsService" ref="osgiUtilsService" />
+    <property name="connectorManager" ref="connectorManager" />
+  </bean>
+
+  <service>
+    <interfaces>
+      <value>org.openengsb.opencit.core.projectmanager.util.ConnectorUtil</value>
+    </interfaces>
+    <ref component-id="connectorUtil" />
+  </service>
 
   <bean id="scheduler" class="org.openengsb.opencit.core.projectmanager.internal.SchedulingServiceImpl">
     <property name="workflowService" ref="workflowService" />
@@ -53,6 +66,8 @@
     <ref component-id="scheduler" />
   </service>
 
+  <reference id="connectorManager" interface="org.openengsb.core.api.ConnectorManager" />
+  <reference id="osgiUtilsService" interface="org.openengsb.core.api.OsgiUtilsService" />
   <reference id="persistenceManager" interface="org.openengsb.core.api.persistence.PersistenceManager" />
   <reference id="contextService" interface="org.openengsb.core.api.context.ContextCurrentService" />
   <reference id="workflowService" interface="org.openengsb.core.api.workflow.WorkflowService" />

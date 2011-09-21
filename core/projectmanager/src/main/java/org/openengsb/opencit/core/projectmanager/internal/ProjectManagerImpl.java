@@ -36,6 +36,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
+import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.osgi.framework.BundleContext;
 
 public class ProjectManagerImpl implements ProjectManager {
@@ -49,6 +50,8 @@ public class ProjectManagerImpl implements ProjectManager {
     private SchedulingService scheduler;
 
     private BundleContext bundleContext;
+
+    private ConnectorUtil connectorUtil;
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
@@ -178,6 +181,14 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void setScheduler(SchedulingService scheduler) {
         this.scheduler = scheduler;
+    }
+
+    public void setConnectorUtil(ConnectorUtil connectorUtil) {
+        this.connectorUtil = connectorUtil;
+    }
+
+    public ConnectorUtil getConnectorUtil() {
+        return connectorUtil;
     }
 
 }

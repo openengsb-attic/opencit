@@ -41,6 +41,7 @@ import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.openengsb.core.services.internal.ConnectorManagerImpl;
 
 public class CreateProjectPageTest extends AbstractCitPageTest {
@@ -49,6 +50,7 @@ public class CreateProjectPageTest extends AbstractCitPageTest {
     private ProjectManager projectManager;
     private ContextCurrentService contextSerice;
     private ConnectorManager connectorManager;
+    private ConnectorUtil connectorUtil;
 
     @Before
     public void setUp() {
@@ -69,6 +71,11 @@ public class CreateProjectPageTest extends AbstractCitPageTest {
         mockedBeansMap.put("scheduler", scheduler);
         connectorManager = new ConnectorManagerImpl();
         mockedBeansMap.put("connectorManager", connectorManager);
+        connectorUtil = new ConnectorUtil();
+        /* FIXME: Why do I have to do this manually? */
+        connectorUtil.setConnectorManager(connectorManager);
+        connectorUtil.setOsgiUtilsService(serviceUtils);
+        mockedBeansMap.put("connectorUtil", connectorUtil);
         return mockedBeansMap;
     }
 
