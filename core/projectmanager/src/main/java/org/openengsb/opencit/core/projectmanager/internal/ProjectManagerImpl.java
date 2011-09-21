@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.context.Context;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
@@ -34,6 +35,7 @@ import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
@@ -62,7 +64,7 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     @Override
-    public void createProject(Project project) throws ProjectAlreadyExistsException {
+    public void createProject(Project project) throws ProjectAlreadyExistsException, ConnectorValidationFailedException {
         checkId(project.getId());
         try {
             persistence.create(project);
@@ -72,7 +74,22 @@ public class ProjectManagerImpl implements ProjectManager {
         }
     }
 
-    private void setupProject(Project project) {
+    private void createConnectors(Project project) throws ConnectorValidationFailedException {
+        Map<String, ConnectorConfig> connectorConfigs = project.getConnectorConfigs();
+
+        /* Mainly for the tests */
+        if (connectorConfigs == null) return;
+
+        for (Entry<String, ConnectorConfig> e : connectorConfigs.entrySet()) {
+            String domain = e.getKey();
+            ConnectorConfig cfg = e.getValue();
+            ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(), cfg.getAttributeValues());
+            project.addService(domain, id);
+        }
+    }
+
+    private void setupProject(Project project) throws ConnectorValidationFailedException {
+        createConnectors(project);
         createAndSetContext(project);
         setDefaultConnectors(project);
         scheduler.setupAndStartScmPoller(project);
@@ -129,9 +146,9 @@ public class ProjectManagerImpl implements ProjectManager {
 
     @Override
     public void updateProject(Project project) throws NoSuchProjectException {
-        Project old = getProject(project.getId());
+        getProject(project.getId());
         try {
-            persistence.update(old, project);
+            persistence.update(new Project(project.getId()), project);
             setDefaultConnectors(project);
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not update project", e);

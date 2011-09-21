@@ -29,6 +29,7 @@ import org.openengsb.core.api.model.ConnectorId;
 public class Project implements Serializable {
 
     private Map<String, ConnectorId> services;
+    private Map<String, ConnectorConfig> connectorConfigs;
 
     public enum State {
             OK,
@@ -84,11 +85,22 @@ public class Project implements Serializable {
         return services;
     }
 
-    public void addService(String type, ConnectorId id) {
+    public void addService(String type, ConnectorId connectorId) {
         if (services == null) {
             services = new HashMap<String, ConnectorId>();
         }
-        services.put(type, id);
+        services.put(type, connectorId);
+    }
+
+    public Map<String, ConnectorConfig> getConnectorConfigs() {
+        return connectorConfigs;
+    }
+
+    public void addConnectorConfig(String type, ConnectorConfig attribs) {
+        if (connectorConfigs == null) {
+            connectorConfigs = new HashMap<String, ConnectorConfig>();
+        }
+        connectorConfigs.put(type, attribs);
     }
 
     @Override

@@ -19,12 +19,13 @@ package org.openengsb.opencit.core.projectmanager;
 
 import java.util.List;
 
+import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
 public interface ProjectManager {
 
-    void createProject(Project project) throws ProjectAlreadyExistsException;
+    void createProject(Project project) throws ProjectAlreadyExistsException, ConnectorValidationFailedException;
 
     List<Project> getAllProjects();
 

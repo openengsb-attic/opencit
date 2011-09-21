@@ -39,10 +39,10 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.api.ConnectorProvider;
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
-import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.opencit.core.config.OpenCitConfigurator;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.openengsb.opencit.ui.web.model.ProjectProperties;
@@ -168,16 +168,8 @@ public class CreateProject extends BasePage {
         p.setNotificationRecipient(project.getNotificationRecipient());
 
         for (String c : OpenCitConfigurator.getRequiredServices()) {
-            try {
-                String connector = project.getDomainConnector(c);
-                ConnectorId id = connectorUtil.createConnector(p, c, connector, project.getDomainConfig(c));
-                p.addService(c, id);
-            } catch (ConnectorValidationFailedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                log.error("Connector creation failed!");
-                /* TODO: Clean up old connectors and tell the user he f***ed up */
-            }
+            String connector = project.getDomainConnector(c);
+            p.addConnectorConfig(c, new ConnectorConfig(connector, project.getDomainConfig(c)));
         }
 
         try {
@@ -185,7 +177,10 @@ public class CreateProject extends BasePage {
             setResponsePage(getApplication().getHomePage());
         } catch (ProjectAlreadyExistsException e) {
             // FIXME
-            log.error("This project already exists");
+            log.error("This project already exists", e);
+        } catch (ConnectorValidationFailedException e) {
+            // FIXME
+            log.error("Connector failed validation", e);
         }
     }
 
