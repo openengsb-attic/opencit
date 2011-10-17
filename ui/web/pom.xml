@@ -84,14 +84,14 @@
       <version>${openengsb.wrapped.guava.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.core</groupId>
-      <artifactId>openengsb-core-common</artifactId>
+      <groupId>org.openengsb.framework</groupId>
+      <artifactId>org.openengsb.framework.common</artifactId>
       <version>${openengsb.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.core</groupId>
-      <artifactId>openengsb-core-workflow</artifactId>
+      <groupId>org.openengsb.framework</groupId>
+      <artifactId>org.openengsb.framework.workflow</artifactId>
       <version>${openengsb.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -141,7 +141,7 @@
 
     <dependency>
       <groupId>org.openengsb.ui</groupId>
-      <artifactId>openengsb-ui-common</artifactId>
+      <artifactId>org.openengsb.ui.common</artifactId>
       <version>${openengsb.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -171,16 +171,6 @@
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-extensions</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-ioc</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-spring</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -231,14 +221,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.core</groupId>
-      <artifactId>openengsb-core-test</artifactId>
+      <groupId>org.openengsb.framework</groupId>
+      <artifactId>org.openengsb.framework.test</artifactId>
       <version>${openengsb.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.openengsb.core</groupId>
-      <artifactId>openengsb-core-services</artifactId>
+      <groupId>org.openengsb.framework</groupId>
+      <artifactId>org.openengsb.framework.services</artifactId>
       <version>${openengsb.version}</version>
       <scope>test</scope>
     </dependency>

@@ -26,7 +26,7 @@
   <fileSets>
     <!-- Expanded Karaf Runtime -->
     <fileSet>
-      <directory>target/dependencies/openengsb-${openengsb.version}</directory>
+      <directory>target/dependencies/openengsb-framework-${openengsb.version}</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
         <exclude>bin/**</exclude>
@@ -47,7 +47,7 @@
 
     <!-- Copy over bin/karaf separately to get the correct file mode -->
     <fileSet>
-      <directory>target/dependencies/openengsb-${openengsb.version}</directory>
+      <directory>target/dependencies/openengsb-framework-${openengsb.version}</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>bin/admin</include>
@@ -62,7 +62,7 @@
 
     <!-- Copy over bin/karaf separately to get the correct file mode -->
     <fileSet>
-      <directory>target/dependencies/openengsb-${openengsb.version}</directory>
+      <directory>target/dependencies/openengsb-framework-${openengsb.version}</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>bin/admin.bat</include>
@@ -118,14 +118,14 @@
       <lineEnding>dos</lineEnding>
     </file>
     <file>
-      <source>${basedir}/target/dependencies/openengsb-${openengsb.version}/bin/openengsb.bat</source>
+      <source>${basedir}/target/dependencies/openengsb-framework-${openengsb.version}/bin/openengsb.bat</source>
       <outputDirectory>/bin/</outputDirectory>
       <destName>opencit.bat</destName>
       <fileMode>0755</fileMode>
       <lineEnding>dos</lineEnding>
     </file>
     <file>
-      <source>${basedir}/target/dependencies/openengsb-${openengsb.version}/bin/openengsb</source>
+      <source>${basedir}/target/dependencies/openengsb-framework-${openengsb.version}/bin/openengsb</source>
       <outputDirectory>/bin/</outputDirectory>
       <destName>opencit</destName>
       <fileMode>0755</fileMode>

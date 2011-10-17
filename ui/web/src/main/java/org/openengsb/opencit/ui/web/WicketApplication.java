@@ -17,7 +17,10 @@
 
 package org.openengsb.opencit.ui.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Page;
+import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.WebPage;
 import org.openengsb.ui.common.OpenEngSBWicketApplication;
 
@@ -30,6 +33,14 @@ public class WicketApplication extends OpenEngSBWicketApplication {
     @Override
     protected Class<? extends WebPage> getSignInPageClass() {
         return LoginPage.class;
+    }
+
+    @Override
+    protected Class<? extends AuthenticatedWebSession> getWebSessionClass() {
+        // TODO Auto-generated method stub
+        Log log = LogFactory.getLog(CreateProject.class);
+        log.error("getWebSessionClass called. What should I do?");
+        return null;
     }
 
 }
