@@ -38,18 +38,48 @@
 
   <description>Web Administration Interface for the OpenCIT</description>
 
-  <packaging>war</packaging>
+  <packaging>bundle</packaging>
 
   <build>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/**.html</include>
+          <include>**/**.properties</include>
+          <include>**/**.css</include>
+          <include>**/**.js</include>
+          <include>**/**.png</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/test/java</directory>
+        <includes>
+          <include>**/**.html</include>
+          <include>**/**.properties</include>
+          <include>**/**.css</include>
+          <include>**/**.js</include>
+          <include>**/**.png</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
         <executions>
           <execution>
             <id>bundle-manifest</id>
@@ -59,25 +89,28 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <archive>
-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
+          <instructions>
+            <Import-Package>org.drools; bundle-symbolic-name="org.drools.core",
+              org.drools.event; bundle-symbolic-name="org.drools.core",
+              org.drools.rule, org.drools.compiler,
+              org.springframework.security.web.authentication,
+              org.springframework.security.authentication,
+              org.springframework.security.core.userdetails,
+              org.springframework.dao,
+              org.ops4j.pax.wicket.util.proxy,
+              net.sf.cglib.core;version="[2,3)",
+              net.sf.cglib.proxy;version="[2,3)",
+              net.sf.cglib.reflect;version="[2,3)", *
+            </Import-Package>
+            <DynamicImport-Package>org.openengsb.*</DynamicImport-Package>
+          </instructions>
         </configuration>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>org.openengsb.wrapped</groupId>
-      <artifactId>org.apache.wicket-all</artifactId>
-      <version>${openengsb.wrapped.wicket.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>com.google.guava-all</artifactId>
@@ -145,6 +178,12 @@
       <version>${openengsb.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openengsb.ui</groupId>
+      <artifactId>org.openengsb.ui.api</artifactId>
+      <version>${openengsb.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.openengsb.opencit.core</groupId>
@@ -153,6 +192,16 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.ops4j.pax.wicket</groupId>
+      <artifactId>pax-wicket-service</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.wicket</groupId>
+      <artifactId>pax-wicket-test</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket</artifactId>
@@ -180,28 +229,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-velocity</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-auth-roles</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
       <scope>provided</scope>
     </dependency>
 

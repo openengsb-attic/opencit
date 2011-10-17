@@ -42,7 +42,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
@@ -54,15 +53,16 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ReportModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
+import org.ops4j.pax.wicket.api.PaxWicketBean;
 
 public class ProjectDetails extends BasePage implements SpringBeanProvider<ProjectManager> {
 
     private static Log log = LogFactory.getLog(BasePage.class);
 
-    @SpringBean
+    @PaxWicketBean
     private ProjectManager projectManager;
 
-    @SpringBean
+    @PaxWicketBean
     private SchedulingService scheduler;
 
     private Image projectStateImage;

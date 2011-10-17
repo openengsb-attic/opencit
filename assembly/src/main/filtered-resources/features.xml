@@ -27,7 +27,7 @@
     </details>
     <bundle>mvn:org.openengsb.opencit.core/opencit-core-config/${project.version}</bundle>
     <bundle>mvn:org.openengsb.opencit.core/opencit-core-projectmanager/${project.version}</bundle>
-    <bundle>mvn:org.openengsb.opencit.ui/opencit-ui-web/${project.version}/war</bundle>
+    <bundle>mvn:org.openengsb.opencit.ui/opencit-ui-web/${project.version}</bundle>
   </feature>
 
 </features>
