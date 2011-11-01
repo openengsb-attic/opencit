@@ -84,6 +84,14 @@
       <scope>provided</scope>
     </dependency>
 
+    <!--Hack for jgit-->
+    <dependency>
+      <groupId>org.openengsb.wrapped</groupId>
+      <artifactId>com.jcraft.jsch-all</artifactId>
+      <version>${openengsb.wrapped.jsch.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
