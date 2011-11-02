@@ -73,9 +73,10 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
     private BuildDomain buildMock = mock(BuildDomain.class);
     private TestDomain testMock = mock(TestDomain.class);
     private DeployDomain deployMock = mock(DeployDomain.class);
-    private NotificationDomain notificationMock = mock(NotificationDomain.class);
+    private NotificationDomain notificationDomainMock = mock(NotificationDomain.class);
     private ReportDomain reportMock = mock(ReportDomain.class);
     private ProjectManager projectManagerMock = mock(ProjectManager.class);
+    private Notification notificationMock = mock(Notification.class);
 
     @Test
     public void testExecuteWorkflow() throws Exception {
@@ -99,7 +100,7 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         Dictionary<String, Object> deployProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "deploy"));
         registerService(deployMock, deployProps, DeployDomain.class);
         Dictionary<String, Object> notificationProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "notification"));
-        registerService(notificationMock, notificationProps, NotificationDomain.class);
+        registerService(notificationDomainMock, notificationProps, NotificationDomain.class);
 
         Dictionary<String, Object> reportProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "report"));
         registerService(reportMock, reportProps, ReportDomain.class);
@@ -116,6 +117,7 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         registerService(projectManagerMock, managerProps, ProjectManager.class);
         Project projectMock = mock(Project.class);
         when(projectManagerMock.getCurrentContextProject()).thenReturn(projectMock);
+        when(projectManagerMock.createNotification()).thenReturn(notificationMock);
 
         OpenCitConfigurator configurator = new OpenCitConfigurator();
         configurator.setRuleManager(directoryRuleSource);
@@ -129,7 +131,7 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         service.processEvent(new DeployFailEvent(pid, "deployoutput"));
 
         service.waitForFlowToFinish(pid);
-        verify(notificationMock).notify(any(Notification.class));
+        verify(notificationDomainMock).notify(any(Notification.class));
     }
 
     @Override

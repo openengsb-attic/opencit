@@ -54,6 +54,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.openengsb.framework</groupId>
+      <artifactId>org.openengsb.framework.ekb</artifactId>
+      <version>${openengsb.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.openengsb.domain</groupId>
       <artifactId>openengsb-domain-report</artifactId>
       <version>${openengsb.domain.report.version}</version>
