@@ -47,7 +47,6 @@ import org.openengsb.domain.deploy.DeployFailEvent;
 import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.notification.model.Notification;
 import org.openengsb.domain.report.ReportDomain;
-import org.openengsb.domain.report.model.Report;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;
 import org.openengsb.domain.test.TestSuccessEvent;
@@ -104,7 +103,7 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
 
         Dictionary<String, Object> reportProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "report"));
         registerService(reportMock, reportProps, ReportDomain.class);
-        when(reportMock.generateReport(anyString(), anyString(), anyString())).thenReturn(new Report("testreport"));
+        when(reportMock.generateReport(anyString(), anyString(), anyString())).thenReturn(new TestReport("testreport"));
 
         /*mockDomain(TestDomain.class, "test");
         reportDomain = mockDomain(ReportDomain.class, "report");

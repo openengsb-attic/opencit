@@ -149,7 +149,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     @Test
     public void testReportPanel_shouldWork() {
-        List<Report> reports = Arrays.asList(new Report[]{ new Report("rep1") });
+        List<Report> reports = Arrays.asList(new Report[]{ new TestReport("rep1") });
         when(reportMock.getAllReports("test")).thenReturn(reports);
         getTester().startPage(getProjectDetails());
         getTester().assertContains("rep1");

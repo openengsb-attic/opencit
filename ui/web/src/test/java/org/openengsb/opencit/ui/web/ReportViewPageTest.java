@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +38,8 @@ import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.model.Report;
-import org.openengsb.domain.report.model.SimpleReportPart;
+import org.openengsb.domain.report.model.ReportPart;
+import org.openengsb.domain.report.common.SimpleReportPart;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
@@ -85,7 +87,7 @@ public class ReportViewPageTest extends AbstractCitPageTest {
         testReportModel = new LoadableDetachableModel<Report>() {
             @Override
             protected Report load() {
-                return new Report("foo");
+                return new TestReport("foo");
             }
         };
         when(projectManager.getProject("bar")).thenReturn(testProject);
@@ -126,7 +128,9 @@ public class ReportViewPageTest extends AbstractCitPageTest {
     @Test
     public void testPartsPanel_shouldWork() {
         SimpleReportPart reportPart = new SimpleReportPart("part1", "text/plain", "content1".getBytes());
-        testReportModel.getObject().addPart(reportPart);
+        ArrayList<ReportPart> parts = new ArrayList<ReportPart>();
+        parts.add(reportPart);
+        testReportModel.getObject().setParts(parts);
         getTester().startPage(new ReportViewPage(testReportModel));
         getTester().assertContains("part1");
         getTester().assertContains("content1");
