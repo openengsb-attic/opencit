@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
-import org.apache.wicket.spring.test.ApplicationContextMock;
+import org.ops4j.pax.wicket.test.spring.ApplicationContextMock;
+import org.ops4j.pax.wicket.test.spring.PaxWicketSpringBeanComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -63,7 +63,7 @@ public class LoginPageTest {
         WebApplication app = new WicketApplication() {
             @Override
             protected void addInjector() {
-                addComponentInstantiationListener(new SpringComponentInjector(this, contextMock, true));
+                addComponentInstantiationListener(new PaxWicketSpringBeanComponentInjector(this, contextMock, true));
             }
         };
         tester = new WicketTester(app);
