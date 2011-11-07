@@ -79,9 +79,16 @@ public abstract class AbstractCitPageTest extends AbstractOsgiMockServiceTest {
                 return Index.class;
             }
 
+            @SuppressWarnings("serial")
             @Override
             public Session newSession(Request request, Response response) {
-                return new OpenEngSBWebSession(request);
+                return new OpenEngSBWebSession(request) {
+                    @Override
+                    protected AuthenticationManager getAuthenticationManager() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                };
             }
         });
     }
