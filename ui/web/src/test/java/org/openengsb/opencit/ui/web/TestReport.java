@@ -1,5 +1,6 @@
 package org.openengsb.opencit.ui.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openengsb.core.api.model.OpenEngSBModelEntry;
@@ -8,7 +9,7 @@ import org.openengsb.domain.report.model.ReportPart;
 
 public class TestReport implements Report {
     private String name;
-    private List<ReportPart> parts;
+    private List<ReportPart> parts = new ArrayList<ReportPart>();
 
     public TestReport(String name) {
         this.name = name; 
