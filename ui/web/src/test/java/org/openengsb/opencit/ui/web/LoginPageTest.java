@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.ops4j.pax.wicket.api.ApplicationLifecycleListener;
 import org.ops4j.pax.wicket.test.spring.ApplicationContextMock;
 import org.ops4j.pax.wicket.test.spring.PaxWicketSpringBeanComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
@@ -52,6 +53,16 @@ public class LoginPageTest {
     private WicketTester tester;
     private ApplicationContextMock contextMock;
 
+    class DummyListener implements ApplicationLifecycleListener {
+        @Override
+        public void onDestroy(WebApplication wicketApplication) {
+        }
+
+        @Override
+        public void onInit(WebApplication wicketApplication) {
+        }
+    }
+
     @Before
     public void setUp() {
         contextMock = new ApplicationContextMock();
@@ -59,8 +70,9 @@ public class LoginPageTest {
         contextMock.putBean(mock(ProjectManager.class));
         contextMock.putBean(mock(ContextCurrentService.class));
         contextMock.putBean(mock(SchedulingService.class));
+        ApplicationLifecycleListener listener = new DummyListener();
 
-        WebApplication app = new WicketApplication() {
+        WebApplication app = new WicketApplication(listener) {
             @Override
             protected void addInjector() {
                 addComponentInstantiationListener(new PaxWicketSpringBeanComponentInjector(this, contextMock, true));
