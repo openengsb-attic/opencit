@@ -43,10 +43,10 @@ import org.ops4j.pax.wicket.api.PaxWicketBean;
 
 public class Index extends BasePage implements SpringBeanProvider<ProjectManager> {
 
-    @PaxWicketBean
+    @PaxWicketBean(name="projectManager")
     private ProjectManager projectManager;
 
-    @PaxWicketBean
+    @PaxWicketBean(name="scheduler")
     private SchedulingService scheduler;
 
     private Label noProjects;

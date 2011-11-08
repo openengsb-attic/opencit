@@ -67,9 +67,9 @@ public class LoginPageTest {
     public void setUp() {
         contextMock = new ApplicationContextMock();
         mockAuthentication();
-        contextMock.putBean(mock(ProjectManager.class));
+        contextMock.putBean("projectManager", mock(ProjectManager.class));
         contextMock.putBean(mock(ContextCurrentService.class));
-        contextMock.putBean(mock(SchedulingService.class));
+        contextMock.putBean("scheduler", mock(SchedulingService.class));
         ApplicationLifecycleListener listener = new DummyListener();
 
         WebApplication app = new WicketApplication(listener) {
