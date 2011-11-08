@@ -59,7 +59,7 @@ deploy.deploy(processId2)</action>
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
 Report r = report.generateReport(reportId, project.getId(), reportName);
-Notification n = new Notification();
+Notification n = projectManager.createNotification();
 String result;
 Boolean success = (Boolean) kcontext.getVariable("processSuccess");
 if(success == Boolean.TRUE){

@@ -20,6 +20,7 @@ package org.openengsb.opencit.core.projectmanager;
 import java.util.List;
 
 import org.openengsb.core.api.ConnectorValidationFailedException;
+import org.openengsb.domain.notification.model.Notification;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
@@ -38,5 +39,8 @@ public interface ProjectManager {
     Project getCurrentContextProject() throws NoSuchProjectException;
 
     void deleteProject(String projectId) throws NoSuchProjectException;
+
+    // FIXME: Remove this and load the EkbService properly into the workflow
+    public Notification createNotification();
 
 }

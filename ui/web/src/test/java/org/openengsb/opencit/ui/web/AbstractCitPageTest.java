@@ -31,8 +31,8 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
-import org.apache.wicket.spring.test.ApplicationContextMock;
+import org.ops4j.pax.wicket.test.spring.ApplicationContextMock;
+import org.ops4j.pax.wicket.test.spring.PaxWicketSpringBeanComponentInjector;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.mockito.invocation.InvocationOnMock;
@@ -71,7 +71,7 @@ public abstract class AbstractCitPageTest extends AbstractOsgiMockServiceTest {
             @Override
             protected void init() {
                 super.init();
-                addComponentInstantiationListener(new SpringComponentInjector(this, appContext, false));
+                addComponentInstantiationListener(new PaxWicketSpringBeanComponentInjector(this, appContext, false));
             }
 
             @Override
@@ -79,9 +79,16 @@ public abstract class AbstractCitPageTest extends AbstractOsgiMockServiceTest {
                 return Index.class;
             }
 
+            @SuppressWarnings("serial")
             @Override
             public Session newSession(Request request, Response response) {
-                return new OpenEngSBWebSession(request);
+                return new OpenEngSBWebSession(request) {
+                    @Override
+                    protected AuthenticationManager getAuthenticationManager() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                };
             }
         });
     }

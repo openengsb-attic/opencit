@@ -35,7 +35,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.api.ConnectorProvider;
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
@@ -47,12 +46,13 @@ import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.openengsb.opencit.ui.web.model.ProjectProperties;
 import org.openengsb.ui.common.editor.ServiceEditorPanel;
+import org.ops4j.pax.wicket.api.PaxWicketBean;
 
 public class CreateProject extends BasePage {
 
-    @SpringBean
+    @PaxWicketBean
     private ProjectManager projectManager;
-    @SpringBean
+    @PaxWicketBean
     private ConnectorUtil connectorUtil;
 
     ProjectProperties project = new ProjectProperties();

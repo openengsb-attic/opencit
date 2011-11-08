@@ -18,10 +18,18 @@
 package org.openengsb.opencit.ui.web;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.WebPage;
 import org.openengsb.ui.common.OpenEngSBWicketApplication;
+import org.ops4j.pax.wicket.api.ApplicationLifecycleListener;
 
 public class WicketApplication extends OpenEngSBWicketApplication {
+    private final ApplicationLifecycleListener lifecycleListener;
+
+    public WicketApplication(ApplicationLifecycleListener lifecycleListener) {
+        this.lifecycleListener = lifecycleListener;
+    }
+
     @Override
     public Class<? extends Page> getHomePage() {
         return Index.class;
@@ -32,4 +40,20 @@ public class WicketApplication extends OpenEngSBWicketApplication {
         return LoginPage.class;
     }
 
+    @Override
+    protected void init() {
+        lifecycleListener.onInit(this);
+        super.init();
+    }
+
+    @Override
+    protected Class<? extends AuthenticatedWebSession> getWebSessionClass() {
+        return AdminWebSession.class;
+    }
+
+    @Override
+    protected void onDestroy() {
+        lifecycleListener.onDestroy(this);
+        super.onDestroy();
+    }
 }

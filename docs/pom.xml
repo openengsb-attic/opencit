@@ -43,7 +43,7 @@
       </activation>
       <modules>
         <module>manual</module>
-        <module>homepage</module>
+        <!--<module>homepage</module>-->
       </modules>
     </profile>
   </profiles>
