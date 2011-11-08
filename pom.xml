@@ -35,7 +35,7 @@
 
   <properties>
     <jdk.version>1.6</jdk.version>
-    <openengsb.version>2.0.3</openengsb.version>
+    <openengsb.version>2.1.1</openengsb.version>
     <karaf.version>2.2.3</karaf.version>
     <plugin.pax.version>1.4</plugin.pax.version>
     <maven.plugin.war.version>2.1.1</maven.plugin.war.version>
