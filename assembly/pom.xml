@@ -206,13 +206,13 @@
                 <descriptor>mvn:org.apache.karaf.assemblies.features/standard/${karaf.version}/xml/features</descriptor>
                 <descriptor>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.framework/openengsb-framework/${openengsb.version}/xml/features</descriptor>
-                <descriptor>mvn:org.openengsb.domain/openengsb-domain-scm/${openengsb.domain.scm.version}/xml/features</descriptor>
-                <descriptor>mvn:org.openengsb.domain/openengsb-domain-test/${openengsb.domain.test.version}/xml/features</descriptor>
-                <descriptor>mvn:org.openengsb.domain/openengsb-domain-build/${openengsb.domain.build.version}/xml/features</descriptor>
-                <descriptor>mvn:org.openengsb.domain/openengsb-domain-deploy/${openengsb.domain.deploy.version}/xml/features</descriptor>
-                <descriptor>mvn:org.openengsb.domain/openengsb-domain-notification/${openengsb.domain.notification.version}/xml/features</descriptor>
-                <descriptor>mvn:org.openengsb.domain/openengsb-domain-report/${openengsb.domain.report.version}/xml/features</descriptor>
-                <descriptor>mvn:org.openengsb.connector/openengsb-connector-git/${openengsb.connector.git.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.scm/${openengsb.domain.scm.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.test/${openengsb.domain.test.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.build/${openengsb.domain.build.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.deploy/${openengsb.domain.deploy.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.notification/${openengsb.domain.notification.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.report/${openengsb.domain.report.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.connector/org.openengsb.connector.git/${openengsb.connector.git.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.connector/openengsb-connector-email/${openengsb.connector.email.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.connector/openengsb-connector-notificationsample/${openengsb.connector.notificationsample.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.connector/openengsb-connector-maven/${openengsb.connector.maven.version}/xml/features</descriptor>
