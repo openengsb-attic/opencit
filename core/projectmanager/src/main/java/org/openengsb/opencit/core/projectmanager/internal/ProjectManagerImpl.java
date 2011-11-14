@@ -98,8 +98,8 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     private void setupProject(Project project) throws ConnectorValidationFailedException {
-        createConnectors(project);
         createAndSetContext(project);
+        createConnectors(project);
         setDefaultConnectors(project);
         scheduler.setupAndStartScmPoller(project);
     }
