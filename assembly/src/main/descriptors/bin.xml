@@ -50,27 +50,7 @@
       <directory>target/dependencies/openengsb-framework-${openengsb.version}</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>bin/admin</include>
-        <include>bin/karaf</include>
-        <include>bin/openengsb</include>
-        <include>bin/start</include>
-        <include>bin/stop</include>
-        <include>bin/client</include>
-      </includes>
-      <fileMode>0755</fileMode>
-    </fileSet>
-
-    <!-- Copy over bin/karaf separately to get the correct file mode -->
-    <fileSet>
-      <directory>target/dependencies/openengsb-framework-${openengsb.version}</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>bin/admin.bat</include>
-        <include>bin/karaf.bat</include>
-        <include>bin/openengsb.bat</include>
-        <include>bin/start.bat</include>
-        <include>bin/stop.bat</include>
-        <include>bin/client.bat</include>
+        <include>bin/**</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
