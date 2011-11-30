@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -47,13 +48,15 @@ import org.openengsb.domain.deploy.DeployFailEvent;
 import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.notification.Notification;
 import org.openengsb.domain.report.ReportDomain;
+import org.openengsb.domain.report.Report;
+import org.openengsb.domain.report.ReportPart;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;
 import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.osgi.framework.BundleContext;
-
+import org.openengsb.core.common.util.ModelUtils;
 import com.google.common.collect.ImmutableMap;
 
 public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
@@ -104,7 +107,10 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
 
         Dictionary<String, Object> reportProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "report"));
         registerService(reportMock, reportProps, ReportDomain.class);
-        when(reportMock.generateReport(anyString(), anyString(), anyString())).thenReturn(new TestReport("testreport"));
+        Report report = ModelUtils.createEmptyModelObject(Report.class);
+        report.setName("testreport");
+        report.setParts(new ArrayList<ReportPart>());
+        when(reportMock.generateReport(anyString(), anyString(), anyString())).thenReturn(report);
 
         /*mockDomain(TestDomain.class, "test");
         reportDomain = mockDomain(ReportDomain.class, "report");

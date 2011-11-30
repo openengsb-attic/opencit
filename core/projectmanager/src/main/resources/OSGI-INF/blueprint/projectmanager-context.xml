@@ -38,7 +38,6 @@
     <property name="bundleContext" ref="blueprintBundleContext" />
     <property name="scheduler" ref="scheduler" />
     <property name="connectorUtil" ref="connectorUtil" />
-    <property name="ekbService" ref="ekbService" />
   </bean>
 
   <bean id="connectorUtil" class="org.openengsb.opencit.core.projectmanager.util.ConnectorUtil">
@@ -73,5 +72,4 @@
   <reference id="contextService" interface="org.openengsb.core.api.context.ContextCurrentService" />
   <reference id="workflowService" interface="org.openengsb.core.api.workflow.WorkflowService" />
   <reference id="authenticationManager" interface="org.springframework.security.authentication.AuthenticationManager" />
-  <reference id="ekbService" interface="org.openengsb.core.api.ekb.EngineeringKnowledgeBaseService" />
 </blueprint>

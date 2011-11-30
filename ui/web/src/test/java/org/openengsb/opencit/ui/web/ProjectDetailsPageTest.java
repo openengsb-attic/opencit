@@ -24,6 +24,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -43,8 +44,10 @@ import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
+import org.openengsb.core.common.util.ModelUtils;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.Report;
+import org.openengsb.domain.report.ReportPart;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -149,7 +152,10 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
 
     @Test
     public void testReportPanel_shouldWork() {
-        List<Report> reports = Arrays.asList(new Report[]{ new TestReport("rep1") });
+        Report report = ModelUtils.createEmptyModelObject(Report.class);
+        report.setName("rep1");
+        report.setParts(new ArrayList<ReportPart>());
+        List<Report> reports = Arrays.asList(new Report[]{ report });
         when(reportMock.getAllReports("test")).thenReturn(reports);
         getTester().startPage(getProjectDetails());
         getTester().assertContains("rep1");

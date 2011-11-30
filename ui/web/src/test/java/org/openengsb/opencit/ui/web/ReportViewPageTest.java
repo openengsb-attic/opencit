@@ -36,6 +36,7 @@ import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
+import org.openengsb.core.common.util.ModelUtils;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.Report;
 import org.openengsb.domain.report.ReportPart;
@@ -87,7 +88,10 @@ public class ReportViewPageTest extends AbstractCitPageTest {
         testReportModel = new LoadableDetachableModel<Report>() {
             @Override
             protected Report load() {
-                return new TestReport("foo");
+                Report report = ModelUtils.createEmptyModelObject(Report.class);
+                report.setName("foo");
+                report.setParts(new ArrayList<ReportPart>());
+                return report;
             }
         };
         when(projectManager.getProject("bar")).thenReturn(testProject);
