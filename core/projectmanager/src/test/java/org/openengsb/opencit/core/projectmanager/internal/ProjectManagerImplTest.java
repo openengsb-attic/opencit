@@ -22,12 +22,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyString;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -42,6 +42,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.WiringService;
+import org.openengsb.core.api.context.Context;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
@@ -64,7 +65,6 @@ import org.osgi.framework.BundleContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.openengsb.core.api.context.Context;
 
 public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
@@ -268,7 +268,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
                 return null;
             }
         }).when(workflowService).waitForFlowToFinish(eq(1L), anyLong());
-        when(scmMock.update()).thenReturn(fakeCommits, (List<CommitRef>[])null);
+        when(scmMock.update()).thenReturn(fakeCommits, (List<CommitRef>[]) null);
 
         scheduler.setPollInterval(100L);
 

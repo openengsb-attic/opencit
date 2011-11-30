@@ -41,6 +41,5 @@ public interface ProjectManager {
     void deleteProject(String projectId) throws NoSuchProjectException;
 
     // FIXME: Remove this and load the EkbService properly into the workflow
-    public Notification createNotification();
-
+    Notification createNotification();
 }

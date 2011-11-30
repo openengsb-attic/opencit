@@ -36,6 +36,7 @@ import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.core.common.util.DefaultOsgiUtilsService;
+import org.openengsb.core.common.util.ModelUtils;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.core.test.DummyPersistence;
 import org.openengsb.core.workflow.internal.WorkflowServiceImpl;
@@ -56,7 +57,7 @@ import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.osgi.framework.BundleContext;
-import org.openengsb.core.common.util.ModelUtils;
+
 import com.google.common.collect.ImmutableMap;
 
 public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
@@ -100,12 +101,15 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         registerService(buildMock, buildProps, BuildDomain.class);
         Dictionary<String, Object> testProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "test"));
         registerService(testMock, testProps, TestDomain.class);
-        Dictionary<String, Object> deployProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "deploy"));
+        Dictionary<String, Object> deployProps;
+        deployProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "deploy"));
         registerService(deployMock, deployProps, DeployDomain.class);
-        Dictionary<String, Object> notificationProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "notification"));
+        Dictionary<String, Object> notificationProps;
+        notificationProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "notification"));
         registerService(notificationDomainMock, notificationProps, NotificationDomain.class);
 
-        Dictionary<String, Object> reportProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "report"));
+        Dictionary<String, Object> reportProps =
+            new Hashtable<String, Object>(ImmutableMap.of("location.foo", "report"));
         registerService(reportMock, reportProps, ReportDomain.class);
         Report report = ModelUtils.createEmptyModelObject(Report.class);
         report.setName("testreport");
@@ -119,7 +123,8 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         mockDomain(BuildDomain.class, "build");
         mockDomain(ScmDomain.class, "scm");*/
         
-        Dictionary<String, Object> managerProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "projectManager"));
+        Dictionary<String, Object> managerProps;
+        managerProps = new Hashtable<String, Object>(ImmutableMap.of("location.foo", "projectManager"));
         registerService(projectManagerMock, managerProps, ProjectManager.class);
         Project projectMock = mock(Project.class);
         when(projectManagerMock.getCurrentContextProject()).thenReturn(projectMock);

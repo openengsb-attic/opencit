@@ -132,7 +132,7 @@ public class CreateProject extends BasePage {
                     }
                 };
                 
-        update.domain = domain;
+                update.domain = domain;
                 update.panel = panel;
                 dropdown.add(update);
             }
@@ -188,7 +188,7 @@ public class CreateProject extends BasePage {
         List<ConnectorProvider> connectors = connectorUtil.findConnectorsForDomain(domain);
         List<String> names = new LinkedList<String>();
 
-        for(ConnectorProvider c : connectors) {
+        for (ConnectorProvider c : connectors) {
             names.add(c.getId());
         }
         

@@ -37,12 +37,12 @@ import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
 import org.openengsb.core.api.descriptor.ServiceDescriptor;
 import org.openengsb.core.api.l10n.PassThroughStringLocalizer;
+import org.openengsb.core.services.internal.ConnectorManagerImpl;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
-import org.openengsb.core.services.internal.ConnectorManagerImpl;
 
 public class CreateProjectPageTest extends AbstractCitPageTest {
 

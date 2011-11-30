@@ -49,8 +49,10 @@ public class ConnectorUtil {
     private ConnectorProvider getConnectorProvider(String domain, String id) {
         List<ConnectorProvider> connectors = findConnectorsForDomain(domain);
 
-        for(ConnectorProvider c : connectors) {
-            if(c.getId().equals(id)) return c;
+        for (ConnectorProvider c : connectors) {
+            if (c.getId().equals(id)) {
+                return c;
+            }
         }
 
         log.error("Cannot find ConnectorProvider with id " + id);

@@ -94,7 +94,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
         WiringService wiringService = Mockito.mock(WiringService.class);
         when(wiringService.getDomainEndpoint(ReportDomain.class, "report")).thenReturn(reportMock);
         registerServiceViaId(wiringService, "wiring", WiringService.class);
-}
+    }
 
     @Test
     public void testProjectDetailsHeaderPresent_shouldWork() {

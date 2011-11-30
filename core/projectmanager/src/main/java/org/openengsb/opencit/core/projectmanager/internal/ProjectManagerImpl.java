@@ -25,12 +25,12 @@ import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.context.Context;
 import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
-import org.openengsb.core.common.util.ModelUtils;
 import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
 import org.openengsb.core.api.persistence.PersistenceService;
 import org.openengsb.core.common.OpenEngSBCoreServices;
+import org.openengsb.core.common.util.ModelUtils;
 import org.openengsb.domain.notification.Notification;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -66,7 +66,8 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     @Override
-    public void createProject(Project project) throws ProjectAlreadyExistsException, ConnectorValidationFailedException {
+    public void createProject(Project project) 
+        throws ProjectAlreadyExistsException, ConnectorValidationFailedException {
         checkId(project.getId());
         try {
             persistence.create(project);
@@ -80,12 +81,15 @@ public class ProjectManagerImpl implements ProjectManager {
         Map<String, ConnectorConfig> connectorConfigs = project.getConnectorConfigs();
 
         /* Mainly for the tests */
-        if (connectorConfigs == null) return;
+        if (connectorConfigs == null) {
+            return;
+        }
 
         for (Entry<String, ConnectorConfig> e : connectorConfigs.entrySet()) {
             String domain = e.getKey();
             ConnectorConfig cfg = e.getValue();
-            ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(), cfg.getAttributeValues());
+            ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(),
+                cfg.getAttributeValues());
             project.addService(domain, id);
         }
     }
