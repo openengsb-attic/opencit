@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openengsb.core.api.model.OpenEngSBModelEntry;
-import org.openengsb.domain.report.model.Report;
-import org.openengsb.domain.report.model.ReportPart;
+import org.openengsb.domain.report.Report;
+import org.openengsb.domain.report.ReportPart;
 
 public class TestReport implements Report {
     private String name;

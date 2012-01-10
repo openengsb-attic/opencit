@@ -44,7 +44,7 @@ import org.openengsb.core.api.context.ContextCurrentService;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.api.workflow.WorkflowService;
 import org.openengsb.domain.report.ReportDomain;
-import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.Report;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;

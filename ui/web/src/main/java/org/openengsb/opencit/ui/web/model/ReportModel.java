@@ -23,7 +23,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
-import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.Report;
 
 @SuppressWarnings("serial")
 public class ReportModel extends LoadableDetachableModel<Report> {

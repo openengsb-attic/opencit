@@ -45,7 +45,7 @@ import org.apache.wicket.resource.ContextRelativeResource;
 import org.openengsb.core.api.context.ContextHolder;
 import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
-import org.openengsb.domain.report.model.Report;
+import org.openengsb.domain.report.Report;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;

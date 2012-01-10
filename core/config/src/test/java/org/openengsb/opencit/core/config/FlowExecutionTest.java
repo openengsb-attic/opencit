@@ -45,7 +45,7 @@ import org.openengsb.domain.build.BuildSuccessEvent;
 import org.openengsb.domain.deploy.DeployDomain;
 import org.openengsb.domain.deploy.DeployFailEvent;
 import org.openengsb.domain.notification.NotificationDomain;
-import org.openengsb.domain.notification.model.Notification;
+import org.openengsb.domain.notification.Notification;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;

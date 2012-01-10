@@ -19,8 +19,8 @@ package org.openengsb.opencit.ui.web.util;
 
 import java.util.List;
 
-import org.openengsb.domain.report.model.Report;
-import org.openengsb.domain.report.model.ReportPart;
+import org.openengsb.domain.report.Report;
+import org.openengsb.domain.report.ReportPart;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;

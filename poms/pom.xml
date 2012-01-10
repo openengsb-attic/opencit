@@ -44,17 +44,17 @@
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.build.helper.version>1.5</maven.plugin.build.helper.version>
     <!--  OpenEngSB component versions -->
-    <openengsb.domain.report.version>2.0.0-SNAPSHOT</openengsb.domain.report.version>
-    <openengsb.domain.notification.version>2.0.0-SNAPSHOT</openengsb.domain.notification.version>
-    <openengsb.domain.scm.version>2.0.0-SNAPSHOT</openengsb.domain.scm.version>
-    <openengsb.domain.build.version>2.0.0-SNAPSHOT</openengsb.domain.build.version>
-    <openengsb.domain.test.version>2.0.0-SNAPSHOT</openengsb.domain.test.version>
-    <openengsb.domain.deploy.version>2.0.0-SNAPSHOT</openengsb.domain.deploy.version>
+    <openengsb.domain.report.version>2.0.0</openengsb.domain.report.version>
+    <openengsb.domain.notification.version>2.0.0</openengsb.domain.notification.version>
+    <openengsb.domain.scm.version>2.0.0</openengsb.domain.scm.version>
+    <openengsb.domain.build.version>2.0.0</openengsb.domain.build.version>
+    <openengsb.domain.test.version>2.0.1</openengsb.domain.test.version>
+    <openengsb.domain.deploy.version>2.0.0</openengsb.domain.deploy.version>
     <openengsb.domain.example.version>${openengsb.version}</openengsb.domain.example.version>
-    <openengsb.connector.plaintextreport.version>2.0.0-SNAPSHOT</openengsb.connector.plaintextreport.version>
-    <openengsb.connector.git.version>2.0.0-SNAPSHOT</openengsb.connector.git.version>
-    <openengsb.connector.maven.version>2.0.0-SNAPSHOT</openengsb.connector.maven.version>
-    <openengsb.connector.email.version>2.0.0-SNAPSHOT</openengsb.connector.email.version>
+    <openengsb.connector.plaintextreport.version>2.0.0</openengsb.connector.plaintextreport.version>
+    <openengsb.connector.git.version>2.0.0</openengsb.connector.git.version>
+    <openengsb.connector.maven.version>2.0.0</openengsb.connector.maven.version>
+    <openengsb.connector.email.version>2.0.0</openengsb.connector.email.version>
     <openengsb.connector.notificationsample.version>2.0.0-SNAPSHOT</openengsb.connector.notificationsample.version>
     <openengsb.wrapped.guava.version>1.0.0.r07.w1</openengsb.wrapped.guava.version>
     <openengsb.wrapped.jaxb.version>2.2.1.w1</openengsb.wrapped.jaxb.version>

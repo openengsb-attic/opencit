@@ -20,7 +20,7 @@ package org.openengsb.opencit.core.projectmanager;
 import java.util.List;
 
 import org.openengsb.core.api.ConnectorValidationFailedException;
-import org.openengsb.domain.notification.model.Notification;
+import org.openengsb.domain.notification.Notification;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
