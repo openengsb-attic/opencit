@@ -7,7 +7,7 @@
   <header>
     <variables>
       <variable name="buildEndEvent" >
-        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.common.Event" />
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
       </variable>
       <variable name="reportId" >
         <type name="org.drools.process.core.datatype.impl.type.StringDataType" />
@@ -20,13 +20,13 @@
         <value>false</value>
       </variable>
       <variable name="buildStartEvent" >
-        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.common.Event" />
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
       </variable>
       <variable name="testEndEvent" >
-        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.common.Event" />
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
       </variable>
       <variable name="deployEndEvent" >
-        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.common.Event" />
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
       </variable>
     </variables>
   </header>
@@ -39,7 +39,7 @@
     </eventNode>
     <actionNode id="136" name="Deploy" x="238" y="880" width="80" height="64" >
         <action type="expression" dialect="mvel" >Long processId2 = (Long) kcontext.getVariable("processId");
-deploy.deploy(processId2)</action>
+deploy.deploy(testEndEvent.getPath(), processId2);</action>
     </actionNode>
     <start id="1" name="Start" x="147" y="16" width="80" height="64" />
     <eventNode id="138" name="DeploySuccess" x="16" y="784" width="144" height="64" variableName="deployEndEvent" scope="external" >
@@ -103,7 +103,7 @@ notification.notify(n);</action>
     <split id="132" name="Split" x="192" y="688" width="80" height="64" type="1" />
     <actionNode id="135" name="Start Tests" x="177" y="616" width="111" height="40" >
         <action type="expression" dialect="mvel" >Long processId2 = (Long) kcontext.getVariable("processId");
-test.runTests(processId2)</action>
+test.runTests(buildEndEvent.getPath(), processId2)</action>
     </actionNode>
     <actionNode id="15" name="startFlow" x="173" y="184" width="159" height="64" >
         <action type="expression" dialect="java" >Long processIdValue = kcontext.getProcessInstance().getId();
@@ -114,7 +114,7 @@ kcontext.setVariable("reportId", reportIdValue);</action>
     <join id="134" name="Join" x="304" y="784" width="80" height="64" type="1" />
     <actionNode id="16" name="Start build" x="196" y="280" width="112" height="64" >
         <action type="expression" dialect="java" >Long processId2 = (Long) kcontext.getVariable("processId");
-build.build(processId2);</action>
+build.build(scm.export() processId2);</action>
     </actionNode>
     <join id="20" name="jointoSendReport" x="283" y="1072" width="123" height="49" type="2" />
     <join id="108" name="Join" x="406" y="544" width="80" height="40" type="1" />

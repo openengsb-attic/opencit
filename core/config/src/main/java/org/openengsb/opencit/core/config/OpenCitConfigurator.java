@@ -31,6 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.openengsb.core.api.Event;
+import org.openengsb.core.api.model.OpenEngSBFileModel;
 import org.openengsb.core.api.workflow.RuleBaseException;
 import org.openengsb.core.api.workflow.RuleManager;
 import org.openengsb.core.api.workflow.model.RuleBaseElementId;
@@ -104,6 +105,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(Collection.class.getCanonicalName());
         ruleManager.addImport(ArrayList.class.getCanonicalName());
         ruleManager.addImport(Event.class.getCanonicalName());
+        ruleManager.addImport(OpenEngSBFileModel.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
