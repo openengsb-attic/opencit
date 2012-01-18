@@ -17,6 +17,7 @@
 
 package org.openengsb.opencit.core.config;
 
+import java.io.File;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,7 +106,9 @@ public class OpenCitConfigurator {
         ruleManager.addImport(Collection.class.getCanonicalName());
         ruleManager.addImport(ArrayList.class.getCanonicalName());
         ruleManager.addImport(Event.class.getCanonicalName());
+        ruleManager.addImport(File.class.getCanonicalName());
         ruleManager.addImport(OpenEngSBFileModel.class.getCanonicalName());
+        ruleManager.addImport(Thread.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {

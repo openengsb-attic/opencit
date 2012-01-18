@@ -137,8 +137,8 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         long pid = service.startFlow("ci");
 
         service.processEvent(new BuildStartEvent(pid));
-        service.processEvent(new BuildSuccessEvent(pid, "output"));
-        service.processEvent(new TestSuccessEvent(pid, "testoutput"));
+        service.processEvent(new BuildSuccessEvent(pid, "output", null));
+        service.processEvent(new TestSuccessEvent(pid, "testoutput", null));
         service.processEvent(new DeployFailEvent(pid, "deployoutput"));
 
         service.waitForFlowToFinish(pid);

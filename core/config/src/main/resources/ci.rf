@@ -15,6 +15,9 @@
       <variable name="processId" >
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="Long" />
       </variable>
+      <variable name="deleteHack" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="File" />
+      </variable>
       <variable name="processSuccess" >
         <type name="org.drools.process.core.datatype.impl.type.BooleanDataType" />
         <value>false</value>
@@ -32,7 +35,7 @@
   </header>
 
   <nodes>
-    <eventNode id="137" name="DeployFail" x="80" y="976" width="126" height="64" variableName="deployEndEvent" scope="external" >
+    <eventNode id="137" name="DeployFail" x="21" y="973" width="126" height="64" variableName="deployEndEvent" scope="external" >
       <eventFilters>
         <eventFilter type="eventType" eventType="DeployFailEvent" />
       </eventFilters>
@@ -84,7 +87,14 @@ for(int i = 0; i &lt; parts.size(); i++) {
 }
 n.setMessage(message);
 n.setRecipient(project.getNotificationRecipient());
-notification.notify(n);</action>
+notification.notify(n);
+File deleteMe = (File) kcontext.getVariable("deleteHack");
+System.out.println("deleteMe: " + deleteMe);
+if (deleteMe != null) {
+    java.lang.Thread.sleep(10000);
+    boolean b = deleteMe.delete();
+    System.out.println("Delete result:" + b);
+}</action>
     </actionNode>
     <actionNode id="128" name="setStateToSuccess" x="83" y="880" width="123" height="64" >
         <action type="expression" dialect="java" >kcontext.setVariable("processSuccess", true);</action>
@@ -114,7 +124,10 @@ kcontext.setVariable("reportId", reportIdValue);</action>
     <join id="134" name="Join" x="304" y="784" width="80" height="64" type="1" />
     <actionNode id="16" name="Start build" x="196" y="280" width="112" height="64" >
         <action type="expression" dialect="java" >Long processId2 = (Long) kcontext.getVariable("processId");
-build.build(scm.export() processId2);</action>
+OpenEngSBFileModel m = scm.export();
+File f = m != null ? m.getFile() : null;
+kcontext.setVariable("deleteHack", f);
+build.build(m, processId2);</action>
     </actionNode>
     <join id="20" name="jointoSendReport" x="283" y="1072" width="123" height="49" type="2" />
     <join id="108" name="Join" x="406" y="544" width="80" height="40" type="1" />
@@ -156,9 +169,9 @@ build.build(scm.export() processId2);</action>
     <connection from="130" to="134" />
     <connection from="15" to="16" />
     <connection from="108" to="20" bendpoints="[444,724]" />
+    <connection from="137" to="20" />
     <connection from="134" to="20" />
     <connection from="140" to="20" />
-    <connection from="137" to="20" />
     <connection from="120" to="108" />
     <connection from="119" to="108" />
     <connection from="16" to="125" />
