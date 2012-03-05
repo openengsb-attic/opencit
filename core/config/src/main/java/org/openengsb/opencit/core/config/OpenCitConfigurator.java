@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.drools.runtime.process.WorkflowProcessInstance;
@@ -108,7 +109,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(Event.class.getCanonicalName());
         ruleManager.addImport(File.class.getCanonicalName());
         ruleManager.addImport(OpenEngSBFileModel.class.getCanonicalName());
-        ruleManager.addImport(Thread.class.getCanonicalName());
+        ruleManager.addImport(FileUtils.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
