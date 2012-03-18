@@ -31,6 +31,8 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.openengsb.core.api.Event;
 import org.openengsb.core.api.model.OpenEngSBFileModel;
@@ -110,6 +112,8 @@ public class OpenCitConfigurator {
         ruleManager.addImport(File.class.getCanonicalName());
         ruleManager.addImport(OpenEngSBFileModel.class.getCanonicalName());
         ruleManager.addImport(FileUtils.class.getCanonicalName());
+        ruleManager.addImport(Log.class.getCanonicalName());
+        ruleManager.addImport(LogFactory.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
