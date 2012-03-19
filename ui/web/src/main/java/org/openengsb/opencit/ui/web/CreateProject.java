@@ -187,11 +187,22 @@ public class CreateProject extends BasePage {
     private DropDownChoice<String> addConnectorDropdown(String domain, String dropdown) {
         List<ConnectorProvider> connectors = connectorUtil.findConnectorsForDomain(domain);
         List<String> names = new LinkedList<String>();
+        String[] queue_to_back = { "composite-connector", "external-connector-proxy" };
 
         for (ConnectorProvider c : connectors) {
             names.add(c.getId());
         }
-        
+
+        Collections.sort(names);
+        for(String s : queue_to_back) {
+            int index = names.indexOf(s);
+            if (index == -1) {
+                continue;
+            }
+            names.remove(index);
+            names.add(s);
+        }
+
         /* The unit tests do not have mocked connectors for all domains, so be prepared
          * for an empty list
          */
@@ -199,7 +210,6 @@ public class CreateProject extends BasePage {
             project.setDomainConnector(domain, names.get(0));
         }
         ConnectorModel model = new ConnectorModel(domain);
-        Collections.sort(names);
         DropDownChoice<String> ret = new DropDownChoice<String>(dropdown, model, names);
         return ret;
     }
