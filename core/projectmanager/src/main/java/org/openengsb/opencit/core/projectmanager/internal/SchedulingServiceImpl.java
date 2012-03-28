@@ -26,9 +26,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.workflow.WorkflowService;
-import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
@@ -41,6 +41,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     private WorkflowService workflowService;
     private AuthenticationManager authenticationManager;
     private ProjectManager projectManager;
+    private OsgiUtilsService osgiUtilsService;
 
     private ScheduledExecutorService scmScheduler = Executors.newScheduledThreadPool(1);
     private Map<String, PollTask> pollTasks = new HashMap<String, PollTask>();
@@ -119,7 +120,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     private PollTask createPollTask(Project project) {
-        WiringService ws = OpenEngSBCoreServices.getWiringService();
+        WiringService ws = getOsgiUtilsService().getOsgiServiceProxy(WiringService.class);
         ScmDomain scm = ws.getDomainEndpoint(ScmDomain.class, "scm", project.getId());
         PollTask pollTask = new PollTask(project.getId());
 
@@ -144,6 +145,14 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     public void setPollInterval(long pollInterval) {
         this.pollInterval = pollInterval;
+    }
+
+    public void setOsgiUtilsService(OsgiUtilsService osgiUtilsService) {
+        this.osgiUtilsService = osgiUtilsService;
+    }
+
+    public OsgiUtilsService getOsgiUtilsService() {
+        return osgiUtilsService;
     }
 
 }
