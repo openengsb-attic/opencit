@@ -103,15 +103,29 @@ public class Project implements Serializable {
         connectorConfigs.put(type, attribs);
     }
 
+    private boolean objectEquals(Object o1, Object o2) {
+        /* Needed for the persistence service */
+        if (o1 == null || o2 == null) {
+            return true;
+        }
+        return ObjectUtils.equals(o1, o2);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Project)) {
             return false;
         }
         Project other = (Project) obj;
-        return ObjectUtils.equals(id, other.id) && ObjectUtils.equals(state, other.state)
-                && ObjectUtils.equals(notificationRecipient, other.notificationRecipient)
-                && ObjectUtils.equals(services, other.services);
+
+        if (!objectEquals(id, other.id)) return false;
+        if (!objectEquals(notificationRecipient, other.notificationRecipient)) return false;
+        if (!objectEquals(services, other.services)) return false;
+        if (!objectEquals(state, other.state)) return false;
+        if (!objectEquals(connectorConfigs, other.connectorConfigs)) return false;
+        /* Ignore the last poll date, it will go away soon */
+
+        return true;
     }
 
     @Override
