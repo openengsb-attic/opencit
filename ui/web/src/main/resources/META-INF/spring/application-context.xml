@@ -45,6 +45,10 @@
     <property name="versionNumber" value="${openengsb.version.number}" />
   </bean>
 
+  <bean id="osgiUtilsService" class="org.openengsb.core.common.util.DefaultOsgiUtilsService">
+    <property name="bundleContext" ref="bundleContext" />
+  </bean>
+
   <osgi:list id="openengsbVersionService" interface="org.openengsb.ui.api.OpenEngSBVersionService" cardinality="0..N" />
   <osgi:reference id="serviceManager" interface="org.openengsb.core.api.ConnectorManager" />
   <osgi:reference id="eventService" interface="org.openengsb.core.api.workflow.WorkflowService" />

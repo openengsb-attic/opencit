@@ -42,8 +42,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.resource.ContextRelativeResource;
+import org.openengsb.core.api.OsgiUtilsService;
+import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextHolder;
-import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.Report;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -61,6 +62,8 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
 
     @PaxWicketBean
     private ProjectManager projectManager;
+    @PaxWicketBean
+    private OsgiUtilsService osgiUtilsService;
 
     @PaxWicketBean
     private SchedulingService scheduler;
@@ -187,7 +190,8 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
             protected List<Report> load() {
                 String projectId = ContextHolder.get().getCurrentContextId();
                 ReportDomain reportDomain;
-                reportDomain = OpenEngSBCoreServices.getWiringService().getDomainEndpoint(ReportDomain.class, "report");
+                WiringService ws = osgiUtilsService.getService(WiringService.class);
+                reportDomain = ws.getDomainEndpoint(ReportDomain.class, "report");
 
                 List<Report> reports = new ArrayList<Report>(reportDomain.getAllReports(projectId));
                 Comparator<Report> comparator = Collections.reverseOrder(new Comparator<Report>() {
@@ -231,8 +235,9 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                 item.add(new Link<Report>("report.link", item.getModel()) {
                     @Override
                     public void onClick() {
+                        WiringService ws = osgiUtilsService.getService(WiringService.class);
                         ReportModel reportModel =
-                            new ReportModel(ContextHolder.get().getCurrentContextId(), getModelObject());
+                            new ReportModel(ContextHolder.get().getCurrentContextId(), getModelObject(), ws);
                         setResponsePage(new ReportViewPage(reportModel));
                     }
                 });

@@ -20,32 +20,34 @@ package org.openengsb.opencit.ui.web.model;
 import java.util.List;
 
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextHolder;
-import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.Report;
 
 @SuppressWarnings("serial")
 public class ReportModel extends LoadableDetachableModel<Report> {
     private String reportName;
-
     private String projectId;
+    private WiringService ws;
 
-    public ReportModel(String projectId, String reportName) {
+    public ReportModel(String projectId, String reportName, WiringService ws) {
         this.projectId = projectId;
         this.reportName = reportName;
+        this.ws = ws;
     }
 
-    public ReportModel(String categoryName, Report report) {
+    public ReportModel(String categoryName, Report report, WiringService ws) {
         this.projectId = categoryName;
         this.reportName = report.getName();
+        this.ws = ws;
         setObject(report);
     }
 
     @Override
     protected Report load() {
         ReportDomain reportDomain;
-        reportDomain = OpenEngSBCoreServices.getWiringService().getDomainEndpoint(ReportDomain.class, "report");
+        reportDomain = ws.getDomainEndpoint(ReportDomain.class, "report");
 
         ContextHolder.get().setCurrentContextId(projectId);
         List<Report> reports = reportDomain.getAllReports(projectId);

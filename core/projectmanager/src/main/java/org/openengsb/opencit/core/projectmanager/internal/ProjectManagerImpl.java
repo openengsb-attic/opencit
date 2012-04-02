@@ -183,7 +183,7 @@ public class ProjectManagerImpl implements ProjectManager {
         Project project = getProject(projectId);
         ReportDomain reportDomain;
 
-        WiringService ws = getOsgiUtilsService().getOsgiServiceProxy(WiringService.class);
+        WiringService ws = osgiUtilsService.getService(WiringService.class);
         reportDomain = ws.getDomainEndpoint(ReportDomain.class, "report");
         scheduler.suspendScmPoller(projectId);
         reportDomain.removeCategory(projectId);
@@ -225,9 +225,5 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void setOsgiUtilsService(OsgiUtilsService osgiUtilsService) {
         this.osgiUtilsService = osgiUtilsService;
-    }
-
-    public OsgiUtilsService getOsgiUtilsService() {
-        return osgiUtilsService;
     }
 }

@@ -34,7 +34,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.context.ContextHolder;
-import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.core.common.util.DefaultOsgiUtilsService;
 import org.openengsb.core.common.util.ModelUtils;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
@@ -149,7 +148,6 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
     protected void setBundleContext(BundleContext bundleContext) {
         DefaultOsgiUtilsService serviceUtils = new DefaultOsgiUtilsService();
         serviceUtils.setBundleContext(bundleContext);
-        OpenEngSBCoreServices.setOsgiServiceUtils(serviceUtils);
         registerService(serviceUtils, new Hashtable<String, Object>(), OsgiUtilsService.class);
         this.bundleContext = bundleContext;
     }

@@ -120,7 +120,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     private PollTask createPollTask(Project project) {
-        WiringService ws = getOsgiUtilsService().getOsgiServiceProxy(WiringService.class);
+        WiringService ws = osgiUtilsService.getService(WiringService.class);
         ScmDomain scm = ws.getDomainEndpoint(ScmDomain.class, "scm", project.getId());
         PollTask pollTask = new PollTask(project.getId());
 
@@ -150,9 +150,4 @@ public class SchedulingServiceImpl implements SchedulingService {
     public void setOsgiUtilsService(OsgiUtilsService osgiUtilsService) {
         this.osgiUtilsService = osgiUtilsService;
     }
-
-    public OsgiUtilsService getOsgiUtilsService() {
-        return osgiUtilsService;
-    }
-
 }

@@ -59,6 +59,11 @@
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="projectManager" ref="projectManager" />
     <property name="pollInterval" value="600000" />
+    <property name="osgiUtilsService" ref="osgiUtilsService" />
+  </bean>
+
+  <bean id="osgiUtilsService" class="org.openengsb.core.common.util.DefaultOsgiUtilsService">
+    <property name="bundleContext" ref="blueprintBundleContext" />
   </bean>
 
   <bean id="osgiUtilsService" class="org.openengsb.core.common.util.DefaultOsgiUtilsService">

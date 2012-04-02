@@ -90,9 +90,11 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
 
         AuthenticationManager authenticationManager = makeAuthenticationManager();
         scheduler.setAuthenticationManager(authenticationManager);
-        
+        projectManager.setOsgiUtilsService(serviceUtils);
+
         workflowService = mock(WorkflowService.class);
         scheduler.setWorkflowService(workflowService);
+        scheduler.setOsgiUtilsService(serviceUtils);
 
         contextMock = Mockito.mock(ContextCurrentService.class);
 

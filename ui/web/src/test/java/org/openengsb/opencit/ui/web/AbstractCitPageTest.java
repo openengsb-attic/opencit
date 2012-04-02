@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openengsb.core.api.OsgiUtilsService;
-import org.openengsb.core.common.OpenEngSBCoreServices;
 import org.openengsb.core.common.util.DefaultOsgiUtilsService;
 import org.openengsb.core.test.AbstractOsgiMockServiceTest;
 import org.openengsb.ui.common.OpenEngSBWebSession;
@@ -119,7 +118,6 @@ public abstract class AbstractCitPageTest extends AbstractOsgiMockServiceTest {
     protected void setBundleContext(BundleContext bundleContext) {
         serviceUtils = new DefaultOsgiUtilsService();
         serviceUtils.setBundleContext(bundleContext);
-        OpenEngSBCoreServices.setOsgiServiceUtils(serviceUtils);
         registerService(serviceUtils, new Hashtable<String, Object>(), OsgiUtilsService.class);
         this.bundleContext = bundleContext;
         appContext.putBean(serviceUtils);
