@@ -40,7 +40,7 @@
         <eventFilter type="eventType" eventType="DeployFailEvent" />
       </eventFilters>
     </eventNode>
-    <start id="1" name="Start" x="147" y="16" width="80" height="64" />
+    <start id="1" name="Start" x="89" y="15" width="74" height="48" />
     <actionNode id="136" name="Deploy" x="238" y="880" width="80" height="64" >
         <action type="expression" dialect="mvel" >Long processId2 = (Long) kcontext.getVariable("processId");
 deploy.deploy(testEndEvent.getPath(), processId2);</action>
@@ -51,14 +51,14 @@ deploy.deploy(testEndEvent.getPath(), processId2);</action>
       </eventFilters>
     </eventNode>
     <join id="140" name="Join" x="238" y="976" width="80" height="64" type="1" />
-    <eventNode id="143" name="FlowStarted" x="259" y="16" width="116" height="64" >
+    <eventNode id="143" name="FlowStarted" x="208" y="21" width="116" height="64" >
       <eventFilters>
         <eventFilter type="eventType" eventType="FlowStartedEvent" />
       </eventFilters>
     </eventNode>
     <end id="6" name="End" x="304" y="1233" width="80" height="40" />
     <join id="142" name="Join" x="212" y="112" width="80" height="40" type="1" />
-    <actionNode id="129" name="finishIt" x="281" y="1153" width="126" height="48" >
+    <actionNode id="129" name="Send Report" x="371" y="1073" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
 Report r = report.generateReport(reportId, project.getId(), reportName);
@@ -92,10 +92,6 @@ try {
 } catch (Exception e) {
     Log log = LogFactory.getLog("CI&amp;T workflow");
     log.error("Error when sending notification:\n", e);
-}
-File deleteMe = (File) kcontext.getVariable("deleteHack");
-if (deleteMe != null) {
-    FileUtils.deleteDirectory(deleteMe);
 }</action>
     </actionNode>
     <actionNode id="128" name="setStateToSuccess" x="83" y="880" width="123" height="64" >
@@ -132,6 +128,12 @@ kcontext.setVariable("deleteHack", f);
 build.build(m, processId2);</action>
     </actionNode>
     <join id="20" name="jointoSendReport" x="283" y="1072" width="123" height="49" type="2" />
+    <actionNode id="146" name="Directory Delete Hack" x="631" y="1105" width="80" height="48" >
+        <action type="expression" dialect="java" >File deleteMe = (File) kcontext.getVariable("deleteHack");
+if (deleteMe != null) {
+    FileUtils.deleteDirectory(deleteMe);
+}</action>
+    </actionNode>
     <join id="108" name="Join" x="406" y="544" width="80" height="40" type="1" />
     <eventNode id="107" name="BuildSuccess" x="25" y="448" width="187" height="64" variableName="buildEndEvent" scope="external" >
       <eventFilters>
@@ -157,7 +159,7 @@ build.build(m, processId2);</action>
     <connection from="133" to="136" />
     <connection from="136" to="140" />
     <connection from="128" to="140" />
-    <connection from="129" to="6" />
+    <connection from="146" to="6" />
     <connection from="143" to="142" />
     <connection from="1" to="142" />
     <connection from="20" to="129" />
@@ -174,6 +176,7 @@ build.build(m, processId2);</action>
     <connection from="137" to="20" />
     <connection from="134" to="20" />
     <connection from="140" to="20" />
+    <connection from="129" to="146" />
     <connection from="120" to="108" />
     <connection from="119" to="108" />
     <connection from="16" to="125" />
