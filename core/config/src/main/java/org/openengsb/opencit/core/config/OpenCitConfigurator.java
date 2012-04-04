@@ -81,7 +81,10 @@ public class OpenCitConfigurator {
 
     public void init() {
         addGlobalsAndImports();
-        addWorkflow();
+        addWorkflow("ci");
+        addWorkflow("runBuild");
+        addWorkflow("runTests");
+        addWorkflow("runDeploy");
         addRules();
     }
 
@@ -168,12 +171,12 @@ public class OpenCitConfigurator {
         addGlobal(ProjectManager.class.getCanonicalName(), "projectManager");
     }
 
-    private void addWorkflow() {
+    private void addWorkflow(String name) {
         InputStream is = null;
         try {
-            is = getClass().getClassLoader().getResourceAsStream("ci.rf");
+            is = getClass().getClassLoader().getResourceAsStream(name + ".rf");
             String citWorkflow = IOUtils.toString(is);
-            RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Process, "ci");
+            RuleBaseElementId id = new RuleBaseElementId(RuleBaseElementType.Process, name);
             if (isPresent(id)) {
                 ruleManager.update(id, citWorkflow);
             } else {

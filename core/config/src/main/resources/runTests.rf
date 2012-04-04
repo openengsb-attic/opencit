@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<process xmlns="http://drools.org/drools-5.0/process"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+         xs:schemaLocation="http://drools.org/drools-5.0/process drools-processes-5.0.xsd"
+         type="RuleFlow" name="runTests" id="runTests" package-name="org.openengsb" >
+
+  <header>
+    <variables>
+      <variable name="buildEndEvent" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
+      </variable>
+      <variable name="testEndEvent" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
+      </variable>
+    </variables>
+  </header>
+
+  <nodes>
+    <start id="1" name="Start" x="12" y="240" width="48" height="48" />
+    <end id="2" name="End" x="370" y="320" width="48" height="48" />
+    <actionNode id="3" name="runTests" x="105" y="241" width="80" height="48" >
+        <action type="expression" dialect="java" >Long processId2 = (Long) kcontext.getVariable("processId");
+BuildSuccessEvent event = (BuildSuccessEvent) buildEndEvent;
+test.runTestsProcessId(event.getPath(), processId2);</action>
+    </actionNode>
+    <split id="4" name="Gateway" x="230" y="240" width="49" height="49" type="1" />
+    <eventNode id="5" name="TestSuccess" x="130" y="150" width="48" height="48" variableName="testEndEvent" scope="external" >
+      <eventFilters>
+        <eventFilter type="eventType" eventType="TestSuccessEvent" />
+      </eventFilters>
+    </eventNode>
+    <join id="6" name="Gateway" x="230" y="150" width="49" height="49" type="1" />
+    <eventNode id="7" name="TestFail" x="135" y="320" width="48" height="48" variableName="testEndEvent" scope="external" >
+      <eventFilters>
+        <eventFilter type="eventType" eventType="TestFailEvent" />
+      </eventFilters>
+    </eventNode>
+    <join id="8" name="Gateway" x="230" y="320" width="49" height="49" type="1" />
+    <end id="9" name="End" x="370" y="150" width="48" height="48" />
+  </nodes>
+
+  <connections>
+    <connection from="8" to="2" />
+    <connection from="1" to="3" />
+    <connection from="3" to="4" />
+    <connection from="5" to="6" />
+    <connection from="4" to="6" />
+    <connection from="4" to="8" />
+    <connection from="7" to="8" />
+    <connection from="6" to="9" />
+  </connections>
+
+</process>
