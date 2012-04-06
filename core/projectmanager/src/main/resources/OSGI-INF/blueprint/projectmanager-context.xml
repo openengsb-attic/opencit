@@ -66,10 +66,6 @@
     <property name="bundleContext" ref="blueprintBundleContext" />
   </bean>
 
-  <bean id="osgiUtilsService" class="org.openengsb.core.common.util.DefaultOsgiUtilsService">
-    <property name="bundleContext" ref="blueprintBundleContext" />
-  </bean>
-
   <service>
     <interfaces>
       <value>org.openengsb.opencit.core.projectmanager.SchedulingService</value>
