@@ -267,11 +267,6 @@
       <id>sonatype.repository</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
-    <repository>
-      <id>thirdparty</id>
-      <name>OpenEngSB 3rd Party Repository</name>
-      <url>http://maven.openengsb.org/nexus/content/repositories/thirdparty</url>
-    </repository>
   </repositories>
 
 </project>
