@@ -30,6 +30,7 @@ import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.ScmUpdate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -77,7 +78,7 @@ public class PollTask implements Runnable {
         log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
         List<CommitRef> updates = scm.update();
         if (updates != null && !updates.isEmpty()) {
-            scheduler.scheduleProjectForBuild(projectId);
+            scheduler.scheduleProjectForBuild(projectId, new ScmUpdate(updates));
         }
 
         try {

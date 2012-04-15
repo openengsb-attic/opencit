@@ -50,7 +50,9 @@ import org.openengsb.domain.report.Report;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.ui.web.model.ManualBuildReason;
 import org.openengsb.opencit.ui.web.model.ReportModel;
 import org.openengsb.opencit.ui.web.model.SpringBeanProvider;
 import org.openengsb.opencit.ui.web.util.StateUtil;
@@ -145,7 +147,9 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
 
             @Override
             public void onSubmit() {
-                scheduler.scheduleProjectForBuild(ContextHolder.get().getCurrentContextId());
+                String project = ContextHolder.get().getCurrentContextId();
+                BuildReason reason = new ManualBuildReason();
+                scheduler.scheduleProjectForBuild(project, reason);
                 setResponsePage(ProjectDetails.class);
             }
 

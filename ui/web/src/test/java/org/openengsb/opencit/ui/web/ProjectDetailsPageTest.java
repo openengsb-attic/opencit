@@ -19,6 +19,7 @@ package org.openengsb.opencit.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -50,6 +51,7 @@ import org.openengsb.domain.report.Report;
 import org.openengsb.domain.report.ReportPart;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
@@ -77,7 +79,7 @@ public class ProjectDetailsPageTest extends AbstractCitPageTest {
                 return null;
             }
         };
-        doAnswer(answer).when(scheduler).scheduleProjectForBuild(anyString());
+        doAnswer(answer).when(scheduler).scheduleProjectForBuild(anyString(), any(BuildReason.class));
         return mockedBeansMap;
     }
 

@@ -17,6 +17,8 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.openengsb.core.api.context.ContextHolder;
@@ -24,6 +26,7 @@ import org.openengsb.core.api.workflow.WorkflowException;
 import org.openengsb.core.api.workflow.WorkflowService;
 import org.openengsb.core.security.BundleAuthenticationToken;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,9 +39,11 @@ public class CITTask implements Callable<Boolean> {
     private long pid;
     private String projectId;
     private AuthenticationManager authenticationManager;
+    private BuildReason reason;
 
-    public CITTask(String projectId) {
+    public CITTask(String projectId, BuildReason reason) {
         this.projectId = projectId;
+        this.reason = reason;
     }
 
     @Override
@@ -47,7 +52,10 @@ public class CITTask implements Callable<Boolean> {
 
         ContextHolder.get().setCurrentContextId(projectId);
         try {
-            pid = workflowService.startFlow("ci");
+            Map<String, Object> parameterMap = new HashMap<String, Object>();
+            parameterMap.put("buildReason", reason);
+            
+            pid = workflowService.startFlow("ci", parameterMap);
             workflowService.waitForFlowToFinish(pid, TIMEOUT);
         } finally {
             scheduler.resumeScmPoller(projectId);
@@ -78,5 +86,4 @@ public class CITTask implements Callable<Boolean> {
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
-
 }

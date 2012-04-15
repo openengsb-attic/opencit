@@ -17,6 +17,7 @@
 
 package org.openengsb.opencit.core.projectmanager;
 
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 
 public interface SchedulingService {
@@ -29,7 +30,7 @@ public interface SchedulingService {
 
     boolean isProjectPolling(String projectid);
 
-    void scheduleProjectForBuild(String projectId);
+    void scheduleProjectForBuild(String projectId, BuildReason reason);
 
     void cancelProjectBuild(String projectId);
 

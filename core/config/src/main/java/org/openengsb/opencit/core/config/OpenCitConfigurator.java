@@ -55,12 +55,14 @@ import org.openengsb.domain.report.NoSuchReportException;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.Report;
 import org.openengsb.domain.report.ReportPart;
+import org.openengsb.domain.report.SimpleReportPart;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;
 import org.openengsb.domain.test.TestFailEvent;
 import org.openengsb.domain.test.TestStartEvent;
 import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
@@ -153,6 +155,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(Report.class.getCanonicalName());
         ruleManager.addImport(ReportPart.class.getCanonicalName());
         ruleManager.addImport(NoSuchReportException.class.getCanonicalName());
+        ruleManager.addImport(SimpleReportPart.class.getCanonicalName());
         addGlobal(ReportDomain.class.getCanonicalName(), "report");
     }
 
@@ -168,6 +171,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(ProjectManager.class.getCanonicalName());
         ruleManager.addImport(Project.class.getCanonicalName());
         ruleManager.addImport(State.class.getCanonicalName());
+        ruleManager.addImport(BuildReason.class.getCanonicalName());
         addGlobal(ProjectManager.class.getCanonicalName(), "projectManager");
     }
 

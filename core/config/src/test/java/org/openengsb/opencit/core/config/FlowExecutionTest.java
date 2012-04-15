@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.apache.commons.io.FileUtils;
@@ -133,7 +134,9 @@ public class FlowExecutionTest extends AbstractOsgiMockServiceTest {
         configurator.setRuleManager(directoryRuleSource);
         configurator.init();
 
-        long pid = service.startFlow("ci");
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("buildReason", new TestBuildReason());
+        long pid = service.startFlow("ci", params);
 
         service.processEvent(new BuildStartEvent(pid));
         service.processEvent(new BuildSuccessEvent(pid, "output", null));

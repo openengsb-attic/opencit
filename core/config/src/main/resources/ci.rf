@@ -36,14 +36,14 @@
 
   <nodes>
     <start id="1" name="Start" x="75" y="16" width="116" height="64" />
-    <end id="6" name="End" x="146" y="1180" width="80" height="40" />
+    <end id="6" name="End" x="146" y="1260" width="80" height="40" />
     <eventNode id="143" name="FlowStarted" x="223" y="16" width="116" height="64" >
       <eventFilters>
         <eventFilter type="eventType" eventType="FlowStartedEvent" />
       </eventFilters>
     </eventNode>
     <join id="142" name="Join" x="167" y="112" width="80" height="40" type="1" />
-    <actionNode id="129" name="Send Report" x="123" y="1020" width="126" height="48" >
+    <actionNode id="129" name="Send Report" x="123" y="1100" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
 Report r = report.generateReport(reportId, project.getId(), reportName);
@@ -85,51 +85,58 @@ kcontext.setVariable("processId", processIdValue);
 String reportIdValue = report.collectData();
 kcontext.setVariable("reportId", reportIdValue);</action>
     </actionNode>
-    <split id="153" name="Gateway" x="104" y="762" width="49" height="49" type="2" >
+    <split id="153" name="Gateway" x="104" y="842" width="49" height="49" type="2" >
       <constraints>
         <constraint toNodeId="154" toType="DROOLS_DEFAULT" name="deploySuccess" priority="1" type="rule" dialect="mvel" >eval(true)</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="deployFail" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
-    <actionNode id="154" name="setStateToSuccess" x="16" y="843" width="123" height="64" >
+    <actionNode id="154" name="setStateToSuccess" x="16" y="923" width="123" height="64" >
         <action type="expression" dialect="java" >kcontext.setVariable("processSuccess", true);</action>
     </actionNode>
-    <subProcess id="155" name="runDeploy" x="50" y="682" width="110" height="48" processId="runDeploy" >
+    <subProcess id="155" name="runDeploy" x="50" y="762" width="110" height="48" processId="runDeploy" >
       <mapping type="in" from="processId" to="processId" />
       <mapping type="in" from="testEndEvent" to="testEndEvent" />
       <mapping type="out" from="deployEndEvent" to="deployEndEvent" />
     </subProcess>
-    <join id="20" name="jointoSendReport" x="125" y="939" width="123" height="49" type="2" />
-    <actionNode id="146" name="Directory Delete Hack" x="146" y="1100" width="80" height="48" >
+    <actionNode id="156" name="reportBuildReason" x="135" y="280" width="144" height="48" >
+        <action type="expression" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
+String reportIdvalue = (String) kcontext.getVariable("reportId");
+
+SimpleReportPart part = new SimpleReportPart("Build Reason", "text/plain", reason.getDescription().getBytes());
+report.addReportPart(reportIdvalue, part);</action>
+    </actionNode>
+    <join id="20" name="jointoSendReport" x="125" y="1019" width="123" height="49" type="2" />
+    <actionNode id="146" name="Directory Delete Hack" x="146" y="1180" width="80" height="48" >
         <action type="expression" dialect="java" >OpenEngSBFileModel m = (OpenEngSBFileModel) kcontext.getVariable("sourcePath");
 File f = m != null ? m.getFile() : null;
 if (f != null) {
     FileUtils.deleteDirectory(f);
 }</action>
     </actionNode>
-    <subProcess id="147" name="runTests" x="71" y="521" width="110" height="48" processId="runTests" >
+    <subProcess id="147" name="runTests" x="71" y="601" width="110" height="48" processId="runTests" >
       <mapping type="in" from="processId" to="processId" />
       <mapping type="in" from="buildEndEvent" to="buildEndEvent" />
       <mapping type="out" from="testEndEvent" to="testEndEvent" />
     </subProcess>
-    <split id="148" name="Gateway" x="127" y="601" width="49" height="49" type="2" >
+    <split id="148" name="Gateway" x="127" y="681" width="49" height="49" type="2" >
       <constraints>
         <constraint toNodeId="155" toType="DROOLS_DEFAULT" name="testSuccess" priority="1" type="code" dialect="java" >return testEndEvent instanceof TestSuccessEvent;</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="testFail" priority="2" type="rule" dialect="java" >eval(true)</constraint>
       </constraints>
     </split>
-    <subProcess id="149" name="runBuild" x="152" y="360" width="110" height="48" processId="runBuild" >
+    <subProcess id="149" name="runBuild" x="152" y="440" width="110" height="48" processId="runBuild" >
       <mapping type="in" from="processId" to="processId" />
       <mapping type="in" from="sourcePath" to="sourcePath" />
       <mapping type="out" from="buildEndEvent" to="buildEndEvent" />
     </subProcess>
-    <split id="150" name="Gateway" x="183" y="440" width="49" height="49" type="2" >
+    <split id="150" name="Gateway" x="183" y="520" width="49" height="49" type="2" >
       <constraints>
         <constraint toNodeId="147" toType="DROOLS_DEFAULT" name="buildSuccess" priority="1" type="code" dialect="java" >return buildEndEvent instanceof BuildSuccessEvent;</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="buildFail" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
-    <actionNode id="151" name="checkoutFiles" x="167" y="280" width="80" height="48" >
+    <actionNode id="151" name="checkoutFiles" x="139" y="360" width="136" height="48" >
         <action type="expression" dialect="java" >OpenEngSBFileModel m = scm.export();
 kcontext.setVariable("sourcePath", m);</action>
     </actionNode>
@@ -144,6 +151,7 @@ kcontext.setVariable("sourcePath", m);</action>
     <connection from="155" to="153" />
     <connection from="153" to="154" />
     <connection from="148" to="155" />
+    <connection from="15" to="156" />
     <connection from="150" to="20" bendpoints="[408,758]" />
     <connection from="148" to="20" bendpoints="[242,829]" />
     <connection from="153" to="20" />
@@ -153,7 +161,7 @@ kcontext.setVariable("sourcePath", m);</action>
     <connection from="147" to="148" />
     <connection from="151" to="149" />
     <connection from="149" to="150" />
-    <connection from="15" to="151" />
+    <connection from="156" to="151" />
   </connections>
 
 </process>
