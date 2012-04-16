@@ -40,6 +40,8 @@ public interface ProjectManager {
 
     void deleteProject(String projectId) throws NoSuchProjectException;
 
+    boolean isRemotingAvailable();
+
     // FIXME: Remove this and load the EkbService properly into the workflow
     Notification createNotification();
 }

@@ -21,6 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.Session;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.WiringService;
@@ -47,24 +54,41 @@ import org.osgi.framework.BundleContext;
 public class ProjectManagerImpl implements ProjectManager {
 
     private PersistenceManager persistenceManager;
-
     private PersistenceService persistence;
-
     private ContextCurrentService contextService;
-
     private SchedulingService scheduler;
-
     private BundleContext bundleContext;
-
     private ConnectorUtil connectorUtil;
-
     private OsgiUtilsService osgiUtilsService;
+
+    private Connection connection;
+    private Session session = null;
+    private static final String URL = "tcp://127.0.0.1:6549";
+
+    private static Log log = LogFactory.getLog(ProjectManagerImpl.class);
+
+    private void initJms() throws JMSException {
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(URL);
+        connection = connectionFactory.createConnection();
+        connection.start();
+
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    }
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
         List<Project> projects = getAllProjects();
         for (Project project : projects) {
             scheduler.setupAndStartScmPoller(project);
+        }
+
+        try {
+            initJms();
+        } catch(JMSException e) {
+            /* Not a critical issue. Cascading CI&T will not work, but local operation will
+             * be fine.
+             */
+            log.info("Failed to init JMS", e);
         }
     }
 
@@ -225,5 +249,10 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void setOsgiUtilsService(OsgiUtilsService osgiUtilsService) {
         this.osgiUtilsService = osgiUtilsService;
+    }
+
+    @Override
+    public boolean isRemotingAvailable() {
+        return session != null;
     }
 }
