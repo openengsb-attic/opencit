@@ -17,6 +17,7 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -67,6 +68,8 @@ public class ProjectManagerImpl implements ProjectManager {
 
     private static Log log = LogFactory.getLog(ProjectManagerImpl.class);
 
+    private List<Project> projects;
+
     private void initJms() throws JMSException {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(URL);
         connection = connectionFactory.createConnection();
@@ -77,7 +80,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
-        List<Project> projects = getAllProjects();
+        projects = persistence.query(new Project(null));
         for (Project project : projects) {
             scheduler.setupAndStartScmPoller(project);
         }
@@ -97,6 +100,7 @@ public class ProjectManagerImpl implements ProjectManager {
         throws ProjectAlreadyExistsException, ConnectorValidationFailedException {
         checkId(project.getId());
         try {
+            projects.add(project);
             persistence.create(project);
             setupProject(project);
         } catch (PersistenceException e) {
@@ -157,24 +161,27 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     private void checkId(String id) throws ProjectAlreadyExistsException {
-        List<Project> projects = persistence.query(new Project(id));
-        if (!projects.isEmpty()) {
+        try {
+            getProject(id);
             throw new ProjectAlreadyExistsException("Project with id '" + id + "' already exists.");
+        } catch (NoSuchProjectException e) {
+            return;
         }
     }
 
     @Override
     public List<Project> getAllProjects() {
-        return persistence.query(new Project(null));
+        return new ArrayList<Project>(projects);
     }
 
     @Override
     public Project getProject(String projectId) throws NoSuchProjectException {
-        List<Project> projects = persistence.query(new Project(projectId));
-        if (projects.isEmpty()) {
-            throw new NoSuchProjectException("No project with id '" + projectId + "' found.");
+        for (Project p : projects) {
+            if (p.getId().equals(projectId)) {
+                return p;
+            }
         }
-        return projects.get(0);
+        throw new NoSuchProjectException("No project with id '" + projectId + "' found.");
     }
 
     @Override
@@ -211,6 +218,7 @@ public class ProjectManagerImpl implements ProjectManager {
         reportDomain = ws.getDomainEndpoint(ReportDomain.class, "report");
         scheduler.suspendScmPoller(projectId);
         reportDomain.removeCategory(projectId);
+        projects.remove(project);
         try {
             persistence.delete(project);
         } catch (PersistenceException e) {
