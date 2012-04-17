@@ -36,14 +36,14 @@
 
   <nodes>
     <start id="1" name="Start" x="75" y="16" width="116" height="64" />
-    <end id="6" name="End" x="146" y="1260" width="80" height="40" />
+    <end id="6" name="End" x="146" y="1340" width="80" height="40" />
     <eventNode id="143" name="FlowStarted" x="223" y="16" width="116" height="64" >
       <eventFilters>
         <eventFilter type="eventType" eventType="FlowStartedEvent" />
       </eventFilters>
     </eventNode>
     <join id="142" name="Join" x="167" y="112" width="80" height="40" type="1" />
-    <actionNode id="129" name="Send Report" x="123" y="1100" width="126" height="48" >
+    <actionNode id="129" name="Send Report" x="123" y="1180" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
 Report r = report.generateReport(reportId, project.getId(), reportName);
@@ -106,8 +106,13 @@ String reportIdvalue = (String) kcontext.getVariable("reportId");
 SimpleReportPart part = new SimpleReportPart("Build Reason", "text/plain", reason.getDescription().getBytes());
 report.addReportPart(reportIdvalue, part);</action>
     </actionNode>
-    <join id="20" name="jointoSendReport" x="125" y="1019" width="123" height="49" type="2" />
-    <actionNode id="146" name="Directory Delete Hack" x="146" y="1180" width="80" height="48" >
+    <actionNode id="157" name="storeBuild" x="33" y="1019" width="106" height="48" >
+        <action type="expression" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
+Project project = projectManager.getCurrentContextProject();
+projectManager.storeBuild(project, reason);</action>
+    </actionNode>
+    <join id="20" name="jointoSendReport" x="125" y="1099" width="123" height="49" type="2" />
+    <actionNode id="146" name="Directory Delete Hack" x="146" y="1260" width="80" height="48" >
         <action type="expression" dialect="java" >OpenEngSBFileModel m = (OpenEngSBFileModel) kcontext.getVariable("sourcePath");
 File f = m != null ? m.getFile() : null;
 if (f != null) {
@@ -152,10 +157,11 @@ kcontext.setVariable("sourcePath", m);</action>
     <connection from="153" to="154" />
     <connection from="148" to="155" />
     <connection from="15" to="156" />
+    <connection from="154" to="157" />
     <connection from="150" to="20" bendpoints="[408,758]" />
     <connection from="148" to="20" bendpoints="[242,829]" />
     <connection from="153" to="20" />
-    <connection from="154" to="20" />
+    <connection from="157" to="20" />
     <connection from="129" to="146" />
     <connection from="150" to="147" />
     <connection from="147" to="148" />

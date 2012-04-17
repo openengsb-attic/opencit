@@ -21,6 +21,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import javax.jms.Destination;
+import javax.jms.MessageProducer;
+
 import org.openengsb.core.api.model.ConnectorId;
 
 @SuppressWarnings("serial")
@@ -32,6 +35,9 @@ public class Project implements Serializable {
     }
 
     private ProjectPersist persistent;
+
+    private Destination topic;
+    private MessageProducer producer;
 
     public Project() {
         persistent = new ProjectPersist();
@@ -110,5 +116,21 @@ public class Project implements Serializable {
     @Override
     public int hashCode() {
         return persistent.hashCode();
+    }
+
+    public void setTopic(Destination topic) {
+        this.topic = topic;
+    }
+
+    public Destination getTopic() {
+        return topic;
+    }
+
+    public void setProducer(MessageProducer producer) {
+        this.producer = producer;
+    }
+
+    public MessageProducer getProducer() {
+        return producer;
     }
 }

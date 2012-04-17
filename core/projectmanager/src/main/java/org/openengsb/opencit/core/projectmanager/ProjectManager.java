@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.domain.notification.Notification;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
@@ -41,6 +42,8 @@ public interface ProjectManager {
     void deleteProject(String projectId) throws NoSuchProjectException;
 
     boolean isRemotingAvailable();
+
+    void storeBuild(Project project, BuildReason reason);
 
     // FIXME: Remove this and load the EkbService properly into the workflow
     Notification createNotification();

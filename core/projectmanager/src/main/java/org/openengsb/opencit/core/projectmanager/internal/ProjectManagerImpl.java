@@ -301,4 +301,10 @@ public class ProjectManagerImpl implements ProjectManager {
     public boolean isRemotingAvailable() {
         return session != null;
     }
+
+    @Override
+    public void storeBuild(Project project, BuildReason reason) {
+        Build build = new Build(project.getId(), reason);
+        persistence.create(build);
+    }
 }
