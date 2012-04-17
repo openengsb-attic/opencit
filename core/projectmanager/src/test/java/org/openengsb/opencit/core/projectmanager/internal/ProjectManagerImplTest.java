@@ -135,7 +135,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     private void addTestData() throws PersistenceException {
         Project project = new Project("test");
         project.setState(State.OK);
-        persistence.create(project);
+        persistence.create(project.getPersitentPart());
         projectManager.init();
     }
 

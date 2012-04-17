@@ -48,6 +48,7 @@ import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.ProjectPersist;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.osgi.framework.BundleContext;
@@ -68,7 +69,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
     private static Log log = LogFactory.getLog(ProjectManagerImpl.class);
 
-    private List<Project> projects;
+    private List<Project> projects = new ArrayList<Project>();
 
     private void initJms() throws JMSException {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(URL);
@@ -80,8 +81,10 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
-        projects = persistence.query(new Project(null));
-        for (Project project : projects) {
+        List<ProjectPersist> dbRead = persistence.query(new ProjectPersist(null));
+        for (ProjectPersist dbProject : dbRead) {
+            Project project = new Project(dbProject);
+            projects.add(project);
             scheduler.setupAndStartScmPoller(project);
         }
 
@@ -101,7 +104,7 @@ public class ProjectManagerImpl implements ProjectManager {
         checkId(project.getId());
         try {
             projects.add(project);
-            persistence.create(project);
+            persistence.create(project.getPersitentPart());
             setupProject(project);
         } catch (PersistenceException e) {
             throw new RuntimeException(e);
@@ -188,7 +191,7 @@ public class ProjectManagerImpl implements ProjectManager {
     public void updateProject(Project project) throws NoSuchProjectException {
         getProject(project.getId());
         try {
-            persistence.update(new Project(project.getId()), project);
+            persistence.update(new ProjectPersist(project.getId()), project.getPersitentPart());
             setDefaultConnectors(project);
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not update project", e);
@@ -220,7 +223,7 @@ public class ProjectManagerImpl implements ProjectManager {
         reportDomain.removeCategory(projectId);
         projects.remove(project);
         try {
-            persistence.delete(project);
+            persistence.delete(project.getPersitentPart());
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not delete project " + projectId, e);
         }
