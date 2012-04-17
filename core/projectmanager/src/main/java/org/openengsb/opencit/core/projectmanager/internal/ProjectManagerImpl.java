@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.jms.Connection;
+import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -46,6 +48,8 @@ import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.model.Build;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.ProjectPersist;
@@ -81,10 +85,33 @@ public class ProjectManagerImpl implements ProjectManager {
 
     private void startProject(Project project) {
         scheduler.setupAndStartScmPoller(project);
+
+        if (session == null) return;
+
+        try {
+            Destination topic;
+            topic = session.createQueue(project.getId());
+            MessageProducer producer = session.createProducer(topic);
+            project.setTopic(topic);
+            project.setProducer(producer);
+        } catch (JMSException e) {
+            log.error("Failed to create JMS topic for project " + project.getId(), e);
+        }
     }
 
     private void stopProject(Project project) {
         scheduler.suspendScmPoller(project.getId());
+
+        MessageProducer producer = project.getProducer();
+        if (producer != null) {
+            try {
+                producer.close();
+            } catch (JMSException e) {
+                log.error("Failed to close JMS topic for project " + project.getId(), e);
+            }
+        }
+        project.setProducer(null);
+        project.setTopic(null);
     }
 
     public void init() {
