@@ -79,13 +79,21 @@ public class ProjectManagerImpl implements ProjectManager {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 
+    private void startProject(Project project) {
+        scheduler.setupAndStartScmPoller(project);
+    }
+
+    private void stopProject(Project project) {
+        scheduler.suspendScmPoller(project.getId());
+    }
+
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
         List<ProjectPersist> dbRead = persistence.query(new ProjectPersist(null));
         for (ProjectPersist dbProject : dbRead) {
             Project project = new Project(dbProject);
             projects.add(project);
-            scheduler.setupAndStartScmPoller(project);
+            startProject(project);
         }
 
         try {
@@ -132,7 +140,7 @@ public class ProjectManagerImpl implements ProjectManager {
         createAndSetContext(project);
         createConnectors(project);
         setDefaultConnectors(project);
-        scheduler.setupAndStartScmPoller(project);
+        startProject(project);
     }
 
     private void createAndSetContext(Project project) {
@@ -219,7 +227,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
         WiringService ws = osgiUtilsService.getService(WiringService.class);
         reportDomain = ws.getDomainEndpoint(ReportDomain.class, "report");
-        scheduler.suspendScmPoller(projectId);
+        stopProject(project);
         reportDomain.removeCategory(projectId);
         projects.remove(project);
         try {
