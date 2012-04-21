@@ -78,6 +78,7 @@ public class OpenCitConfigurator {
         services.add("deploy");
         services.add("notification");
         services.add("report");
+        services.add("dependency");
         return services;
     }
 

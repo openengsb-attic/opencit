@@ -165,6 +165,13 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         projectPanel.add(feedbackPanel);
 
         initReportPanel();
+
+        this.add(new Link<Project>("addDependency") {
+            @Override
+            public void onClick() {
+                setResponsePage(AddDependency.class);
+            }
+        });
     }
 
     private void initReportPanel() {
