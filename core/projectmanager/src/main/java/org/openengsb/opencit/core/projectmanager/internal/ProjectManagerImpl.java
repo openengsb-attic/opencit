@@ -51,6 +51,7 @@ import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Build;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
+import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.ProjectPersist;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
@@ -306,5 +307,12 @@ public class ProjectManagerImpl implements ProjectManager {
     public void storeBuild(Project project, BuildReason reason) {
         Build build = new Build(project.getId(), reason);
         persistence.create(build);
+    }
+
+    @Override
+    public void addProjectDependency(Project project,
+            DependencyProperties dependency) {
+        // TODO Auto-generated method stub
+        
     }
 }
