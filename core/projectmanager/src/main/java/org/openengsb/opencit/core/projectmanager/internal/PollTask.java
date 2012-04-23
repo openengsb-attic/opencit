@@ -78,7 +78,8 @@ public class PollTask implements Runnable {
         log.debug("ContextHolder now has " + ContextHolder.get().getCurrentContextId());
         List<CommitRef> updates = scm.update();
         if (updates != null && !updates.isEmpty()) {
-            scheduler.scheduleProjectForBuild(projectId, new ScmUpdate(updates));
+            String commitId = updates.get(0).getStringRepresentation();
+            scheduler.scheduleProjectForBuild(projectId, new ScmUpdate(commitId));
         }
 
         try {
