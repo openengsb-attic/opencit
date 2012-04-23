@@ -46,7 +46,7 @@ public interface ProjectManager {
 
     void storeBuild(Project project, BuildReason reason);
 
-    void addProjectDependency(Project project, DependencyProperties dependency);
+    void addProjectDependency(Project project, DependencyProperties dependency) throws ConnectorValidationFailedException;
     
     // FIXME: Remove this and load the EkbService properly into the workflow
     Notification createNotification();

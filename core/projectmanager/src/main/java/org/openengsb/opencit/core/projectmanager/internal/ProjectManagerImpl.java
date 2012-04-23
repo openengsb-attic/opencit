@@ -266,6 +266,28 @@ public class ProjectManagerImpl implements ProjectManager {
         }
     }
 
+    @Override
+    public void storeBuild(Project project, BuildReason reason) {
+        Build build = new Build(project.getId(), reason, UUID.randomUUID());
+        persistence.create(build);
+    }
+
+    @Override
+    public void addProjectDependency(Project project, DependencyProperties dependency)
+        throws ConnectorValidationFailedException {
+        String domain = "dependency";
+        ConnectorConfig cfg = new ConnectorConfig(dependency.getConnector(), dependency.getConfig());
+
+        ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(),
+            cfg.getAttributeValues());
+        dependency.setConnectorInstance(id);
+        project.addDependency(dependency);
+
+        /* TODO: Create the topic listener */
+
+        updateProject(project);
+    }
+
     public void setPersistenceManager(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
     }
@@ -302,18 +324,5 @@ public class ProjectManagerImpl implements ProjectManager {
     @Override
     public boolean isRemotingAvailable() {
         return session != null;
-    }
-
-    @Override
-    public void storeBuild(Project project, BuildReason reason) {
-        Build build = new Build(project.getId(), reason, UUID.randomUUID());
-        persistence.create(build);
-    }
-
-    @Override
-    public void addProjectDependency(Project project,
-            DependencyProperties dependency) {
-        // TODO Auto-generated method stub
-        
     }
 }

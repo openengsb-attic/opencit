@@ -122,6 +122,10 @@ public class Project implements Serializable {
         this.topic = topic;
     }
 
+    public void addDependency(DependencyProperties dependency) {
+        persistent.addDependency(dependency);
+    }
+
     public Destination getTopic() {
         return topic;
     }

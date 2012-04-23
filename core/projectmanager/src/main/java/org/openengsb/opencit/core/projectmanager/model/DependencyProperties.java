@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openengsb.core.api.model.ConnectorId;
+
 @SuppressWarnings("serial")
 public class DependencyProperties implements Serializable {
     private String id;
     private String topic;
     private String connector;
     private Map<String, String> config = new HashMap<String, String>();
+    private ConnectorId ConnectorInstance;
 
     public void setId(String id) {
         this.id = id;
@@ -41,5 +44,13 @@ public class DependencyProperties implements Serializable {
 
     public Map<String, String> getConfig() {
         return config;
+    }
+
+    public void setConnectorInstance(ConnectorId connectorInstance) {
+        ConnectorInstance = connectorInstance;
+    }
+
+    public ConnectorId getConnectorInstance() {
+        return ConnectorInstance;
     }
 }

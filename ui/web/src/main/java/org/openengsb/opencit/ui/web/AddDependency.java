@@ -17,6 +17,7 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.openengsb.core.api.ConnectorProvider;
+import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.descriptor.AttributeDefinition;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
@@ -96,7 +97,12 @@ public class AddDependency extends BasePage {
         log.info("Adding dependency " + dependency.getId());
 
         Project project = projectManager.getCurrentContextProject();
-        projectManager.addProjectDependency(project, dependency);
+        try {
+            projectManager.addProjectDependency(project, dependency);
+        } catch (ConnectorValidationFailedException e) {
+            // FIXME: Properly report this to the user
+            log.error("Failed to add dependency: ", e);
+        }
 
         setResponsePage(ProjectDetails.class);
     }

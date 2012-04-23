@@ -28,13 +28,18 @@ import org.openengsb.core.api.model.ConnectorId;
 @SuppressWarnings("serial")
 public class ProjectPersist implements Serializable {
 
+    // Connectors
     private Map<String, ConnectorId> services;
     private Map<String, ConnectorConfig> connectorConfigs;
 
+    // Project state
     private Project.State state;
     private String id;
     private String notificationRecipient;
     private Date lastScmPollDate;
+
+    // Dependencies
+    private Map<String, DependencyProperties> dependencies = new HashMap<String, DependencyProperties>();
 
     public ProjectPersist() {
 
@@ -96,6 +101,10 @@ public class ProjectPersist implements Serializable {
             connectorConfigs = new HashMap<String, ConnectorConfig>();
         }
         connectorConfigs.put(type, attribs);
+    }
+
+    public void addDependency(DependencyProperties dep) {
+        dependencies.put(dep.getId(), dep);
     }
 
     private boolean objectEquals(Object o1, Object o2) {
