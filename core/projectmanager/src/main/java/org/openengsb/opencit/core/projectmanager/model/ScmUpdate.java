@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openengsb.domain.scm.CommitRef;
 
+@SuppressWarnings("serial")
 public class ScmUpdate extends BuildReason {
     private List<CommitRef> commits;
 

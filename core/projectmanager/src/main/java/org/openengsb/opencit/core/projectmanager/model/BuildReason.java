@@ -1,5 +1,8 @@
 package org.openengsb.opencit.core.projectmanager.model;
 
-public abstract class BuildReason {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public abstract class BuildReason implements Serializable {
     public abstract String getDescription();
 }
