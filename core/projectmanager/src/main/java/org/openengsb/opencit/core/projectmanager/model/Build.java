@@ -12,11 +12,10 @@ public class Build implements Serializable {
     private BuildReason reason;
     
     public Build() {
-        this.id = UUID.randomUUID();
     }
 
-    public Build(String projectId, BuildReason reason) {
-        this.id = UUID.randomUUID();
+    public Build(String projectId, BuildReason reason, UUID id) {
+        this.id = id;
         this.setProjectId(projectId);
         this.setReason(reason);
     }

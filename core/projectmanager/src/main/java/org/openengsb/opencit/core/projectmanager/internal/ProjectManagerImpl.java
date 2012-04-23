@@ -20,6 +20,7 @@ package org.openengsb.opencit.core.projectmanager.internal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.jms.Connection;
@@ -305,7 +306,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
     @Override
     public void storeBuild(Project project, BuildReason reason) {
-        Build build = new Build(project.getId(), reason);
+        Build build = new Build(project.getId(), reason, UUID.randomUUID());
         persistence.create(build);
     }
 
