@@ -18,6 +18,7 @@
 package org.openengsb.opencit.core.projectmanager.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,6 +106,10 @@ public class ProjectPersist implements Serializable {
 
     public void addDependency(DependencyProperties dep) {
         dependencies.put(dep.getId(), dep);
+    }
+
+    public Collection<DependencyProperties> getDependencies() {
+        return dependencies.values();
     }
 
     private boolean objectEquals(Object o1, Object o2) {

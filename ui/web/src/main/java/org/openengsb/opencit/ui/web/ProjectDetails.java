@@ -51,6 +51,7 @@ import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
+import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.ui.web.model.ManualBuildReason;
 import org.openengsb.opencit.ui.web.model.ReportModel;
@@ -165,13 +166,7 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         projectPanel.add(feedbackPanel);
 
         initReportPanel();
-
-        this.add(new Link<Project>("addDependency") {
-            @Override
-            public void onClick() {
-                setResponsePage(AddDependency.class);
-            }
-        });
+        initDependenciesPanel();
     }
 
     private void initReportPanel() {
@@ -192,6 +187,25 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
         if (reportsModel.getObject().isEmpty()) {
             noReports.setVisible(true);
         }
+    }
+
+    @SuppressWarnings("serial")
+    private void initDependenciesPanel() {
+        WebMarkupContainer dependenciesPanel = new WebMarkupContainer("dependenciesPanel");
+        dependenciesPanel.setOutputMarkupId(true);
+
+        IModel<List<DependencyProperties>> dependencyModel = createDependencyModel();
+
+        dependenciesPanel.add(createDependencyListView(dependencyModel, "dependenciesList"));
+
+        dependenciesPanel.add(new Link<Project>("addDependency") {
+            @Override
+            public void onClick() {
+                setResponsePage(AddDependency.class);
+            }
+        });
+
+        add(dependenciesPanel);
     }
 
     @SuppressWarnings("serial")
@@ -252,6 +266,33 @@ public class ProjectDetails extends BasePage implements SpringBeanProvider<Proje
                         setResponsePage(new ReportViewPage(reportModel));
                     }
                 });
+            }
+
+        };
+    }
+
+    @SuppressWarnings("serial")
+    private IModel<List<DependencyProperties>> createDependencyModel() {
+        return new LoadableDetachableModel<List<DependencyProperties>>() {
+            @Override
+            protected List<DependencyProperties> load() {
+                Project project = projectManager.getCurrentContextProject();
+
+                List<DependencyProperties> dependencies = new ArrayList<DependencyProperties>(project.getDependencies());
+                return dependencies;
+            }
+        };
+    }
+
+    @SuppressWarnings("serial")
+    private ListView<DependencyProperties> createDependencyListView(IModel<List<DependencyProperties>> depModel,
+            String id) {
+        return new ListView<DependencyProperties>(id, depModel) {
+
+            @Override
+            protected void populateItem(ListItem<DependencyProperties> item) {
+                DependencyProperties dep = item.getModelObject();
+                item.add(new Label("dependency.name", dep.getId()));
             }
 
         };

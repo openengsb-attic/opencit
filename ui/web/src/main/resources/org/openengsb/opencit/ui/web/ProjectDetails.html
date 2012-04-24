@@ -63,7 +63,18 @@
           no results info window
         </div>
       </div>
-      <a wicket:id="addDependency" href="#"><wicket:message key="addDependency.title">[addDependency.title]</wicket:message></a>
+      <div wicket:id="dependenciesPanel">
+        <h2><wicket:message key="dependencies.label">[dependencies.label]</wicket:message></h2>
+        <ul wicket:id="dependenciesList">
+          <li>
+            <h4>
+              <span wicket:id="dependency.name">[report.name]</span>
+            </h4>
+          </li>
+        </ul>
+        <br />
+        <a wicket:id="addDependency" href="#"><wicket:message key="addDependency.title">[addDependency.title]</wicket:message></a>
+      </div>
     </wicket:extend>
   </body>
 </html>

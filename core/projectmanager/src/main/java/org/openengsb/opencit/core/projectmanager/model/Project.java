@@ -18,6 +18,7 @@
 package org.openengsb.opencit.core.projectmanager.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -124,6 +125,10 @@ public class Project implements Serializable {
 
     public void addDependency(DependencyProperties dependency) {
         persistent.addDependency(dependency);
+    }
+
+    public Collection<DependencyProperties> getDependencies() {
+        return persistent.getDependencies();
     }
 
     public Destination getTopic() {
