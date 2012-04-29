@@ -31,19 +31,22 @@
       <variable name="deployEndEvent" >
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
       </variable>
+      <variable name="buildId" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="java.util.UUID" />
+      </variable>
     </variables>
   </header>
 
   <nodes>
     <start id="1" name="Start" x="75" y="16" width="116" height="64" />
-    <end id="6" name="End" x="146" y="1340" width="80" height="40" />
+    <end id="6" name="End" x="146" y="1420" width="80" height="40" />
     <eventNode id="143" name="FlowStarted" x="223" y="16" width="116" height="64" >
       <eventFilters>
         <eventFilter type="eventType" eventType="FlowStartedEvent" />
       </eventFilters>
     </eventNode>
     <join id="142" name="Join" x="167" y="112" width="80" height="40" type="1" />
-    <actionNode id="129" name="Send Report" x="123" y="1180" width="126" height="48" >
+    <actionNode id="129" name="Send Report" x="123" y="1260" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
 Report r = report.generateReport(reportId, project.getId(), reportName);
@@ -87,7 +90,7 @@ kcontext.setVariable("reportId", reportIdValue);</action>
     </actionNode>
     <split id="153" name="Gateway" x="104" y="842" width="49" height="49" type="2" >
       <constraints>
-        <constraint toNodeId="154" toType="DROOLS_DEFAULT" name="deploySuccess" priority="1" type="rule" dialect="mvel" >eval(true)</constraint>
+        <constraint toNodeId="154" toType="DROOLS_DEFAULT" name="deploySuccess" priority="1" type="code" dialect="java" >return deployEndEvent instanceof DeploySuccessEvent;</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="deployFail" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
@@ -109,10 +112,15 @@ report.addReportPart(reportIdvalue, part);</action>
     <actionNode id="157" name="storeBuild" x="33" y="1019" width="106" height="48" >
         <action type="expression" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
 Project project = projectManager.getCurrentContextProject();
-projectManager.storeBuild(project, reason);</action>
+buildId = projectManager.storeBuild(project, reason);</action>
     </actionNode>
-    <join id="20" name="jointoSendReport" x="125" y="1099" width="123" height="49" type="2" />
-    <actionNode id="146" name="Directory Delete Hack" x="146" y="1260" width="80" height="48" >
+    <join id="20" name="jointoSendReport" x="125" y="1179" width="123" height="49" type="2" />
+    <actionNode id="158" name="announceUpdate" x="59" y="1099" width="80" height="48" >
+        <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
+String location = ((DeploySuccessEvent) deployEndEvent).getArtifactLocation();
+projectManager.sendUpdateNotification(project, buildId, location);</action>
+    </actionNode>
+    <actionNode id="146" name="Directory Delete Hack" x="146" y="1340" width="80" height="48" >
         <action type="expression" dialect="java" >OpenEngSBFileModel m = (OpenEngSBFileModel) kcontext.getVariable("sourcePath");
 File f = m != null ? m.getFile() : null;
 if (f != null) {
@@ -161,7 +169,8 @@ kcontext.setVariable("sourcePath", m);</action>
     <connection from="150" to="20" bendpoints="[408,758]" />
     <connection from="148" to="20" bendpoints="[242,829]" />
     <connection from="153" to="20" />
-    <connection from="157" to="20" />
+    <connection from="158" to="20" />
+    <connection from="157" to="158" />
     <connection from="129" to="146" />
     <connection from="150" to="147" />
     <connection from="147" to="148" />

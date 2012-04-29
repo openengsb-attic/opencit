@@ -18,6 +18,9 @@
 package org.openengsb.opencit.core.projectmanager;
 
 import java.util.List;
+import java.util.UUID;
+
+import javax.jms.JMSException;
 
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.domain.notification.Notification;
@@ -43,8 +46,8 @@ public interface ProjectManager {
     void deleteProject(String projectId) throws NoSuchProjectException;
 
     boolean isRemotingAvailable();
-
-    void storeBuild(Project project, BuildReason reason);
+    UUID storeBuild(Project project, BuildReason reason);
+    void sendUpdateNotification(Project project, UUID storedBuild, String location) throws JMSException;
 
     void addProjectDependency(Project project, DependencyProperties dependency) throws ConnectorValidationFailedException;
     
