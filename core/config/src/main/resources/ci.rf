@@ -112,12 +112,14 @@ report.addReportPart(reportIdvalue, part);</action>
     <actionNode id="157" name="storeBuild" x="33" y="1019" width="106" height="48" >
         <action type="expression" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
 Project project = projectManager.getCurrentContextProject();
-buildId = projectManager.storeBuild(project, reason);</action>
+buildId = projectManager.storeBuild(project, reason);
+kcontext.setVariable("buildId", buildId);</action>
     </actionNode>
     <join id="20" name="jointoSendReport" x="125" y="1179" width="123" height="49" type="2" />
     <actionNode id="158" name="announceUpdate" x="59" y="1099" width="80" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String location = ((DeploySuccessEvent) deployEndEvent).getArtifactLocation();
+buildId = (UUID) kcontext.getVariable("buildId");
 projectManager.sendUpdateNotification(project, buildId, location);</action>
     </actionNode>
     <actionNode id="146" name="Directory Delete Hack" x="146" y="1340" width="80" height="48" >

@@ -26,9 +26,7 @@ import java.util.Map.Entry;
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
@@ -56,6 +54,7 @@ import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Build;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
+import org.openengsb.opencit.core.projectmanager.model.DepUpdateBuildReason;
 import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.ProjectPersist;
@@ -97,7 +96,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
         try {
             Destination topic;
-            topic = session.createQueue(project.getId());
+            topic = session.createTopic(project.getId());
             MessageProducer producer = session.createProducer(topic);
             project.setTopic(topic);
             project.setProducer(producer);
@@ -279,27 +278,16 @@ public class ProjectManagerImpl implements ProjectManager {
         return ret;
     }
 
-    class myListener implements MessageListener {
-        public Project project;
-        public String dependency;
-
-        @Override
-        public void onMessage(Message message) {
-            System.out.println("Got a message: " + message);
-        }
-    }
-
     private void startNotificationListener(Project project, DependencyProperties dependency) {
         try {
-            myListener listener = new myListener();
-            listener.project = project;
-            listener.dependency = dependency.getId();
+            UpdateTopicListener listener = new UpdateTopicListener();
+            listener.setProject(project);
+            listener.setDependency(dependency.getId());
+            listener.setProjectManager(this);
 
             Destination topic = session.createTopic(dependency.getTopic());
             MessageConsumer consumer = session.createConsumer(topic);
             consumer.setMessageListener(listener);
-
-            connection.start();
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
@@ -362,7 +350,10 @@ public class ProjectManagerImpl implements ProjectManager {
     @Override
     public void sendUpdateNotification(Project project, UUID storedBuild,
             String location) throws JMSException {
-        if (project.getProducer() == null) return;
+        if (project.getProducer() == null) {
+            log.trace("Project has no JMS producer, not sending update notification");
+            return;
+        }
         UpdateNotification n = new UpdateNotification();
 
         n.setBuildId(storedBuild);
@@ -371,5 +362,12 @@ public class ProjectManagerImpl implements ProjectManager {
         
         ObjectMessage msg = session.createObjectMessage(n);
         project.getProducer().send(msg);
+        log.trace("Update notification sent, topic " + project.getProducer().getDestination().toString());
+    }
+
+    public void processDependencyUpdate(Project project, String dependency,
+            UpdateNotification notification) {
+        BuildReason reason = new DepUpdateBuildReason(notification, dependency);
+        scheduler.scheduleProjectForBuild(project.getId(), reason);
     }
 }
