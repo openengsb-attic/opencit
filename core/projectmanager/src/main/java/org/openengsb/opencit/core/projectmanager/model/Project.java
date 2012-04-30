@@ -127,6 +127,10 @@ public class Project implements Serializable {
         persistent.addDependency(dependency);
     }
 
+    public DependencyProperties getDependency(String name) {
+        return persistent.getDependency(name);
+    }
+
     public Collection<DependencyProperties> getDependencies() {
         return persistent.getDependencies();
     }

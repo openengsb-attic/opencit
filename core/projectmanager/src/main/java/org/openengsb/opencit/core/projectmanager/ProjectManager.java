@@ -23,6 +23,8 @@ import java.util.UUID;
 import javax.jms.JMSException;
 
 import org.openengsb.core.api.ConnectorValidationFailedException;
+import org.openengsb.core.api.model.ConnectorId;
+import org.openengsb.domain.dependency.DependencyDomain;
 import org.openengsb.domain.notification.Notification;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
@@ -53,4 +55,6 @@ public interface ProjectManager {
     
     // FIXME: Remove this and load the EkbService properly into the workflow
     Notification createNotification();
+    // FIXME: Isn't there a nicer way to get a connector instance???
+    DependencyDomain getDependencyConnector(ConnectorId id);
 }

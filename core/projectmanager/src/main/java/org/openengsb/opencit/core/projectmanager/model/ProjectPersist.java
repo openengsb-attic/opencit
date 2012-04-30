@@ -146,4 +146,8 @@ public class ProjectPersist implements Serializable {
         hash += 31 * ObjectUtils.hashCode(services);
         return hash;
     }
+
+    public DependencyProperties getDependency(String name) {
+        return dependencies.get(name);
+    }
 }

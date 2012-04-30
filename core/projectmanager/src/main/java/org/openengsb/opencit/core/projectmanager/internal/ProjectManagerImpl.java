@@ -45,6 +45,7 @@ import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
 import org.openengsb.core.api.persistence.PersistenceService;
 import org.openengsb.core.common.util.ModelUtils;
+import org.openengsb.domain.dependency.DependencyDomain;
 import org.openengsb.domain.notification.Notification;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
@@ -369,5 +370,16 @@ public class ProjectManagerImpl implements ProjectManager {
             UpdateNotification notification) {
         BuildReason reason = new DepUpdateBuildReason(notification, dependency);
         scheduler.scheduleProjectForBuild(project.getId(), reason);
+    }
+
+    @Override
+    public synchronized DependencyDomain getDependencyConnector(ConnectorId id) {
+        Context context = contextService.getContext();
+        context.put("dependency", id.getInstanceId());
+
+        WiringService ws = osgiUtilsService.getService(WiringService.class);
+        DependencyDomain connector = ws.getDomainEndpoint(DependencyDomain.class, "dependency");
+        
+        return connector;
     }
 }

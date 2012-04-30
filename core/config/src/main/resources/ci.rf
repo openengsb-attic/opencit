@@ -18,6 +18,9 @@
       <variable name="sourcePath" >
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="OpenEngSBFileModel" />
       </variable>
+      <variable name="buildPath" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="OpenEngSBFileModel" />
+      </variable>
       <variable name="processSuccess" >
         <type name="org.drools.process.core.datatype.impl.type.BooleanDataType" />
         <value>false</value>
@@ -34,19 +37,22 @@
       <variable name="buildId" >
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="java.util.UUID" />
       </variable>
+      <variable name="mergeEndEvent" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
+      </variable>
     </variables>
   </header>
 
   <nodes>
-    <start id="1" name="Start" x="75" y="16" width="116" height="64" />
-    <end id="6" name="End" x="146" y="1420" width="80" height="40" />
-    <eventNode id="143" name="FlowStarted" x="223" y="16" width="116" height="64" >
+    <start id="1" name="Start" x="37" y="16" width="116" height="64" />
+    <eventNode id="143" name="FlowStarted" x="185" y="16" width="116" height="64" >
       <eventFilters>
         <eventFilter type="eventType" eventType="FlowStartedEvent" />
       </eventFilters>
     </eventNode>
-    <join id="142" name="Join" x="167" y="112" width="80" height="40" type="1" />
-    <actionNode id="129" name="Send Report" x="123" y="1260" width="126" height="48" >
+    <end id="6" name="End" x="146" y="1823" width="80" height="40" />
+    <join id="142" name="Join" x="129" y="112" width="80" height="40" type="1" />
+    <actionNode id="129" name="Send Report" x="123" y="1663" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String reportName = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS").format(new Date());
 Report r = report.generateReport(reportId, project.getId(), reportName);
@@ -82,79 +88,108 @@ try {
     log.error("Error when sending notification:\n", e);
 }</action>
     </actionNode>
-    <actionNode id="15" name="startFlow" x="128" y="184" width="159" height="64" >
+    <actionNode id="15" name="startFlow" x="90" y="184" width="159" height="64" >
         <action type="expression" dialect="java" >Long processIdValue = kcontext.getProcessInstance().getId();
 kcontext.setVariable("processId", processIdValue);
 String reportIdValue = report.collectData();
 kcontext.setVariable("reportId", reportIdValue);</action>
     </actionNode>
-    <split id="153" name="Gateway" x="104" y="842" width="49" height="49" type="2" >
+    <split id="153" name="Gateway" x="104" y="1245" width="49" height="49" type="2" >
       <constraints>
         <constraint toNodeId="154" toType="DROOLS_DEFAULT" name="deploySuccess" priority="1" type="code" dialect="java" >return deployEndEvent instanceof DeploySuccessEvent;</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="deployFail" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
-    <actionNode id="154" name="setStateToSuccess" x="16" y="923" width="123" height="64" >
+    <actionNode id="154" name="setStateToSuccess" x="16" y="1326" width="123" height="64" >
         <action type="expression" dialect="java" >kcontext.setVariable("processSuccess", true);</action>
     </actionNode>
-    <subProcess id="155" name="runDeploy" x="50" y="762" width="110" height="48" processId="runDeploy" >
+    <subProcess id="155" name="runDeploy" x="50" y="1165" width="110" height="48" processId="runDeploy" >
       <mapping type="in" from="processId" to="processId" />
       <mapping type="in" from="testEndEvent" to="testEndEvent" />
       <mapping type="out" from="deployEndEvent" to="deployEndEvent" />
     </subProcess>
-    <actionNode id="156" name="reportBuildReason" x="135" y="280" width="144" height="48" >
+    <actionNode id="156" name="reportBuildReason" x="97" y="280" width="144" height="48" >
         <action type="expression" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
 String reportIdvalue = (String) kcontext.getVariable("reportId");
 
 SimpleReportPart part = new SimpleReportPart("Build Reason", "text/plain", reason.getDescription().getBytes());
 report.addReportPart(reportIdvalue, part);</action>
     </actionNode>
-    <actionNode id="157" name="storeBuild" x="33" y="1019" width="106" height="48" >
+    <actionNode id="157" name="storeBuild" x="33" y="1422" width="106" height="48" >
         <action type="expression" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
 Project project = projectManager.getCurrentContextProject();
 buildId = projectManager.storeBuild(project, reason);
 kcontext.setVariable("buildId", buildId);</action>
     </actionNode>
-    <join id="20" name="jointoSendReport" x="125" y="1179" width="123" height="49" type="2" />
-    <actionNode id="158" name="announceUpdate" x="59" y="1099" width="80" height="48" >
+    <join id="20" name="jointoSendReport" x="125" y="1582" width="123" height="49" type="2" />
+    <actionNode id="158" name="announceUpdate" x="59" y="1502" width="80" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
 String location = ((DeploySuccessEvent) deployEndEvent).getArtifactLocation();
 buildId = (UUID) kcontext.getVariable("buildId");
 projectManager.sendUpdateNotification(project, buildId, location);</action>
     </actionNode>
-    <actionNode id="146" name="Directory Delete Hack" x="146" y="1340" width="80" height="48" >
+    <split id="159" name="Gateway" x="145" y="440" width="49" height="49" type="2" >
+      <constraints>
+        <constraint toNodeId="164" toType="DROOLS_DEFAULT" name="depUpdate" priority="1" type="code" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
+return reason instanceof DepUpdateBuildReason;</constraint>
+        <constraint toNodeId="163" toType="DROOLS_DEFAULT" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
+      </constraints>
+    </split>
+    <actionNode id="146" name="Directory Delete Hack" x="146" y="1743" width="80" height="48" >
         <action type="expression" dialect="java" >OpenEngSBFileModel m = (OpenEngSBFileModel) kcontext.getVariable("sourcePath");
 File f = m != null ? m.getFile() : null;
 if (f != null) {
     FileUtils.deleteDirectory(f);
 }</action>
     </actionNode>
-    <subProcess id="147" name="runTests" x="71" y="601" width="110" height="48" processId="runTests" >
+    <subProcess id="147" name="runTests" x="71" y="1004" width="110" height="48" processId="runTests" >
       <mapping type="in" from="processId" to="processId" />
       <mapping type="in" from="buildEndEvent" to="buildEndEvent" />
       <mapping type="out" from="testEndEvent" to="testEndEvent" />
     </subProcess>
-    <split id="148" name="Gateway" x="127" y="681" width="49" height="49" type="2" >
+    <split id="148" name="Gateway" x="127" y="1084" width="49" height="49" type="2" >
       <constraints>
         <constraint toNodeId="155" toType="DROOLS_DEFAULT" name="testSuccess" priority="1" type="code" dialect="java" >return testEndEvent instanceof TestSuccessEvent;</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="testFail" priority="2" type="rule" dialect="java" >eval(true)</constraint>
       </constraints>
     </split>
-    <subProcess id="149" name="runBuild" x="152" y="440" width="110" height="48" processId="runBuild" >
+    <subProcess id="149" name="runBuild" x="92" y="843" width="110" height="48" processId="runBuild" >
       <mapping type="in" from="processId" to="processId" />
       <mapping type="in" from="sourcePath" to="sourcePath" />
       <mapping type="out" from="buildEndEvent" to="buildEndEvent" />
     </subProcess>
-    <split id="150" name="Gateway" x="183" y="520" width="49" height="49" type="2" >
+    <split id="150" name="Gateway" x="147" y="923" width="49" height="49" type="2" >
       <constraints>
         <constraint toNodeId="147" toType="DROOLS_DEFAULT" name="buildSuccess" priority="1" type="code" dialect="java" >return buildEndEvent instanceof BuildSuccessEvent;</constraint>
         <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="buildFail" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
-    <actionNode id="151" name="checkoutFiles" x="139" y="360" width="136" height="48" >
+    <actionNode id="151" name="checkoutFiles" x="101" y="360" width="136" height="48" >
         <action type="expression" dialect="java" >OpenEngSBFileModel m = scm.export();
 kcontext.setVariable("sourcePath", m);</action>
     </actionNode>
+    <actionNode id="163" name="buildPath=sourcePath" x="32" y="521" width="126" height="48" >
+        <action type="expression" dialect="java" >OpenEngSBFileModel m = (OpenEngSBFileModel) kcontext.getVariable("buildPath");
+kcontext.setVariable("buildPath", m);</action>
+    </actionNode>
+    <split id="162" name="Gateway" x="204" y="601" width="49" height="49" type="2" >
+      <constraints>
+        <constraint toNodeId="165" toType="DROOLS_DEFAULT" name="mergeSuccess" priority="1" type="code" dialect="java" >return mergeEndEvent instanceof MergeSuccessEvent;</constraint>
+        <constraint toNodeId="20" toType="DROOLS_DEFAULT" name="mergeFail" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
+      </constraints>
+    </split>
+    <join id="161" name="Gateway" x="100" y="762" width="49" height="49" type="2" />
+    <actionNode id="166" name="Script" x="594" y="761" width="80" height="48" >
+        <action type="expression" dialect="java" >System.out.println("New stuff done");</action>
+    </actionNode>
+    <actionNode id="165" name="getBuildPath" x="122" y="682" width="80" height="48" >
+        <action type="expression" dialect="java" >MergeSuccessEvent e = (MergeSuccessEvent) kcontext.getVariable("mergeEndEvent");
+kcontext.setVariable("buildPath", e.getPath());</action>
+    </actionNode>
+    <subProcess id="164" name="runMerge" x="190" y="521" width="110" height="48" processId="runMerge" >
+      <mapping type="in" from="sourcePath" to="sourcePath" />
+      <mapping type="out" from="mergeEndEvent" to="mergeEndEvent" />
+    </subProcess>
   </nodes>
 
   <connections>
@@ -168,17 +203,26 @@ kcontext.setVariable("sourcePath", m);</action>
     <connection from="148" to="155" />
     <connection from="15" to="156" />
     <connection from="154" to="157" />
-    <connection from="150" to="20" bendpoints="[408,758]" />
-    <connection from="148" to="20" bendpoints="[242,829]" />
+    <connection from="150" to="20" bendpoints="[338,945]" />
+    <connection from="148" to="20" bendpoints="[248,1102]" />
     <connection from="153" to="20" />
     <connection from="158" to="20" />
+    <connection from="162" to="20" bendpoints="[471,741]" />
     <connection from="157" to="158" />
+    <connection from="151" to="159" />
     <connection from="129" to="146" />
     <connection from="150" to="147" />
     <connection from="147" to="148" />
-    <connection from="151" to="149" />
+    <connection from="166" to="149" />
     <connection from="149" to="150" />
     <connection from="156" to="151" />
+    <connection from="159" to="163" />
+    <connection from="164" to="162" />
+    <connection from="163" to="161" />
+    <connection from="165" to="161" />
+    <connection from="161" to="166" />
+    <connection from="162" to="165" />
+    <connection from="159" to="164" />
   </connections>
 
 </process>

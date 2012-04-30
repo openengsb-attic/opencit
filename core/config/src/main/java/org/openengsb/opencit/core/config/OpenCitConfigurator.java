@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.openengsb.core.api.Event;
+import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.core.api.model.OpenEngSBFileModel;
 import org.openengsb.core.api.workflow.RuleBaseException;
 import org.openengsb.core.api.workflow.RuleManager;
@@ -44,6 +45,9 @@ import org.openengsb.domain.build.BuildDomain;
 import org.openengsb.domain.build.BuildFailEvent;
 import org.openengsb.domain.build.BuildStartEvent;
 import org.openengsb.domain.build.BuildSuccessEvent;
+import org.openengsb.domain.dependency.DependencyDomain;
+import org.openengsb.domain.dependency.MergeFailEvent;
+import org.openengsb.domain.dependency.MergeSuccessEvent;
 import org.openengsb.domain.deploy.DeployDomain;
 import org.openengsb.domain.deploy.DeployFailEvent;
 import org.openengsb.domain.deploy.DeployStartEvent;
@@ -63,6 +67,7 @@ import org.openengsb.domain.test.TestStartEvent;
 import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
+import org.openengsb.opencit.core.projectmanager.model.DepUpdateBuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
@@ -84,6 +89,7 @@ public class OpenCitConfigurator {
     public void init() {
         addGlobalsAndImports();
         addWorkflow("ci");
+        addWorkflow("runMerge");
         addWorkflow("runBuild");
         addWorkflow("runTests");
         addWorkflow("runDeploy");
@@ -94,6 +100,7 @@ public class OpenCitConfigurator {
         try {
             addUtilImports();
             addScmGlobalsAndImports();
+            addDependencyGlobalsAndImports();
             addBuildGlobalsAndImports();
             addTestGlobalsAndImports();
             addDeployGlobalsAndImports();
@@ -119,11 +126,19 @@ public class OpenCitConfigurator {
         ruleManager.addImport(FileUtils.class.getCanonicalName());
         ruleManager.addImport(Log.class.getCanonicalName());
         ruleManager.addImport(LogFactory.class.getCanonicalName());
+        ruleManager.addImport(ConnectorId.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
         ruleManager.addImport(ScmDomain.class.getCanonicalName());
         addGlobal(ScmDomain.class.getCanonicalName(), "scm");
+    }
+
+    private void addDependencyGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport(MergeSuccessEvent.class.getCanonicalName());
+        ruleManager.addImport(MergeFailEvent.class.getCanonicalName());
+        ruleManager.addImport(DependencyDomain.class.getCanonicalName());
+        ruleManager.addImport(DepUpdateBuildReason.class.getCanonicalName());
     }
 
     private void addBuildGlobalsAndImports() throws RuleBaseException {

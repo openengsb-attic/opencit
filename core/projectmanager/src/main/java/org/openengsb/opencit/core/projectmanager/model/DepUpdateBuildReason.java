@@ -7,14 +7,30 @@ public class DepUpdateBuildReason extends BuildReason {
     private UpdateNotification update;
 
     public DepUpdateBuildReason(UpdateNotification update, String depName) {
-        this.update = update;
-        this.depName = depName;
+        this.setUpdate(update);
+        this.setDependencyName(depName);
     }
 
     @Override
     public String getDescription() {
         // TODO Internationalization
-        return "New build " + update.getBuildId() + " of dependency " + depName + ".";
+        return "New build " + getUpdate().getBuildId() + " of dependency " + depName + ".";
+    }
+
+    public void setUpdate(UpdateNotification update) {
+        this.update = update;
+    }
+
+    public UpdateNotification getUpdate() {
+        return update;
+    }
+
+    public void setDependencyName(String depName) {
+        this.depName = depName;
+    }
+
+    public String getDependencyName() {
+        return depName;
     }
 
 }

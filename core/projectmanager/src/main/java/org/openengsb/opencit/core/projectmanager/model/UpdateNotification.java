@@ -9,6 +9,7 @@ public class UpdateNotification implements Serializable {
     private UUID buildId;
     private String artifactLocation;
     private String feedbackQueue;
+    private String dependencyName;
 
     public void setBuildId(UUID buildId) {
         this.buildId = buildId;
@@ -29,5 +30,12 @@ public class UpdateNotification implements Serializable {
     }
     public String getFeedbackQueue() {
         return feedbackQueue;
+    }
+
+    public void setDependencyName(String dependencyName) {
+        this.dependencyName = dependencyName;
+    }
+    public String getDependencyName() {
+        return dependencyName;
     }
 }
