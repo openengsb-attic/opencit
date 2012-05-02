@@ -93,7 +93,9 @@ public class ProjectManagerImpl implements ProjectManager {
     private void startProject(Project project) {
         scheduler.setupAndStartScmPoller(project);
 
-        if (session == null) return;
+        if (session == null) {
+            return;
+        }
 
         try {
             Destination topic;
@@ -103,6 +105,10 @@ public class ProjectManagerImpl implements ProjectManager {
             project.setProducer(producer);
         } catch (JMSException e) {
             log.error("Failed to create JMS topic for project " + project.getId(), e);
+        }
+
+        for (DependencyProperties d : project.getDependencies()) {
+            startNotificationListener(project, d);
         }
     }
 
@@ -123,12 +129,6 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
-        List<ProjectPersist> dbRead = persistence.query(new ProjectPersist(null));
-        for (ProjectPersist dbProject : dbRead) {
-            Project project = new Project(dbProject);
-            projects.add(project);
-            startProject(project);
-        }
 
         try {
             initJms();
@@ -137,6 +137,13 @@ public class ProjectManagerImpl implements ProjectManager {
              * be fine.
              */
             log.info("Failed to init JMS", e);
+        }
+
+        List<ProjectPersist> dbRead = persistence.query(new ProjectPersist(null));
+        for (ProjectPersist dbProject : dbRead) {
+            Project project = new Project(dbProject);
+            projects.add(project);
+            startProject(project);
         }
     }
 
@@ -165,7 +172,7 @@ public class ProjectManagerImpl implements ProjectManager {
             String domain = e.getKey();
             ConnectorConfig cfg = e.getValue();
             ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(),
-                cfg.getAttributeValues());
+                cfg.getAttributeValues(), "");
             project.addService(domain, id);
         }
     }
@@ -301,7 +308,7 @@ public class ProjectManagerImpl implements ProjectManager {
         ConnectorConfig cfg = new ConnectorConfig(dependency.getConnector(), dependency.getConfig());
 
         ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(),
-            cfg.getAttributeValues());
+            cfg.getAttributeValues(), dependency.getId());
         dependency.setConnectorInstance(id);
         project.addDependency(dependency);
 
@@ -352,7 +359,7 @@ public class ProjectManagerImpl implements ProjectManager {
     public void sendUpdateNotification(Project project, UUID storedBuild,
             String location) throws JMSException {
         if (project.getProducer() == null) {
-            log.trace("Project has no JMS producer, not sending update notification");
+            log.info("Project has no JMS producer, not sending update notification");
             return;
         }
         UpdateNotification n = new UpdateNotification();
@@ -360,10 +367,10 @@ public class ProjectManagerImpl implements ProjectManager {
         n.setBuildId(storedBuild);
         n.setArtifactLocation(location);
         n.setFeedbackQueue("feedback");
-        
+
         ObjectMessage msg = session.createObjectMessage(n);
         project.getProducer().send(msg);
-        log.trace("Update notification sent, topic " + project.getProducer().getDestination().toString());
+        log.info("Update notification sent, topic " + project.getProducer().getDestination().toString());
     }
 
     public void processDependencyUpdate(Project project, String dependency,
@@ -373,13 +380,8 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     @Override
-    public synchronized DependencyDomain getDependencyConnector(ConnectorId id) {
-        Context context = contextService.getContext();
-        context.put("dependency", id.getInstanceId());
-
+    public synchronized DependencyDomain getDependencyConnector(Project project, String depname) {
         WiringService ws = osgiUtilsService.getService(WiringService.class);
-        DependencyDomain connector = ws.getDomainEndpoint(DependencyDomain.class, "dependency");
-        
-        return connector;
+        return ws.getDomainEndpoint(DependencyDomain.class, "dependency" + depname, project.getId());
     }
 }

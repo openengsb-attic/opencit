@@ -40,6 +40,9 @@
       <variable name="mergeEndEvent" >
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
       </variable>
+      <variable name="buildReason" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.opencit.core.projectmanager.model.DepUpdateBuildReason" />
+      </variable>
     </variables>
   </header>
 
@@ -50,7 +53,7 @@
         <eventFilter type="eventType" eventType="FlowStartedEvent" />
       </eventFilters>
     </eventNode>
-    <end id="6" name="End" x="146" y="1823" width="80" height="40" />
+    <end id="6" name="End" x="146" y="1903" width="80" height="40" />
     <join id="142" name="Join" x="129" y="112" width="80" height="40" type="1" />
     <actionNode id="129" name="Send Report" x="123" y="1663" width="126" height="48" >
         <action type="expression" dialect="java" >Project project = projectManager.getCurrentContextProject();
@@ -132,10 +135,10 @@ projectManager.sendUpdateNotification(project, buildId, location);</action>
       <constraints>
         <constraint toNodeId="164" toType="DROOLS_DEFAULT" name="depUpdate" priority="1" type="code" dialect="java" >BuildReason reason = (BuildReason) kcontext.getVariable("buildReason");
 return reason instanceof DepUpdateBuildReason;</constraint>
-        <constraint toNodeId="163" toType="DROOLS_DEFAULT" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
+        <constraint toNodeId="163" toType="DROOLS_DEFAULT" name="noDepupdate" priority="2" type="rule" dialect="mvel" >eval(true)</constraint>
       </constraints>
     </split>
-    <actionNode id="146" name="Directory Delete Hack" x="146" y="1743" width="80" height="48" >
+    <actionNode id="146" name="Directory Delete Hack" x="146" y="1823" width="80" height="48" >
         <action type="expression" dialect="java" >OpenEngSBFileModel m = (OpenEngSBFileModel) kcontext.getVariable("sourcePath");
 File f = m != null ? m.getFile() : null;
 if (f != null) {
@@ -179,14 +182,16 @@ kcontext.setVariable("buildPath", m);</action>
       </constraints>
     </split>
     <join id="161" name="Gateway" x="100" y="762" width="49" height="49" type="2" />
-    <actionNode id="166" name="Script" x="594" y="761" width="80" height="48" >
-        <action type="expression" dialect="java" >System.out.println("New stuff done");</action>
+    <actionNode id="167" name="sendFeedback" x="146" y="1743" width="80" height="48" >
+        <action type="expression" dialect="java" ></action>
     </actionNode>
     <actionNode id="165" name="getBuildPath" x="122" y="682" width="80" height="48" >
         <action type="expression" dialect="java" >MergeSuccessEvent e = (MergeSuccessEvent) kcontext.getVariable("mergeEndEvent");
 kcontext.setVariable("buildPath", e.getPath());</action>
     </actionNode>
     <subProcess id="164" name="runMerge" x="190" y="521" width="110" height="48" processId="runMerge" >
+      <mapping type="in" from="buildReason" to="buildReason" />
+      <mapping type="in" from="processId" to="processId" />
       <mapping type="in" from="sourcePath" to="sourcePath" />
       <mapping type="out" from="mergeEndEvent" to="mergeEndEvent" />
     </subProcess>
@@ -210,17 +215,17 @@ kcontext.setVariable("buildPath", e.getPath());</action>
     <connection from="162" to="20" bendpoints="[471,741]" />
     <connection from="157" to="158" />
     <connection from="151" to="159" />
-    <connection from="129" to="146" />
+    <connection from="167" to="146" />
     <connection from="150" to="147" />
     <connection from="147" to="148" />
-    <connection from="166" to="149" />
+    <connection from="161" to="149" />
     <connection from="149" to="150" />
     <connection from="156" to="151" />
     <connection from="159" to="163" />
     <connection from="164" to="162" />
     <connection from="163" to="161" />
     <connection from="165" to="161" />
-    <connection from="161" to="166" />
+    <connection from="129" to="167" />
     <connection from="162" to="165" />
     <connection from="159" to="164" />
   </connections>

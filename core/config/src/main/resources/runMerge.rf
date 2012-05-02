@@ -2,12 +2,15 @@
 <process xmlns="http://drools.org/drools-5.0/process"
          xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
          xs:schemaLocation="http://drools.org/drools-5.0/process drools-processes-5.0.xsd"
-         type="RuleFlow" name="runBuild" id="runBuild" package-name="org.openengsb" >
+         type="RuleFlow" name="runMerge" id="runMerge" package-name="org.openengsb" >
 
   <header>
     <variables>
       <variable name="mergeEndEvent" >
         <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="org.openengsb.core.api.Event" />
+      </variable>
+      <variable name="buildReason" >
+        <type name="org.drools.process.core.datatype.impl.type.ObjectDataType" className="DepUpdateBuildReason" />
       </variable>
     </variables>
   </header>
@@ -18,15 +21,14 @@
     <actionNode id="3" name="runMerge" x="105" y="241" width="80" height="48" >
         <action type="expression" dialect="java" >DepUpdateBuildReason reason = (DepUpdateBuildReason) kcontext.getVariable("buildReason");
 String location = reason.getUpdate().getArtifactLocation();
-System.out.println("Rebuilding because of update located at " + location);
 
 Project project = projectManager.getCurrentContextProject();
 String dependency = reason.getDependencyName();
-ConnectorId id = project.getDependency(dependency).getConnectorInstance();
-DependencyDomain dep = projectManager.getDependencyConnector(id);
+DependencyDomain dep = projectManager.getDependencyConnector(project, dependency);
 
 OpenEngSBFileModel path = (OpenEngSBFileModel) kcontext.getVariable("sourcePath");
-dep.merge(path, location);</action>
+Long processId2 = (Long) kcontext.getVariable("processId");
+dep.merge(path, location, processId2);</action>
     </actionNode>
     <split id="4" name="Gateway" x="230" y="240" width="49" height="49" type="1" />
     <eventNode id="5" name="MergeSuccess" x="19" y="152" width="48" height="48" variableName="mergeEndEvent" scope="external" >
