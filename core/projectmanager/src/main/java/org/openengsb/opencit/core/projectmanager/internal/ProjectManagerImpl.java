@@ -453,6 +453,17 @@ public class ProjectManagerImpl implements ProjectManager, MessageListener {
         WiringService ws = osgiUtilsService.getService(WiringService.class);
         NotificationDomain nd = ws.getDomainEndpoint(NotificationDomain.class, "notification", p.getId());
         nd.notify(n);
-        log.error("Notification sent.");
+        log.trace("Notification sent.");
+
+        if (!(build.getReason() instanceof DepUpdateBuildReason)) {
+            return;
+        }
+        DepUpdateBuildReason update = (DepUpdateBuildReason) build.getReason();
+
+        BuildFeedback newFeedback = new BuildFeedback();
+        newFeedback.setBuildId(update.getUpdate().getBuildId());
+        newFeedback.setResult(BuildFeedback.BuildResult.NESTEDFAIL);
+        newFeedback.setContactInfo(p.getNotificationRecipient());
+        newFeedback.setNestedFeedback(feedback);
     }
 }
