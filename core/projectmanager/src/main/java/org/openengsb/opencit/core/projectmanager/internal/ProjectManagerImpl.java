@@ -17,6 +17,7 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,9 @@ import java.util.Map.Entry;
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
@@ -47,12 +50,14 @@ import org.openengsb.core.api.persistence.PersistenceService;
 import org.openengsb.core.common.util.ModelUtils;
 import org.openengsb.domain.dependency.DependencyDomain;
 import org.openengsb.domain.notification.Notification;
+import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
 import org.openengsb.opencit.core.projectmanager.model.Build;
+import org.openengsb.opencit.core.projectmanager.model.BuildFeedback;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
 import org.openengsb.opencit.core.projectmanager.model.DepUpdateBuildReason;
@@ -64,7 +69,7 @@ import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.osgi.framework.BundleContext;
 
-public class ProjectManagerImpl implements ProjectManager {
+public class ProjectManagerImpl implements ProjectManager, MessageListener {
 
     private PersistenceManager persistenceManager;
     private PersistenceService persistence;
@@ -77,6 +82,9 @@ public class ProjectManagerImpl implements ProjectManager {
     private Connection connection;
     private Session session = null;
     private static final String URL = "tcp://127.0.0.1:6549";
+    private static final String feedbackQueueName = "feedback";
+    private Destination feedbackQueue;
+    private MessageConsumer feedbackConsumer;
 
     private static Log log = LogFactory.getLog(ProjectManagerImpl.class);
 
@@ -88,6 +96,10 @@ public class ProjectManagerImpl implements ProjectManager {
         connection.start();
 
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        feedbackQueue = session.createQueue(feedbackQueueName);
+        feedbackConsumer = session.createConsumer(feedbackQueue);
+        feedbackConsumer.setMessageListener(this);
     }
 
     private void startProject(Project project) {
@@ -366,7 +378,7 @@ public class ProjectManagerImpl implements ProjectManager {
 
         n.setBuildId(storedBuild);
         n.setArtifactLocation(location);
-        n.setFeedbackQueue("feedback");
+        n.setFeedbackQueue(feedbackQueueName);
 
         ObjectMessage msg = session.createObjectMessage(n);
         project.getProducer().send(msg);
@@ -383,5 +395,64 @@ public class ProjectManagerImpl implements ProjectManager {
     public synchronized DependencyDomain getDependencyConnector(Project project, String depname) {
         WiringService ws = osgiUtilsService.getService(WiringService.class);
         return ws.getDomainEndpoint(DependencyDomain.class, "dependency" + depname, project.getId());
+    }
+
+    @Override
+    public void sendFeedback(String channel, BuildFeedback feedback) {
+        if (session == null) {
+            /* OK, this shouldn't happen. How did we get the update notification if JMS is not up? */
+            log.info("JMS not started, not sending feedback\n");
+            return;
+        }
+
+        try {
+            Destination topic = session.createQueue(channel);
+            MessageProducer producer = session.createProducer(topic);
+            ObjectMessage msg = session.createObjectMessage(feedback);
+            producer.send(msg);
+            producer.close();
+            log.info("Build feedback sent\n");
+        } catch(JMSException e) {
+            log.error("Error delivering feedback", e);
+        }
+    }
+
+    @Override
+    public void onMessage(Message message) {
+        if (!(message instanceof ObjectMessage)) {
+            log.error("Received message is not an instance of ObjectMessage: " + message);
+            return;
+        }
+        ObjectMessage objectMessage = (ObjectMessage) message;
+        Serializable object;
+        try {
+            object = objectMessage.getObject();
+        } catch (JMSException e) {
+            log.error("Failed to de-serialize the JMS object", e);
+            return;
+        }
+        if (!(object instanceof BuildFeedback)) {
+            log.error("Received object is not an instance of BuildFeedback: " + object);
+            return;
+        }
+
+        BuildFeedback feedback = (BuildFeedback) object;
+        List<Build> builds = persistence.query(new Build(null, null, feedback.getBuildId()));
+        if (builds.size() != 1) {
+            log.error("Found " + builds.size() + " builds matching buildID " + feedback.getBuildId());
+            return;
+        }
+        Build build = builds.get(0);
+        Project p = getProject(build.getProjectId());
+
+        Notification n = createNotification();
+        n.setSubject("Feedback from dependent project: " + feedback.getResult());
+        n.setMessage(feedback.formatMessage());
+        n.setRecipient(p.getNotificationRecipient());
+
+        WiringService ws = osgiUtilsService.getService(WiringService.class);
+        NotificationDomain nd = ws.getDomainEndpoint(NotificationDomain.class, "notification", p.getId());
+        nd.notify(n);
+        log.error("Notification sent.");
     }
 }

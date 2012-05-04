@@ -25,6 +25,7 @@ import javax.jms.JMSException;
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.domain.dependency.DependencyDomain;
 import org.openengsb.domain.notification.Notification;
+import org.openengsb.opencit.core.projectmanager.model.BuildFeedback;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
 import org.openengsb.opencit.core.projectmanager.model.Project;
@@ -49,6 +50,7 @@ public interface ProjectManager {
     boolean isRemotingAvailable();
     UUID storeBuild(Project project, BuildReason reason);
     void sendUpdateNotification(Project project, UUID storedBuild, String location) throws JMSException;
+    void sendFeedback(String channel, BuildFeedback feedback);
 
     void addProjectDependency(Project project, DependencyProperties dependency) throws ConnectorValidationFailedException;
     

@@ -66,9 +66,11 @@ import org.openengsb.domain.test.TestFailEvent;
 import org.openengsb.domain.test.TestStartEvent;
 import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.BuildFeedback;
 import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.DepUpdateBuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.UpdateNotification;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
 public class OpenCitConfigurator {
@@ -139,6 +141,9 @@ public class OpenCitConfigurator {
         ruleManager.addImport(MergeFailEvent.class.getCanonicalName());
         ruleManager.addImport(DependencyDomain.class.getCanonicalName());
         ruleManager.addImport(DepUpdateBuildReason.class.getCanonicalName());
+        ruleManager.addImport(BuildFeedback.class.getCanonicalName());
+        ruleManager.addImport(BuildFeedback.BuildResult.class.getCanonicalName());
+        ruleManager.addImport(UpdateNotification.class.getCanonicalName());
     }
 
     private void addBuildGlobalsAndImports() throws RuleBaseException {
