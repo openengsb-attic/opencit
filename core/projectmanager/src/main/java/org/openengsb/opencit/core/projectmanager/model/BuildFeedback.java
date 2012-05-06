@@ -81,7 +81,7 @@ public class BuildFeedback implements Serializable {
 
         if (nestedFeedback != null) {
             ret += "Nested feedback:\n";
-            ret += nestedFeedback.toString();
+            ret += nestedFeedback.formatMessage();
         }
         return ret;
     }

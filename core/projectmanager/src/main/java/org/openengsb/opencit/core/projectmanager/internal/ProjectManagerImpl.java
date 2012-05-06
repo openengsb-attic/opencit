@@ -462,8 +462,13 @@ public class ProjectManagerImpl implements ProjectManager, MessageListener {
 
         BuildFeedback newFeedback = new BuildFeedback();
         newFeedback.setBuildId(update.getUpdate().getBuildId());
-        newFeedback.setResult(BuildFeedback.BuildResult.NESTEDFAIL);
+        if (feedback.getResult() == BuildFeedback.BuildResult.SUCCESS) {
+            newFeedback.setResult(BuildFeedback.BuildResult.SUCCESS);
+        } else {
+            newFeedback.setResult(BuildFeedback.BuildResult.NESTEDFAIL);
+        }
         newFeedback.setContactInfo(p.getNotificationRecipient());
         newFeedback.setNestedFeedback(feedback);
+        sendFeedback(update.getUpdate().getFeedbackQueue(), newFeedback);
     }
 }
