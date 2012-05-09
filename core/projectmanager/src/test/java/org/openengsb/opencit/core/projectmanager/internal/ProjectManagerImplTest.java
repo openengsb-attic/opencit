@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.Context;
@@ -132,11 +133,10 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         return authenticationManager;
     }
 
-    private void addTestData() throws PersistenceException {
+    private void addTestData() throws Exception {
         Project project = new Project("test");
         project.setState(State.OK);
-        persistence.create(project.getPersitentPart());
-        projectManager.init();
+        projectManager.createProject(project);
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     }
 
     @Test
-    public void updateProject_shouldWork() throws NoSuchProjectException, PersistenceException {
+    public void updateProject_shouldWork() throws Exception {
         addTestData();
         Project project = new Project("test");
         project.setState(State.OK);
@@ -191,7 +191,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     }
 
     @Test
-    public void deleteProject_souldWork() throws NoSuchProjectException, PersistenceException {
+    public void deleteProject_souldWork() throws Exception {
         addTestData();
         projectManager.deleteProject("test");
         List<Project> allProjects = projectManager.getAllProjects();
