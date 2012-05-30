@@ -245,7 +245,9 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
                 synchronized (this) {
                     this.notify();
                 }
-                Thread.sleep(200);
+                synchronized (this) {
+                    this.wait();
+                }
                 return null;
             }
         };
@@ -257,7 +259,9 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         assertThat(scheduler.isProjectBuilding("test2"), is(true));
         assertThat(scheduler.isProjectPolling("test2"), is(false));
         verify(scmMock).update();
-
+        synchronized (answer) {
+            answer.notify();
+        }
     }
 
     @Test
