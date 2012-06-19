@@ -255,7 +255,13 @@ public class ProjectManagerImpl implements ProjectManager, MessageListener {
             persistence.update(new ProjectPersist(project.getId()), project.getPersitentPart());
             setDefaultConnectors(project);
         } catch (PersistenceException e) {
-            throw new RuntimeException("Could not update project", e);
+            try {
+            List<ProjectPersist> dbRead = persistence.query(new ProjectPersist(project.getId()));
+            persistence.delete(dbRead);
+            persistence.create(project.getPersitentPart());
+            } catch (PersistenceException e2) {
+                throw new RuntimeException("Could not update project", e2);
+            }
         }
     }
 
