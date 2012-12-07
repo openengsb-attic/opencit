@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.drools.runtime.process.WorkflowProcessInstance;
 import org.openengsb.core.api.Event;
+import org.openengsb.core.api.model.ConnectorId;
 import org.openengsb.core.api.model.OpenEngSBFileModel;
 import org.openengsb.core.api.workflow.RuleBaseException;
 import org.openengsb.core.api.workflow.RuleManager;
@@ -44,6 +45,9 @@ import org.openengsb.domain.build.BuildDomain;
 import org.openengsb.domain.build.BuildFailEvent;
 import org.openengsb.domain.build.BuildStartEvent;
 import org.openengsb.domain.build.BuildSuccessEvent;
+import org.openengsb.domain.dependency.DependencyDomain;
+import org.openengsb.domain.dependency.MergeFailEvent;
+import org.openengsb.domain.dependency.MergeSuccessEvent;
 import org.openengsb.domain.deploy.DeployDomain;
 import org.openengsb.domain.deploy.DeployFailEvent;
 import org.openengsb.domain.deploy.DeployStartEvent;
@@ -55,13 +59,18 @@ import org.openengsb.domain.report.NoSuchReportException;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.domain.report.Report;
 import org.openengsb.domain.report.ReportPart;
+import org.openengsb.domain.report.SimpleReportPart;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.domain.test.TestDomain;
 import org.openengsb.domain.test.TestFailEvent;
 import org.openengsb.domain.test.TestStartEvent;
 import org.openengsb.domain.test.TestSuccessEvent;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
+import org.openengsb.opencit.core.projectmanager.model.BuildFeedback;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
+import org.openengsb.opencit.core.projectmanager.model.DepUpdateBuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.UpdateNotification;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
 public class OpenCitConfigurator {
@@ -82,6 +91,7 @@ public class OpenCitConfigurator {
     public void init() {
         addGlobalsAndImports();
         addWorkflow("ci");
+        addWorkflow("runMerge");
         addWorkflow("runBuild");
         addWorkflow("runTests");
         addWorkflow("runDeploy");
@@ -92,6 +102,7 @@ public class OpenCitConfigurator {
         try {
             addUtilImports();
             addScmGlobalsAndImports();
+            addDependencyGlobalsAndImports();
             addBuildGlobalsAndImports();
             addTestGlobalsAndImports();
             addDeployGlobalsAndImports();
@@ -117,11 +128,22 @@ public class OpenCitConfigurator {
         ruleManager.addImport(FileUtils.class.getCanonicalName());
         ruleManager.addImport(Log.class.getCanonicalName());
         ruleManager.addImport(LogFactory.class.getCanonicalName());
+        ruleManager.addImport(ConnectorId.class.getCanonicalName());
     }
 
     private void addScmGlobalsAndImports() throws RuleBaseException {
         ruleManager.addImport(ScmDomain.class.getCanonicalName());
         addGlobal(ScmDomain.class.getCanonicalName(), "scm");
+    }
+
+    private void addDependencyGlobalsAndImports() throws RuleBaseException {
+        ruleManager.addImport(MergeSuccessEvent.class.getCanonicalName());
+        ruleManager.addImport(MergeFailEvent.class.getCanonicalName());
+        ruleManager.addImport(DependencyDomain.class.getCanonicalName());
+        ruleManager.addImport(DepUpdateBuildReason.class.getCanonicalName());
+        ruleManager.addImport(BuildFeedback.class.getCanonicalName());
+        ruleManager.addImport(BuildFeedback.BuildResult.class.getCanonicalName());
+        ruleManager.addImport(UpdateNotification.class.getCanonicalName());
     }
 
     private void addBuildGlobalsAndImports() throws RuleBaseException {
@@ -153,6 +175,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(Report.class.getCanonicalName());
         ruleManager.addImport(ReportPart.class.getCanonicalName());
         ruleManager.addImport(NoSuchReportException.class.getCanonicalName());
+        ruleManager.addImport(SimpleReportPart.class.getCanonicalName());
         addGlobal(ReportDomain.class.getCanonicalName(), "report");
     }
 
@@ -168,6 +191,7 @@ public class OpenCitConfigurator {
         ruleManager.addImport(ProjectManager.class.getCanonicalName());
         ruleManager.addImport(Project.class.getCanonicalName());
         ruleManager.addImport(State.class.getCanonicalName());
+        ruleManager.addImport(BuildReason.class.getCanonicalName());
         addGlobal(ProjectManager.class.getCanonicalName(), "projectManager");
     }
 

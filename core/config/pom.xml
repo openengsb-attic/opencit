@@ -79,6 +79,12 @@
     </dependency>
     <dependency>
       <groupId>org.openengsb.domain</groupId>
+      <artifactId>org.openengsb.domain.dependency</artifactId>
+      <version>${openengsb.domain.dependency.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.domain</groupId>
       <artifactId>org.openengsb.domain.build</artifactId>
       <version>${openengsb.domain.build.version}</version>
       <scope>provided</scope>

@@ -18,63 +18,66 @@
 package org.openengsb.opencit.core.projectmanager.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
+import javax.jms.Destination;
+import javax.jms.MessageProducer;
+
 import org.openengsb.core.api.model.ConnectorId;
 
 @SuppressWarnings("serial")
 public class Project implements Serializable {
 
-    private Map<String, ConnectorId> services;
-    private Map<String, ConnectorConfig> connectorConfigs;
-
     public enum State {
-            OK,
-            FAILURE;
+        OK,
+        FAILURE;
     }
 
-    private State state;
-    private String id;
-    private String notificationRecipient;
-    private Date lastScmPollDate;
+    private ProjectPersist persistent;
+
+    private Destination topic;
+    private MessageProducer producer;
 
     public Project() {
-
+        persistent = new ProjectPersist();
     }
 
     public Project(String id) {
-        this.id = id;
+        persistent = new ProjectPersist(id);
+    }
+
+    public Project(ProjectPersist p) {
+        persistent = p;
     }
 
     public String getId() {
-        return id;
+        return persistent.getId();
     }
 
     public void setNotificationRecipient(String notificationRecipient) {
-        this.notificationRecipient = notificationRecipient;
+        persistent.setNotificationRecipient(notificationRecipient);
     }
 
     public String getNotificationRecipient() {
-        return notificationRecipient;
+        return persistent.getNotificationRecipient();
     }
 
     public State getState() {
-        return state;
+        return persistent.getState();
     }
 
     public void setState(State state) {
-        this.state = state;
+        persistent.setState(state);
     }
 
     public Date getLastScmPollDate() {
-        return this.lastScmPollDate;
+        return persistent.getLastScmPollDate();
     }
 
     public void setLastScmPollDate(Date lastScmPollDate) {
-        this.lastScmPollDate = lastScmPollDate;
+        persistent.setLastScmPollDate(lastScmPollDate);
     }
 
     /**
@@ -82,33 +85,19 @@ public class Project implements Serializable {
      * the created services, key is the type, and value the id of the service
      */
     public Map<String, ConnectorId> getServices() {
-        return services;
+        return persistent.getServices();
     }
 
     public void addService(String type, ConnectorId connectorId) {
-        if (services == null) {
-            services = new HashMap<String, ConnectorId>();
-        }
-        services.put(type, connectorId);
+        persistent.addService(type, connectorId);
     }
 
     public Map<String, ConnectorConfig> getConnectorConfigs() {
-        return connectorConfigs;
+        return persistent.getConnectorConfigs();
     }
 
     public void addConnectorConfig(String type, ConnectorConfig attribs) {
-        if (connectorConfigs == null) {
-            connectorConfigs = new HashMap<String, ConnectorConfig>();
-        }
-        connectorConfigs.put(type, attribs);
-    }
-
-    private boolean objectEquals(Object o1, Object o2) {
-        /* Needed for the persistence service */
-        if (o1 == null || o2 == null) {
-            return true;
-        }
-        return ObjectUtils.equals(o1, o2);
+        persistent.addConnectorConfig(type, attribs);
     }
 
     @Override
@@ -118,23 +107,43 @@ public class Project implements Serializable {
         }
         Project other = (Project) obj;
 
-        if (!objectEquals(id, other.id)) return false;
-        if (!objectEquals(notificationRecipient, other.notificationRecipient)) return false;
-        if (!objectEquals(services, other.services)) return false;
-        if (!objectEquals(state, other.state)) return false;
-        if (!objectEquals(connectorConfigs, other.connectorConfigs)) return false;
-        /* Ignore the last poll date, it will go away soon */
+        return persistent.equals(other.getPersitentPart());
+    }
 
-        return true;
+    public ProjectPersist getPersitentPart() {
+        return persistent;
     }
 
     @Override
     public int hashCode() {
-        int hash = 17;
-        hash += 31 * ObjectUtils.hashCode(id);
-        hash += 31 * ObjectUtils.hashCode(state);
-        hash += 31 * ObjectUtils.hashCode(notificationRecipient);
-        hash += 31 * ObjectUtils.hashCode(services);
-        return hash;
+        return persistent.hashCode();
+    }
+
+    public void setTopic(Destination topic) {
+        this.topic = topic;
+    }
+
+    public void addDependency(DependencyProperties dependency) {
+        persistent.addDependency(dependency);
+    }
+
+    public DependencyProperties getDependency(String name) {
+        return persistent.getDependency(name);
+    }
+
+    public Collection<DependencyProperties> getDependencies() {
+        return persistent.getDependencies();
+    }
+
+    public Destination getTopic() {
+        return topic;
+    }
+
+    public void setProducer(MessageProducer producer) {
+        this.producer = producer;
+    }
+
+    public MessageProducer getProducer() {
+        return producer;
     }
 }

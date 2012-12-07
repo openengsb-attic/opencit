@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.junit.Before;
@@ -40,6 +41,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.Context;
@@ -131,11 +133,10 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         return authenticationManager;
     }
 
-    private void addTestData() throws PersistenceException {
+    private void addTestData() throws Exception {
         Project project = new Project("test");
         project.setState(State.OK);
-        persistence.create(project);
-        projectManager.init();
+        projectManager.createProject(project);
     }
 
     @Test
@@ -175,7 +176,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     }
 
     @Test
-    public void updateProject_shouldWork() throws NoSuchProjectException, PersistenceException {
+    public void updateProject_shouldWork() throws Exception {
         addTestData();
         Project project = new Project("test");
         project.setState(State.OK);
@@ -190,7 +191,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     }
 
     @Test
-    public void deleteProject_souldWork() throws NoSuchProjectException, PersistenceException {
+    public void deleteProject_souldWork() throws Exception {
         addTestData();
         projectManager.deleteProject("test");
         List<Project> allProjects = projectManager.getAllProjects();
@@ -229,6 +230,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testPollerShouldTriggerBuild() throws Exception {
         List<CommitRef> fakeCommits = new LinkedList<CommitRef>();
         fakeCommits.add(Mockito.mock(CommitRef.class));
@@ -236,14 +238,16 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         Project project = new Project("test2");
         project.setNotificationRecipient("test@test.com");
         when(scmMock.update()).thenReturn(fakeCommits);
-        when(workflowService.startFlow("ci")).thenReturn(1L);
+        when(workflowService.startFlow(eq("ci"), any(Map.class))).thenReturn(1L);
         Answer<?> answer = new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
                 synchronized (this) {
                     this.notify();
                 }
-                Thread.sleep(200);
+                synchronized (this) {
+                    this.wait();
+                }
                 return null;
             }
         };
@@ -255,16 +259,19 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         assertThat(scheduler.isProjectBuilding("test2"), is(true));
         assertThat(scheduler.isProjectPolling("test2"), is(false));
         verify(scmMock).update();
-
+        synchronized (answer) {
+            answer.notify();
+        }
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void build_shouldSuspendPoller() throws Exception {
         List<CommitRef> fakeCommits = new LinkedList<CommitRef>();
         fakeCommits.add(Mockito.mock(CommitRef.class));
 
         final Semaphore eventSync = new Semaphore(0);
-        when(workflowService.startFlow("ci")).thenReturn(1L);
+        when(workflowService.startFlow(eq("ci"), any(Map.class))).thenReturn(1L);
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
@@ -294,9 +301,10 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void buildManually_shouldSuspendPoller() throws Exception {
         final Semaphore eventSync = new Semaphore(0);
-        when(workflowService.startFlow("ci")).thenReturn(1L);
+        when(workflowService.startFlow(eq("ci"), any(Map.class))).thenReturn(1L);
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
@@ -310,7 +318,7 @@ public class ProjectManagerImplTest extends AbstractOsgiMockServiceTest {
         project.setState(State.OK);
         projectManager.createProject(project);
         Thread.sleep(200);
-        scheduler.scheduleProjectForBuild("test");
+        scheduler.scheduleProjectForBuild("test", new TestBuild());
         assertThat(scheduler.isProjectBuilding("test"), is(true));
         assertThat(scheduler.isProjectPolling("test"), is(false));
         Thread.sleep(200);

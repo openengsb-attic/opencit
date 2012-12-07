@@ -60,14 +60,14 @@ public class ConnectorUtil {
     }
 
     public ConnectorId createConnector(Project p, String domain, String connectorId,
-            Map<String, String> attributeValues) throws ConnectorValidationFailedException {
+            Map<String, String> attributeValues, String location) throws ConnectorValidationFailedException {
 
         ConnectorProvider connector = getConnectorProvider(domain, connectorId);
         ConnectorId id = ConnectorId.generate(domain, connector.getId());
         ConnectorDescription desc = new ConnectorDescription();
         Map<String, Object> props = new HashMap<String, Object>();
 
-        props.put("location." + p.getId(), domain);
+        props.put("location." + p.getId(), domain + location);
         desc.setAttributes(attributeValues);
         desc.setProperties(props);
         connectorManager.create(id, desc);

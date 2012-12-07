@@ -49,12 +49,17 @@ public class Index extends BasePage implements SpringBeanProvider<ProjectManager
     @PaxWicketBean(name = "scheduler")
     private SchedulingService scheduler;
 
-    private Label noProjects;
+    private Label noProjects, noRemoting;
     private WebMarkupContainer projectListPanel;
     private ListView<Project> projectListView;
 
     @SuppressWarnings("serial")
     public Index() {
+        noRemoting = new Label("noRemoting", new StringResourceModel("noRemotingAvailable", this, null));
+        noRemoting.setOutputMarkupId(true);
+        noRemoting.setVisible(!projectManager.isRemotingAvailable());
+        add(noRemoting);
+
         projectListPanel = new WebMarkupContainer("projectlistPanel");
         projectListPanel.setOutputMarkupId(true);
         add(projectListPanel);

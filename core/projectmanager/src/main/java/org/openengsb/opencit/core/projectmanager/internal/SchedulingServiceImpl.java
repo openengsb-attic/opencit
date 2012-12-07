@@ -32,6 +32,7 @@ import org.openengsb.core.api.workflow.WorkflowService;
 import org.openengsb.domain.scm.ScmDomain;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -94,8 +95,8 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public void scheduleProjectForBuild(String projectId) {
-        CITTask citTask = new CITTask(projectId);
+    public void scheduleProjectForBuild(String projectId, BuildReason reason) {
+        CITTask citTask = new CITTask(projectId, reason);
         citTask.setWorkflowService(workflowService);
         citTask.setScheduler(this);
         citTask.setAuthenticationManager(authenticationManager);

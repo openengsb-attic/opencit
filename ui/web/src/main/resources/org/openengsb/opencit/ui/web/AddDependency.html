@@ -22,28 +22,20 @@
 
 <body>
   <wicket:extend>
-    <h2>
-      <wicket:message key="projectlist.title">[project.list]</wicket:message>
-    </h2>
-    <div wicket:id="noRemoting" class="info" >
-      Warning if JMS init fails
-    </div>
-    <div wicket:id="projectlistPanel">
-      <ul wicket:id="projectlist">
-        <li>
-          <h3>
-            <span wicket:id="project.name">[project.name]</span><br />
-            <img wicket:id="project.state" height="42" width="117"/><br />
-            <a href="#" wicket:id="project.details"><wicket:message key="project.details">[project.details]</wicket:message></a>
-            <a href="#" wicket:id="deleteProject"> <wicket:message key="deleteProject">[deleteProject]</wicket:message> </a>
-          </h3>
-        </li>
-      </ul>
-      <div wicket:id="noProjects" class="info" >
-        no results info window
-      </div>
-    </div>
-    <a wicket:id="newProject" href="#"><wicket:message key="newProject.title">[newProject.title]</wicket:message></a>
+    <form wicket:id="form">
+      <wicket:message key="dependency.id">[dependency.id]</wicket:message>:
+      <input type="text" wicket:id="id"/>
+      <br />
+      <wicket:message key="dependency.topic">[dependency.topic]</wicket:message>:
+      <input type="text" wicket:id="topic"/>
+      <br />
+
+      <select wicket:id="connector"></select>
+      <div wicket:id="editor"></div>
+
+      <input type="submit" wicket:id="okButton" wicket:message="value:dependency.okButton"/>
+      <input type="submit" wicket:id="cancelButton" wicket:message="value:dependency.cancelButton"/>
+    </form>
   </wicket:extend>
 </body>
 </html>

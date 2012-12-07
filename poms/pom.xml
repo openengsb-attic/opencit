@@ -51,11 +51,15 @@
     <openengsb.domain.scm.version>3.0.0-SNAPSHOT</openengsb.domain.scm.version>
     <openengsb.domain.build.version>3.0.0-SNAPSHOT</openengsb.domain.build.version>
     <openengsb.domain.test.version>3.0.0-SNAPSHOT</openengsb.domain.test.version>
+    <openengsb.domain.dependency.version>1.0.0-SNAPSHOT</openengsb.domain.dependency.version>
     <openengsb.connector.plaintextreport.version>2.0.0</openengsb.connector.plaintextreport.version>
     <openengsb.connector.email.version>2.0.0</openengsb.connector.email.version>
     <openengsb.connector.notificationsample.version>2.0.0</openengsb.connector.notificationsample.version>
     <openengsb.connector.git.version>3.0.0-SNAPSHOT</openengsb.connector.git.version>
     <openengsb.connector.maven.version>3.0.0-SNAPSHOT</openengsb.connector.maven.version>
+    <openengsb.connector.mavendep.version>1.0.0-SNAPSHOT</openengsb.connector.mavendep.version>
+    <openengsb.connector.dummydep.version>1.0.0-SNAPSHOT</openengsb.connector.dummydep.version>
+    <openengsb.connector.script.version>1.0.0-SNAPSHOT</openengsb.connector.script.version>
     <openengsb.wrapped.guava.version>1.0.0.r07.w1</openengsb.wrapped.guava.version>
     <openengsb.wrapped.jaxb.version>2.2.1.w1</openengsb.wrapped.jaxb.version>
     <openengsb.wrapped.xmlrpc.version>3.1.3.w1</openengsb.wrapped.xmlrpc.version>

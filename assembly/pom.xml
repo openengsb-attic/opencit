@@ -212,6 +212,7 @@
                 <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.deploy/${openengsb.domain.deploy.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.notification/${openengsb.domain.notification.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.report/${openengsb.domain.report.version}/xml/features</descriptor>
+                <descriptor>mvn:org.openengsb.domain/org.openengsb.domain.dependency/${openengsb.domain.dependency.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.connector/org.openengsb.connector.git/${openengsb.connector.git.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.connector/org.openengsb.connector.email/${openengsb.connector.email.version}/xml/features</descriptor>
                 <descriptor>mvn:org.openengsb.connector/org.openengsb.connector.notificationsample/${openengsb.connector.notificationsample.version}/xml/features</descriptor>

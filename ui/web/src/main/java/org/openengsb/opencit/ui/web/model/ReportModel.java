@@ -19,6 +19,8 @@ package org.openengsb.opencit.ui.web.model;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.openengsb.core.api.WiringService;
 import org.openengsb.core.api.context.ContextHolder;
@@ -29,25 +31,33 @@ import org.openengsb.domain.report.Report;
 public class ReportModel extends LoadableDetachableModel<Report> {
     private String reportName;
     private String projectId;
-    private WiringService ws;
+
+    private static WiringService ws;
+    private static Log log = LogFactory.getLog(ReportModel.class);
 
     public ReportModel(String projectId, String reportName, WiringService ws) {
         this.projectId = projectId;
         this.reportName = reportName;
-        this.ws = ws;
+        if (ReportModel.ws != null && ReportModel.ws != ws) {
+            log.error("WiringService differs. Old ws is " + ReportModel.ws + ", new ws is " + ws);
+        }
+        ReportModel.ws = ws;
     }
 
     public ReportModel(String categoryName, Report report, WiringService ws) {
         this.projectId = categoryName;
         this.reportName = report.getName();
-        this.ws = ws;
+        if (ReportModel.ws != null && ReportModel.ws != ws) {
+            log.error("WiringService differs. Old ws is " + ReportModel.ws + ", new ws is " + ws);
+        }
+        ReportModel.ws = ws;
         setObject(report);
     }
 
     @Override
     protected Report load() {
         ReportDomain reportDomain;
-        reportDomain = ws.getDomainEndpoint(ReportDomain.class, "report");
+        reportDomain = ReportModel.ws.getDomainEndpoint(ReportDomain.class, "report");
 
         ContextHolder.get().setCurrentContextId(projectId);
         List<Report> reports = reportDomain.getAllReports(projectId);

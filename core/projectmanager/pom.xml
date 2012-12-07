@@ -84,10 +84,20 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.openengsb.domain</groupId>
+      <artifactId>org.openengsb.domain.dependency</artifactId>
+      <version>${openengsb.domain.dependency.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.openengsb.wrapped</groupId>
       <artifactId>com.google.guava-all</artifactId>
       <version>${openengsb.wrapped.guava.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-core</artifactId>
     </dependency>
 
     <!--Hack for jgit-->

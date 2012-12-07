@@ -18,9 +18,16 @@
 package org.openengsb.opencit.core.projectmanager;
 
 import java.util.List;
+import java.util.UUID;
+
+import javax.jms.JMSException;
 
 import org.openengsb.core.api.ConnectorValidationFailedException;
+import org.openengsb.domain.dependency.DependencyDomain;
 import org.openengsb.domain.notification.Notification;
+import org.openengsb.opencit.core.projectmanager.model.BuildFeedback;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
+import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
 import org.openengsb.opencit.core.projectmanager.model.Project;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 
@@ -40,6 +47,15 @@ public interface ProjectManager {
 
     void deleteProject(String projectId) throws NoSuchProjectException;
 
+    boolean isRemotingAvailable();
+    UUID storeBuild(Project project, BuildReason reason);
+    void sendUpdateNotification(Project project, UUID storedBuild, String location) throws JMSException;
+    void sendFeedback(String channel, BuildFeedback feedback);
+
+    void addProjectDependency(Project project, DependencyProperties dependency) throws ConnectorValidationFailedException;
+    
     // FIXME: Remove this and load the EkbService properly into the workflow
     Notification createNotification();
+    // FIXME: Isn't there a nicer way to get a connector instance???
+    DependencyDomain getDependencyConnector(Project project, String depname);
 }

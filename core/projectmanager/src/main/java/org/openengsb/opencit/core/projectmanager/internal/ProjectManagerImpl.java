@@ -17,10 +17,26 @@
 
 package org.openengsb.opencit.core.projectmanager.internal;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openengsb.core.api.ConnectorValidationFailedException;
 import org.openengsb.core.api.OsgiUtilsService;
 import org.openengsb.core.api.WiringService;
@@ -32,39 +48,114 @@ import org.openengsb.core.api.persistence.PersistenceException;
 import org.openengsb.core.api.persistence.PersistenceManager;
 import org.openengsb.core.api.persistence.PersistenceService;
 import org.openengsb.core.common.util.ModelUtils;
+import org.openengsb.domain.dependency.DependencyDomain;
 import org.openengsb.domain.notification.Notification;
+import org.openengsb.domain.notification.NotificationDomain;
 import org.openengsb.domain.report.ReportDomain;
 import org.openengsb.opencit.core.projectmanager.NoSuchProjectException;
 import org.openengsb.opencit.core.projectmanager.ProjectAlreadyExistsException;
 import org.openengsb.opencit.core.projectmanager.ProjectManager;
 import org.openengsb.opencit.core.projectmanager.SchedulingService;
+import org.openengsb.opencit.core.projectmanager.model.Build;
+import org.openengsb.opencit.core.projectmanager.model.BuildFeedback;
+import org.openengsb.opencit.core.projectmanager.model.BuildReason;
 import org.openengsb.opencit.core.projectmanager.model.ConnectorConfig;
+import org.openengsb.opencit.core.projectmanager.model.DepUpdateBuildReason;
+import org.openengsb.opencit.core.projectmanager.model.DependencyProperties;
 import org.openengsb.opencit.core.projectmanager.model.Project;
+import org.openengsb.opencit.core.projectmanager.model.ProjectPersist;
+import org.openengsb.opencit.core.projectmanager.model.UpdateNotification;
 import org.openengsb.opencit.core.projectmanager.model.Project.State;
 import org.openengsb.opencit.core.projectmanager.util.ConnectorUtil;
 import org.osgi.framework.BundleContext;
 
-public class ProjectManagerImpl implements ProjectManager {
+public class ProjectManagerImpl implements ProjectManager, MessageListener {
 
     private PersistenceManager persistenceManager;
-
     private PersistenceService persistence;
-
     private ContextCurrentService contextService;
-
     private SchedulingService scheduler;
-
     private BundleContext bundleContext;
-
     private ConnectorUtil connectorUtil;
-
     private OsgiUtilsService osgiUtilsService;
+
+    private Connection connection;
+    private Session session = null;
+    private static final String URL = "tcp://127.0.0.1:6549";
+    private static final String feedbackQueueName = "feedback";
+    private Destination feedbackQueue;
+    private MessageConsumer feedbackConsumer;
+
+    private static Log log = LogFactory.getLog(ProjectManagerImpl.class);
+
+    private List<Project> projects = new ArrayList<Project>();
+
+    private void initJms() throws JMSException {
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(URL);
+        connection = connectionFactory.createConnection();
+        connection.start();
+
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        feedbackQueue = session.createQueue(feedbackQueueName);
+        feedbackConsumer = session.createConsumer(feedbackQueue);
+        feedbackConsumer.setMessageListener(this);
+    }
+
+    private void startProject(Project project) {
+        scheduler.setupAndStartScmPoller(project);
+
+        if (session == null) {
+            return;
+        }
+
+        try {
+            Destination topic;
+            topic = session.createTopic(project.getId());
+            MessageProducer producer = session.createProducer(topic);
+            project.setTopic(topic);
+            project.setProducer(producer);
+        } catch (JMSException e) {
+            log.error("Failed to create JMS topic for project " + project.getId(), e);
+        }
+
+        for (DependencyProperties d : project.getDependencies()) {
+            startNotificationListener(project, d);
+        }
+    }
+
+    private void stopProject(Project project) {
+        scheduler.suspendScmPoller(project.getId());
+
+        MessageProducer producer = project.getProducer();
+        if (producer != null) {
+            try {
+                producer.close();
+            } catch (JMSException e) {
+                log.error("Failed to close JMS topic for project " + project.getId(), e);
+            }
+        }
+        project.setProducer(null);
+        project.setTopic(null);
+    }
 
     public void init() {
         persistence = persistenceManager.getPersistenceForBundle(bundleContext.getBundle());
-        List<Project> projects = getAllProjects();
-        for (Project project : projects) {
-            scheduler.setupAndStartScmPoller(project);
+
+        try {
+            initJms();
+        } catch(JMSException e) {
+            /* Not a critical issue. Cascading CI&T will not work, but local operation will
+             * be fine.
+             */
+            log.info("Failed to init JMS", e);
+        }
+
+        List<ProjectPersist> dbRead = persistence.query(new ProjectPersist(null));
+        for (ProjectPersist dbProject : dbRead) {
+            Project project = new Project(dbProject);
+            projects.add(project);
+            startProject(project);
         }
     }
 
@@ -73,7 +164,8 @@ public class ProjectManagerImpl implements ProjectManager {
         throws ProjectAlreadyExistsException, ConnectorValidationFailedException {
         checkId(project.getId());
         try {
-            persistence.create(project);
+            projects.add(project);
+            persistence.create(project.getPersitentPart());
             setupProject(project);
         } catch (PersistenceException e) {
             throw new RuntimeException(e);
@@ -92,7 +184,7 @@ public class ProjectManagerImpl implements ProjectManager {
             String domain = e.getKey();
             ConnectorConfig cfg = e.getValue();
             ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(),
-                cfg.getAttributeValues());
+                cfg.getAttributeValues(), "");
             project.addService(domain, id);
         }
     }
@@ -101,7 +193,7 @@ public class ProjectManagerImpl implements ProjectManager {
         createAndSetContext(project);
         createConnectors(project);
         setDefaultConnectors(project);
-        scheduler.setupAndStartScmPoller(project);
+        startProject(project);
     }
 
     private void createAndSetContext(Project project) {
@@ -133,34 +225,43 @@ public class ProjectManagerImpl implements ProjectManager {
     }
 
     private void checkId(String id) throws ProjectAlreadyExistsException {
-        List<Project> projects = persistence.query(new Project(id));
-        if (!projects.isEmpty()) {
+        try {
+            getProject(id);
             throw new ProjectAlreadyExistsException("Project with id '" + id + "' already exists.");
+        } catch (NoSuchProjectException e) {
+            return;
         }
     }
 
     @Override
     public List<Project> getAllProjects() {
-        return persistence.query(new Project(null));
+        return new ArrayList<Project>(projects);
     }
 
     @Override
     public Project getProject(String projectId) throws NoSuchProjectException {
-        List<Project> projects = persistence.query(new Project(projectId));
-        if (projects.isEmpty()) {
-            throw new NoSuchProjectException("No project with id '" + projectId + "' found.");
+        for (Project p : projects) {
+            if (p.getId().equals(projectId)) {
+                return p;
+            }
         }
-        return projects.get(0);
+        throw new NoSuchProjectException("No project with id '" + projectId + "' found.");
     }
 
     @Override
     public void updateProject(Project project) throws NoSuchProjectException {
         getProject(project.getId());
         try {
-            persistence.update(new Project(project.getId()), project);
+            persistence.update(new ProjectPersist(project.getId()), project.getPersitentPart());
             setDefaultConnectors(project);
         } catch (PersistenceException e) {
-            throw new RuntimeException("Could not update project", e);
+            try {
+            List<ProjectPersist> dbRead = persistence.query(new ProjectPersist(project.getId()));
+            persistence.delete(dbRead);
+            persistence.create(project.getPersitentPart());
+            } catch (PersistenceException e2) {
+                throw new RuntimeException("Could not update project", e2);
+            }
         }
     }
 
@@ -185,13 +286,53 @@ public class ProjectManagerImpl implements ProjectManager {
 
         WiringService ws = osgiUtilsService.getService(WiringService.class);
         reportDomain = ws.getDomainEndpoint(ReportDomain.class, "report");
-        scheduler.suspendScmPoller(projectId);
+        stopProject(project);
         reportDomain.removeCategory(projectId);
+        projects.remove(project);
         try {
-            persistence.delete(project);
+            persistence.delete(project.getPersitentPart());
         } catch (PersistenceException e) {
             throw new RuntimeException("Could not delete project " + projectId, e);
         }
+    }
+
+    @Override
+    public UUID storeBuild(Project project, BuildReason reason) {
+        UUID ret = UUID.randomUUID();
+        Build build = new Build(project.getId(), reason, ret);
+        persistence.create(build);
+        return ret;
+    }
+
+    private void startNotificationListener(Project project, DependencyProperties dependency) {
+        try {
+            UpdateTopicListener listener = new UpdateTopicListener();
+            listener.setProject(project);
+            listener.setDependency(dependency.getId());
+            listener.setProjectManager(this);
+
+            Destination topic = session.createTopic(dependency.getTopic());
+            MessageConsumer consumer = session.createConsumer(topic);
+            consumer.setMessageListener(listener);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void addProjectDependency(Project project, DependencyProperties dependency)
+        throws ConnectorValidationFailedException {
+        String domain = "dependency";
+        ConnectorConfig cfg = new ConnectorConfig(dependency.getConnector(), dependency.getConfig());
+
+        ConnectorId id = getConnectorUtil().createConnector(project, domain, cfg.getConnector(),
+            cfg.getAttributeValues(), dependency.getId());
+        dependency.setConnectorInstance(id);
+        project.addDependency(dependency);
+
+        startNotificationListener(project, dependency);
+        
+        updateProject(project);
     }
 
     public void setPersistenceManager(PersistenceManager persistenceManager) {
@@ -225,5 +366,116 @@ public class ProjectManagerImpl implements ProjectManager {
 
     public void setOsgiUtilsService(OsgiUtilsService osgiUtilsService) {
         this.osgiUtilsService = osgiUtilsService;
+    }
+
+    @Override
+    public boolean isRemotingAvailable() {
+        return session != null;
+    }
+
+    @Override
+    public void sendUpdateNotification(Project project, UUID storedBuild,
+            String location) throws JMSException {
+        if (project.getProducer() == null) {
+            log.info("Project has no JMS producer, not sending update notification");
+            return;
+        }
+        UpdateNotification n = new UpdateNotification();
+
+        n.setBuildId(storedBuild);
+        n.setArtifactLocation(location);
+        n.setFeedbackQueue(feedbackQueueName);
+
+        ObjectMessage msg = session.createObjectMessage(n);
+        project.getProducer().send(msg);
+        log.info("Update notification sent, topic " + project.getProducer().getDestination().toString());
+    }
+
+    public void processDependencyUpdate(Project project, String dependency,
+            UpdateNotification notification) {
+        BuildReason reason = new DepUpdateBuildReason(notification, dependency);
+        scheduler.scheduleProjectForBuild(project.getId(), reason);
+    }
+
+    @Override
+    public synchronized DependencyDomain getDependencyConnector(Project project, String depname) {
+        WiringService ws = osgiUtilsService.getService(WiringService.class);
+        return ws.getDomainEndpoint(DependencyDomain.class, "dependency" + depname, project.getId());
+    }
+
+    @Override
+    public void sendFeedback(String channel, BuildFeedback feedback) {
+        if (session == null) {
+            /* OK, this shouldn't happen. How did we get the update notification if JMS is not up? */
+            log.info("JMS not started, not sending feedback\n");
+            return;
+        }
+
+        try {
+            Destination topic = session.createQueue(channel);
+            MessageProducer producer = session.createProducer(topic);
+            ObjectMessage msg = session.createObjectMessage(feedback);
+            producer.send(msg);
+            producer.close();
+            log.info("Build feedback sent\n");
+        } catch(JMSException e) {
+            log.error("Error delivering feedback", e);
+        }
+    }
+
+    @Override
+    public void onMessage(Message message) {
+        if (!(message instanceof ObjectMessage)) {
+            log.error("Received message is not an instance of ObjectMessage: " + message);
+            return;
+        }
+        ObjectMessage objectMessage = (ObjectMessage) message;
+        Serializable object;
+        try {
+            object = objectMessage.getObject();
+        } catch (JMSException e) {
+            log.error("Failed to de-serialize the JMS object", e);
+            return;
+        }
+        if (!(object instanceof BuildFeedback)) {
+            log.error("Received object is not an instance of BuildFeedback: " + object);
+            return;
+        }
+
+        BuildFeedback feedback = (BuildFeedback) object;
+        List<Build> builds = persistence.query(new Build(null, null, feedback.getBuildId()));
+        if (builds.size() != 1) {
+            log.error("Found " + builds.size() + " builds matching buildID " + feedback.getBuildId());
+            return;
+        }
+        Build build = builds.get(0);
+        Project p = getProject(build.getProjectId());
+
+        Notification n = createNotification();
+        n.setSubject("Feedback from dependent project: " + feedback.getResult());
+        n.setMessage(feedback.formatMessage());
+        n.setRecipient(p.getNotificationRecipient());
+
+        WiringService ws = osgiUtilsService.getService(WiringService.class);
+        NotificationDomain nd = ws.getDomainEndpoint(NotificationDomain.class, "notification", p.getId());
+        nd.notify(n);
+        log.trace("Notification sent.");
+
+        if (!(build.getReason() instanceof DepUpdateBuildReason)) {
+            return;
+        }
+        DepUpdateBuildReason update = (DepUpdateBuildReason) build.getReason();
+
+        BuildFeedback newFeedback = new BuildFeedback();
+        newFeedback.setBuildId(update.getUpdate().getBuildId());
+        if (feedback.getResult() == BuildFeedback.BuildResult.SUCCESS) {
+            newFeedback.setResult(BuildFeedback.BuildResult.SUCCESS);
+        } else {
+            newFeedback.setResult(BuildFeedback.BuildResult.NESTEDFAIL);
+        }
+        newFeedback.setContactInfo(p.getNotificationRecipient());
+        newFeedback.setProjectName(p.getId());
+        newFeedback.setNestedFeedback(feedback);
+        sendFeedback(update.getUpdate().getFeedbackQueue(), newFeedback);
     }
 }
